@@ -15,10 +15,10 @@ const postSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  subreddit: {
-    type: String,
-    required: true,
-    trim: true
+  community: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Community',
+    required: true
   },
   upvotes: [{
     type: mongoose.Schema.Types.ObjectId,

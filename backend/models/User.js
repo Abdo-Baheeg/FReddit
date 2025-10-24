@@ -21,6 +21,14 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
+  avatar_url: {
+    type: String,
+    default: ''
+  },
+  bio: {
+    type: String,
+    default: ''
+  },
   karma: {
     type: Number,
     default: 0
@@ -28,7 +36,11 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  joined_communities: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Community'
+  }]
 });
 
 // Hash password before saving

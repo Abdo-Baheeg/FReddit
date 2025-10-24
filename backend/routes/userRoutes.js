@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const { body } = require('express-validator');
 const User = require('../models/User');
@@ -88,6 +89,7 @@ router.get('/me', authMiddleware, async (req, res) => {
       id: req.user._id,
       username: req.user.username,
       email: req.user.email,
+      imgURL: req.user.imgURL,
       karma: req.user.karma
     });
   } catch (error) {
