@@ -27,8 +27,8 @@ const connectDB = async () => {
 connectDB();
 
 // Routes
-app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to FReddit API' });
+app.get('/api/health', (req, res) => {
+  res.json({ health: 'healthy', timestamp: Date.now(), database_connected: mongoose.connection.readyState === 1 });
 });
 
 // Import routes

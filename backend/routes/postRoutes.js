@@ -36,10 +36,10 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// @route   POST /api/posts
+// @route   POST /api/posts/create
 // @desc    Create a new post
 // @access  Private
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/create', authMiddleware, async (req, res) => {
   try {
     const { title, content, subreddit } = req.body;
 
@@ -111,6 +111,66 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     await post.deleteOne();
     res.json({ message: 'Post deleted successfully' });
   } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// @route   PUT /api/posts/:id/summary
+// @desc    Generate summary for a post using Gemini API
+// @access  Private
+router.put('/:id/summary', authMiddleware, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    
+    if (!apiKey) {
+      return res.status(500).json({ message: 'Gemini API key not configured' });
+    }
+
+    // Gemini API endpoint
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+    
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: `Please provide a concise summary (2-3 sentences) of the following post:\n\nTitle: ${post.title}\n\nContent: ${post.content}`
+          }]
+        }]
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return res.status(response.status).json({ 
+        message: 'Failed to generate summary', 
+        error: errorData 
+      });
+    }
+
+    const data = await response.json();
+    
+    // Extract the generated summary from Gemini's response
+    const summary = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Summary could not be generated';
+    
+    post.summary = summary;
+    await post.save();
+    
+    res.json({ 
+      summary: post.summary,
+      postId: post._id,
+      title: post.title
+    });
+  } catch (error) {
+    console.error('Summary generation error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
