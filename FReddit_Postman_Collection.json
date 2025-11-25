@@ -1,0 +1,553 @@
+{
+	"info": {
+		"_postman_id": "freddit-api-collection",
+		"name": "FReddit API",
+		"description": "Complete API documentation for FReddit - A Reddit-like social platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"john_doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "register"]
+						},
+						"description": "Register a new user. Returns JWT token and user information.\n\n**Validation:**\n- Username: minimum 3 characters\n- Email: valid email format\n- Password: minimum 6 characters\n\n**Response (201):**\n```json\n{\n  \"token\": \"jwt_token_here\",\n  \"user\": {\n    \"id\": \"user_id\",\n    \"username\": \"john_doe\",\n    \"email\": \"john@example.com\",\n    \"karma\": 0\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"authToken\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "login"]
+						},
+						"description": "Login an existing user. Returns JWT token.\n\n**Response (200):**\n```json\n{\n  \"token\": \"jwt_token_here\",\n  \"user\": {\n    \"id\": \"user_id\",\n    \"username\": \"john_doe\",\n    \"email\": \"john@example.com\",\n    \"karma\": 0\n  }\n}\n```\n\n**Test Script:** Automatically saves the token to environment variable `authToken`"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "me"]
+						},
+						"description": "Get current authenticated user information.\n\n**Authentication:** Required (Bearer token)\n\n**Response (200):**\n```json\n{\n  \"id\": \"user_id\",\n  \"username\": \"john_doe\",\n  \"email\": \"john@example.com\",\n  \"imgURL\": \"profile_image_url\",\n  \"karma\": 0\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "User authentication and profile endpoints"
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Get All Posts",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "posts"]
+						},
+						"description": "Get all posts sorted by creation date (newest first). Limited to 50 posts.\n\n**Response (200):**\n```json\n[\n  {\n    \"_id\": \"post_id\",\n    \"title\": \"Post Title\",\n    \"content\": \"Post content\",\n    \"subreddit\": \"subreddit_name\",\n    \"author\": {\n      \"_id\": \"user_id\",\n      \"username\": \"john_doe\"\n    },\n    \"score\": 0,\n    \"upvotes\": [],\n    \"downvotes\": [],\n    \"commentCount\": 0,\n    \"createdAt\": \"2025-10-24T00:00:00.000Z\"\n  }\n]\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Post By ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/posts/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "posts", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "post_id_here"
+								}
+							]
+						},
+						"description": "Get a specific post by its ID.\n\n**Response (200):**\n```json\n{\n  \"_id\": \"post_id\",\n  \"title\": \"Post Title\",\n  \"content\": \"Post content\",\n  \"subreddit\": \"subreddit_name\",\n  \"author\": {\n    \"_id\": \"user_id\",\n    \"username\": \"john_doe\"\n  },\n  \"score\": 0,\n  \"upvotes\": [],\n  \"downvotes\": [],\n  \"commentCount\": 0,\n  \"summary\": \"AI-generated summary\",\n  \"createdAt\": \"2025-10-24T00:00:00.000Z\"\n}\n```\n\n**Error (404):**\n```json\n{\n  \"message\": \"Post not found\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"My First Post\",\n  \"content\": \"This is the content of my first post on FReddit!\",\n  \"subreddit\": \"general\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/posts/create",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "posts", "create"]
+						},
+						"description": "Create a new post.\n\n**Authentication:** Required (Bearer token)\n\n**Request Body:**\n- `title` (string, required): Post title\n- `content` (string, required): Post content\n- `subreddit` (string, required): Subreddit/community name\n\n**Response (201):**\n```json\n{\n  \"_id\": \"post_id\",\n  \"title\": \"My First Post\",\n  \"content\": \"This is the content of my first post on FReddit!\",\n  \"subreddit\": \"general\",\n  \"author\": {\n    \"_id\": \"user_id\",\n    \"username\": \"john_doe\"\n  },\n  \"score\": 0,\n  \"upvotes\": [],\n  \"downvotes\": [],\n  \"commentCount\": 0,\n  \"createdAt\": \"2025-10-24T00:00:00.000Z\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Vote on Post",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"voteType\": \"upvote\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/posts/:id/vote",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "posts", ":id", "vote"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "post_id_here"
+								}
+							]
+						},
+						"description": "Upvote or downvote a post. Previous votes by the same user are removed.\n\n**Authentication:** Required (Bearer token)\n\n**Request Body:**\n- `voteType` (string): Either \"upvote\" or \"downvote\"\n\n**Response (200):**\nReturns the updated post with new vote counts and score."
+					},
+					"response": []
+				},
+				{
+					"name": "Generate Post Summary (AI)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/posts/:id/summary",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "posts", ":id", "summary"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "post_id_here"
+								}
+							]
+						},
+						"description": "Generate an AI summary of the post using Google's Gemini API.\n\n**Authentication:** Required (Bearer token)\n\n**Note:** Requires `GEMINI_API_KEY` environment variable to be set on the server.\n\n**Response (200):**\n```json\n{\n  \"summary\": \"AI-generated summary of the post (2-3 sentences)\",\n  \"postId\": \"post_id\",\n  \"title\": \"Post Title\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Post",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/posts/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "posts", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "post_id_here"
+								}
+							]
+						},
+						"description": "Delete a post. Only the post author can delete their own post.\n\n**Authentication:** Required (Bearer token)\n\n**Response (200):**\n```json\n{\n  \"message\": \"Post deleted successfully\"\n}\n```\n\n**Error (403):**\n```json\n{\n  \"message\": \"Not authorized to delete this post\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Post creation, retrieval, voting, and management endpoints"
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Get Comments for Post",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/comments/post/:postId",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "comments", "post", ":postId"],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "post_id_here"
+								}
+							]
+						},
+						"description": "Get all comments for a specific post, sorted by creation date (newest first).\n\n**Response (200):**\n```json\n[\n  {\n    \"_id\": \"comment_id\",\n    \"content\": \"This is a comment\",\n    \"post\": \"post_id\",\n    \"author\": {\n      \"_id\": \"user_id\",\n      \"username\": \"john_doe\"\n    },\n    \"parentComment\": null,\n    \"score\": 0,\n    \"upvotes\": [],\n    \"downvotes\": [],\n    \"createdAt\": \"2025-10-24T00:00:00.000Z\"\n  }\n]\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"content\": \"This is my comment on the post\",\n  \"postId\": \"post_id_here\",\n  \"parentCommentId\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/comments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "comments"]
+						},
+						"description": "Create a new comment on a post or reply to an existing comment.\n\n**Authentication:** Required (Bearer token)\n\n**Request Body:**\n- `content` (string, required): Comment text\n- `postId` (string, required): ID of the post being commented on\n- `parentCommentId` (string, optional): ID of parent comment for nested replies\n\n**Response (201):**\n```json\n{\n  \"_id\": \"comment_id\",\n  \"content\": \"This is my comment on the post\",\n  \"post\": \"post_id\",\n  \"author\": {\n    \"_id\": \"user_id\",\n    \"username\": \"john_doe\"\n  },\n  \"parentComment\": null,\n  \"score\": 0,\n  \"upvotes\": [],\n  \"downvotes\": [],\n  \"createdAt\": \"2025-10-24T00:00:00.000Z\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Vote on Comment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"voteType\": \"upvote\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/comments/:id/vote",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "comments", ":id", "vote"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "comment_id_here"
+								}
+							]
+						},
+						"description": "Upvote or downvote a comment. Previous votes by the same user are removed.\n\n**Authentication:** Required (Bearer token)\n\n**Request Body:**\n- `voteType` (string): Either \"upvote\" or \"downvote\"\n\n**Response (200):**\nReturns the updated comment with new vote counts and score."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/comments/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "comments", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "comment_id_here"
+								}
+							]
+						},
+						"description": "Delete a comment. Only the comment author can delete their own comment.\n\n**Authentication:** Required (Bearer token)\n\n**Response (200):**\n```json\n{\n  \"message\": \"Comment deleted successfully\"\n}\n```\n\n**Error (403):**\n```json\n{\n  \"message\": \"Not authorized to delete this comment\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Comment creation, retrieval, voting, and management endpoints"
+		},
+		{
+			"name": "Communities",
+			"item": [
+				{
+					"name": "Get All Communities",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/communities/communities",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "communities", "communities"]
+						},
+						"description": "Get all communities sorted by creation date (newest first).\n\n**Response (200):**\n```json\n[\n  {\n    \"_id\": \"community_id\",\n    \"name\": \"community_name\",\n    \"description\": \"Community description\",\n    \"creator\": \"user_id\",\n    \"members\": [\"user_id_1\", \"user_id_2\"],\n    \"createdAt\": \"2025-10-24T00:00:00.000Z\"\n  }\n]\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Community By ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/communities/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "communities", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "community_id_here"
+								}
+							]
+						},
+						"description": "Get a specific community by its ID.\n\n**Response (200):**\n```json\n{\n  \"_id\": \"community_id\",\n  \"name\": \"community_name\",\n  \"description\": \"Community description\",\n  \"creator\": \"user_id\",\n  \"members\": [\"user_id_1\", \"user_id_2\"],\n  \"createdAt\": \"2025-10-24T00:00:00.000Z\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Community",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"tech_enthusiasts\",\n  \"description\": \"A community for technology enthusiasts to share and discuss\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/communities/create",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "communities", "create"]
+						},
+						"description": "Create a new community.\n\n**Authentication:** Required (Bearer token)\n\n**Request Body:**\n- `name` (string, required): Community name (must be unique)\n- `description` (string, required): Community description\n\n**Response (201):**\n```json\n{\n  \"_id\": \"community_id\",\n  \"name\": \"tech_enthusiasts\",\n  \"description\": \"A community for technology enthusiasts to share and discuss\",\n  \"creator\": \"user_id\",\n  \"members\": [],\n  \"createdAt\": \"2025-10-24T00:00:00.000Z\"\n}\n```\n\n**Error (400):**\n```json\n{\n  \"message\": \"Community already exists\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Join Community",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/communities/:id/join",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "communities", ":id", "join"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "community_id_here"
+								}
+							]
+						},
+						"description": "Join a community. Adds the user to the community's members list and adds the community to user's joinedCommunities.\n\n**Authentication:** Required (Bearer token)\n\n**Response (200):**\n```json\n{\n  \"message\": \"Joined community successfully\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Leave Community",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/communities/:id/leave",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "communities", ":id", "leave"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "community_id_here"
+								}
+							]
+						},
+						"description": "Leave a community. Removes the user from the community's members list and removes the community from user's joinedCommunities.\n\n**Authentication:** Required (Bearer token)\n\n**Response (200):**\n```json\n{\n  \"message\": \"Left community successfully\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Community creation, retrieval, and membership management endpoints"
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/health",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "health"]
+				},
+				"description": "Check API health and database connection status.\n\n**Response (200):**\n```json\n{\n  \"health\": \"healthy\",\n  \"timestamp\": 1729728000000,\n  \"database_connected\": true\n}\n```"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

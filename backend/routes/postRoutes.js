@@ -46,8 +46,11 @@ router.post('/create', authMiddleware, async (req, res) => {
     const post = new Post({
       title,
       content,
-      subreddit,
-      author: req.user._id
+      author: req.user._id,
+      upvotes: [],
+      downvotes: [],
+      score: 0, 
+      community: subreddit
     });
 
     await post.save();
