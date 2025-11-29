@@ -9,6 +9,7 @@ import Register from './pages/Register';
 import CreatePost from './pages/CreatePost';
 import PostDetail from './pages/PostDetail';
 import Chat from './pages/Chat';
+import RedditProfilePage from './pages/viewprofile';   
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
               <Route path="/post/:id" element={<PostDetail />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/chat/:conversationId" element={<Chat />} />
+              <Route path="/profile/:userId" element={<RedditProfilePage />} />
             </Routes>
           </div>
         </div>

@@ -11,7 +11,6 @@ const Navbar = () => {
     window.location.href = '/';
   };
 
-  // Calculate total unread messages
   const totalUnread = Object.values(unreadCounts).reduce((sum, count) => sum + count, 0);
 
   return (
@@ -19,11 +18,14 @@ const Navbar = () => {
       <Link to="/">
         <h1>FReddit</h1>
       </Link>
-      <nav>
+
+      <nav style={{ display: 'flex', alignItems: 'center' }}>
         <Link to="/">Home</Link>
+
         {token ? (
           <>
             <Link to="/create-post">Create Post</Link>
+
             <Link to="/chat" style={{ position: 'relative' }}>
               Messages
               {totalUnread > 0 && (
@@ -42,14 +44,30 @@ const Navbar = () => {
                 </span>
               )}
             </Link>
-            <button onClick={handleLogout} className="btn" style={{width: 'auto', padding: '8px 16px'}}>
+
+            <Link to="/viewprofile" className="profile-icon" style={{ marginLeft: '8px' }}>
+              ⚽
+            </Link>
+
+            <button 
+              onClick={handleLogout} 
+              className="btn" 
+              style={{ width: 'auto', padding: '8px 16px', marginLeft: '8px' }}
+            >
               Logout
             </button>
           </>
         ) : (
           <>
             <Link to="/login">Login</Link>
-            <Link to="/register">Register</Link>
+
+            <Link to="/register" style={{ display: 'flex', alignItems: 'center', marginLeft: '8px' }}>
+              Register
+            </Link>
+
+            <Link to="/viewprofile" className="profile-icon" style={{ marginLeft: '8px' }}>
+              ⚽
+            </Link>
           </>
         )}
       </nav>
