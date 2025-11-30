@@ -19,7 +19,7 @@ const Navbar = () => {
         <h1>FReddit</h1>
       </Link>
 
-      <nav style={{ display: 'flex', alignItems: 'center' }}>
+      <nav style={ { display: 'flex', alignItems: 'center' }}>
         <Link to="/">Home</Link>
 
         {token ? (
@@ -29,17 +29,19 @@ const Navbar = () => {
             <Link to="/chat" style={{ position: 'relative' }}>
               Messages
               {totalUnread > 0 && (
-                <span style={{
-                  position: 'absolute',
-                  top: '-8px',
-                  right: '-10px',
-                  background: '#ff4500',
-                  color: 'white',
-                  borderRadius: '10px',
-                  padding: '2px 6px',
-                  fontSize: '11px',
-                  fontWeight: 'bold'
-                }}>
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '-8px',
+                    right: '-10px',
+                    background: '#ff4500',
+                    color: 'white',
+                    borderRadius: '10px',
+                    padding: '2px 6px',
+                    fontSize: '11px',
+                    fontWeight: 'bold'
+                  }}
+                >
                   {totalUnread}
                 </span>
               )}
@@ -49,9 +51,9 @@ const Navbar = () => {
               ⚽
             </Link>
 
-            <button 
-              onClick={handleLogout} 
-              className="btn" 
+            <button
+              onClick={handleLogout}
+              className="btn"
               style={{ width: 'auto', padding: '8px 16px', marginLeft: '8px' }}
             >
               Logout
