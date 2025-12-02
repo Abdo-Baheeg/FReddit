@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Post = require('../models/Post');
 const authMiddleware = require('../middleware/auth');
+const { GoogleGenAI } = require('@google/genai');
 
 // @route   GET /api/posts
 // @desc    Get all posts
@@ -134,35 +135,15 @@ router.put('/:id/summary', authMiddleware, async (req, res) => {
       return res.status(500).json({ message: 'Gemini API key not configured' });
     }
 
-    // Gemini API endpoint
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+    // Initialize GoogleGenAI client
+    const ai = new GoogleGenAI({ apiKey });
     
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `Please provide a concise summary (2-3 sentences) of the following post:\n\nTitle: ${post.title}\n\nContent: ${post.content}`
-          }]
-        }]
-      })
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash-exp",
+      contents: `Please provide a concise summary (2-3 sentences) of the following post:\n\nTitle: ${post.title}\n\nContent: ${post.content}`
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      return res.status(response.status).json({ 
-        message: 'Failed to generate summary', 
-        error: errorData 
-      });
-    }
-
-    const data = await response.json();
     
-    // Extract the generated summary from Gemini's response
-    const summary = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Summary could not be generated';
+    const summary = response.text || 'Summary could not be generated';
     
     post.summary = summary;
     await post.save();
