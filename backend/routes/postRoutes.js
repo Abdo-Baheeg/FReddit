@@ -139,7 +139,7 @@ router.put('/:id/summary', authMiddleware, async (req, res) => {
     const ai = new GoogleGenAI({ apiKey });
     
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.5-flash",
       contents: `Please provide a concise summary (2-3 sentences) of the following post:\n\nTitle: ${post.title}\n\nContent: ${post.content}`
     });
     
