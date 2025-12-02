@@ -1,6 +1,6 @@
 // api methods using environment variable for base URL
 import axios from 'axios';
-const API_URL = 'https://freddit-production.up.railway.app';
+const API_URL = process.env.API_URL ;
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
