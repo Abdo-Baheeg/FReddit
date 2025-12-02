@@ -1,6 +1,6 @@
 // api methods using environment variable for base URL
 import axios from 'axios';
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5050';
+const API_URL = 'https://freddit-production.up.railway.app';
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
