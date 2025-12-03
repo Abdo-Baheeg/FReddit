@@ -14,12 +14,12 @@ const Navbar = () => {
   const totalUnread = Object.values(unreadCounts).reduce((sum, count) => sum + count, 0);
 
   return (
-    <div className="navbar">
+    <div className="navbar" style={{ position: 'relative', width: '100%' }}>
       <Link to="/">
         <h1>FReddit</h1>
       </Link>
 
-      <nav style={ { display: 'flex', alignItems: 'center' }}>
+      <nav style={{ display: 'flex', alignItems: 'center' }}>
         <Link to="/">Home</Link>
 
         {token ? (
