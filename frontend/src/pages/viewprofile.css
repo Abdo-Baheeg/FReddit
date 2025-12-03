@@ -1,0 +1,1217 @@
+/* ==================== TOP BAR ==================== */
+.vpNewTopBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 1003;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.vpTopBarContainer {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.vpLogoNew {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.vpLogoIcon {
+  width: 32px;
+  height: 32px;
+}
+
+.vpLogoTextNew {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ff4500;
+}
+
+.vpSearchContainer {
+  flex: 1;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.vpSearchWrapper {
+  position: relative;
+}
+
+.vpSearchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
+  pointer-events: none;
+}
+
+.vpSearchInput {
+  width: 100%;
+  padding: 10px 16px 10px 44px;
+  background: #f3f4f6;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.vpSearchInput:focus {
+  outline: none;
+  background: white;
+  border-color: #ff4500;
+  box-shadow: 0 0 0 4px rgba(255,69,0,0.15);
+}
+
+.vpRightIcons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vpIconBtn {
+  position: relative;
+  padding: 8px;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+
+.vpIconBtn:hover {
+  background: #f3f4f6;
+}
+
+.vpAdLabel {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #dbe4de;
+  color: white;
+  font-size: 8px;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.vpCreateBtnNew {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fdfcfc;
+  color: rgb(3, 1, 1);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+
+.vpCreateBtnNew:hover {
+  background: #020201;
+}
+
+.vpUserAvatarNew {
+  position: relative;
+  cursor: pointer;
+}
+
+.vpAvatarImg {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2.5px solid #13100f;
+  object-fit: cover;
+}
+
+.vpOnlineIndicator {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 14px;
+  height: 14px;
+  background: #10b981;
+  border: 3px solid white;
+  border-radius: 50%;
+}
+
+/* ==================== LAYOUT STRUCTURE ==================== */
+.vpLayoutContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;               
+  width: 100%;
+  min-height: 100vh;
+  background-color: white;
+
+  margin-top: 40px; 
+  border: 1px ; 
+}
+
+
+
+/* ==================== SIDEBAR (Modified to be part of flow) ==================== */
+.vpLeftSidebar {
+  position: sticky; /* Sticks to side, doesn't scroll away */
+  top: 48px;
+  height: calc(100vh - 48px);
+  background: white;
+  border-right: 1px solid #edeff1;
+  z-index: 1000;
+  flex-shrink: 0; /* Prevents sidebar from shrinking */
+  overflow-y: auto;
+  transition: width 0.3s ease, margin 0.3s ease;
+}
+
+/* Open State */
+.vpSidebarOpen {
+  width: 270px;
+  margin-left: 0;
+}
+
+/* Closed State - Hidden but keeps structure ready */
+.vpSidebarClosed {
+  width: 0;
+  margin-left: 0;
+  border: none;
+  overflow: hidden;
+}
+
+.vpSidebarContent {
+  padding: 16px;
+  width: 270px; /* Fixed width for inner content so it doesn't squish */
+}
+
+/* Sidebar Styling continued... */
+.vpSidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.vpSidebarNav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #1c1c1c;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.vpSidebarNav a:hover {
+  background: #f6f7f8;
+}
+
+.vpActiveLink {
+  background: #f6f7f8 !important;
+  color: #000 !important;
+  font-weight: 600 !important;
+}
+
+.vpBetaTag {
+  background: #ff4500;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+.vpCreateCommunity {
+  color: #1c1c1c !important;
+  font-weight: 500 !important;
+}
+
+.vpSidebarIcon {
+  width: 20px;
+  height: 20px;
+  color: #1c1c1c;
+}
+
+.vpSidebarDivider {
+  border: none;
+  border-top: 1px solid #edeff1;
+  margin: 16px 0;
+}
+
+.vpSidebarSectionTitle {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #878a8c;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.vpSidebarSection {
+  margin-top: 20px;
+}
+
+.vpGameItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  position: relative;
+  margin-bottom: 6px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.vpGameItem:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.vpGameIcon {
+  width: 32px;
+  height: 32px;
+  background: #edeff1;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #1c1c1c;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+  font-family: Arial, sans-serif;
+}
+
+.vpGameName {
+  font-weight: 500;
+  font-size: 14px;
+  color: #1c1c1c;
+  line-height: 1.2;
+}
+
+.vpGamePlayers {
+  font-size: 11px;
+  color: #878a8c;
+  margin-top: 2px;
+}
+
+.vpNewGame {
+  border: 1px solid #edeff1;
+  background: #f6f7f8;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.vpNewGame:hover {
+  background: #e8e9ea;
+}
+
+.vpNewGame .vpGameIcon {
+  background: linear-gradient(135deg, #ff4500, #ff6b35);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.vpNewBadge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #46d160;
+  color: white;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* ==================== CONTENT WRAPPER ==================== */
+.vpPageContentWrapper {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Prevents overflow issues in flex items */
+}
+
+/* ==================== HAMBURGER BUTTON ==================== */
+.vpHamburgerContainer {
+  padding: 12px 24px 0 24px;
+  display: flex;
+  align-items: center;
+}
+
+.vpHamburgerBtnNew {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid #d3d3d3;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #1c1c1c;
+}
+
+.vpHamburgerBtnNew:hover {
+  background: #f6f7f8;
+  border-color: #878a8c;
+}
+
+.vpHamburgerIcon {
+  width: 20px;
+  height: 20px;
+  color: #1c1c1c;
+}
+
+/* ==================== MAIN PAGE CONTENT ==================== */
+.vpPageContent {
+  display: flex;
+  max-width: 1400px;
+  padding: 24px;
+  width: 100%;
+}
+
+.vpMain {
+
+  min-height: 500px;
+  max-width: 10000px; /* Limit width like reddit */
+}
+
+
+.vpProfileInfo { 
+  display: flex; 
+  align-items: flex-end; 
+  padding: 0 24px; 
+  margin-top: -40px; 
+  position: relative; 
+}
+
+.vpAvatarLarge { 
+  width: 70px; 
+  height: 70px; 
+  border: 5px solid white; 
+  border-radius: 50%; 
+  overflow: hidden; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background: #f6f7f8;
+}
+
+.vpAvatarLarge img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+}
+
+.vpNameSection { 
+  margin-left: 20px; 
+  padding-bottom: 8px; 
+}
+
+.vpUsername { 
+  font-size: 28px; 
+  font-weight: 600; 
+  margin: 0; 
+}
+
+.vpHandle { 
+  color: #787c7e; 
+  font-size: 14px; 
+  margin: 4px 0 0; 
+}
+
+/* Tabs */
+.vpTabs { 
+  display: flex; 
+  gap: 32px; 
+  padding: 16px 24px 0; 
+  border-bottom: 1px solid #edeff1; 
+  margin-top: 16px;
+
+}
+
+.vpTab { 
+  padding: 8px 0; 
+  font-weight: 500; 
+  color: #787c7e; 
+  cursor: pointer; 
+  position: relative; 
+  white-space: nowrap;
+}
+
+.vpActiveTab { 
+  color: #1c1c1c; 
+  font-weight: 600; 
+}
+
+.vpActiveTab::after { 
+  content: ''; 
+  position: absolute; 
+  bottom: -1px; 
+  left: 0; 
+  right: 0; 
+  height: 3px; 
+  background: #ff4500; 
+  border-radius: 2px; 
+}
+
+.vpContentArea {
+  padding: 24px;
+  min-height: 400px;
+}
+
+.vpShowContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f5f5f5;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+}
+
+.vpEyeIcon {
+  margin-right: 8px;
+}
+
+.vpText {
+  flex-grow: 1;
+}
+
+.vpShowArrow {
+  font-size: 18px;
+  color: #666;
+}
+
+
+.vpShowContent { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  color: #000508; 
+  font-size: 14px; 
+  background: #f3f4f6;
+  margin-bottom: 16px; 
+  cursor: pointer; 
+}
+
+.vpShowArrow { 
+  font-size: 18px; 
+}
+
+/* Container to hold both buttons side by side */
+.vpButtonsContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* المسافة بين الزرين */
+  margin-bottom: 40px;
+}
+
+/* Create Post Button */
+.vpCreatePostBtn { 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  padding: 10px 20px; 
+  border: 1px solid black; 
+  border-radius: 999px; 
+  background: white; 
+  font-size: 14px; 
+  font-weight: 500; 
+  cursor: pointer; 
+  color: rgb(12, 12, 12);
+  justify-content: center;
+}
+
+/* Icon in Create Post */
+.vpCreatePostBtn span:first-child { 
+  font-size: 20px; 
+  font-weight: bold; 
+}
+
+/* Feed Button (Circular) */
+/* Feed Button (Circular) */
+.vpfeedBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  color: #1f2937;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1;
+  transition: all 0.2s ease-in-out;
+}
+
+.vpfeedBtn:hover {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.06);
+  transform: translateY(-1px);
+}
+
+.vpfeedBtn:active {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+/* Feed Container */
+.feed-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Feed Options Bar */
+.feed-options-bar {
+  position: absolute;
+  top: 0;
+  left: 40px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+  padding: 16px;
+  min-width: 200px;
+  z-index: 10;
+  animation: slideIn 0.2s ease-out;
+}
+
+.feed-options-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.feed-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feed-option-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.feed-option-item:hover {
+  background-color: #f9fafb;
+}
+
+.feed-option-icon {
+  font-size: 16px;
+}
+
+.feed-option-text {
+  font-size: 14px;
+  color: #1f2937;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+.vpUpdateSettingsBtn { 
+  background: #0079d3; 
+  color: white; 
+  padding: 8px 24px; 
+  border-radius: 999px; 
+  font-weight: 600; 
+  border: none; 
+  cursor: pointer; 
+}
+
+/* ==================== RIGHT SIDEBAR ==================== */
+.vpRightSidebar { 
+  width: 312px; 
+  flex-shrink: 0;
+}
+
+.vpRightCard { 
+  background: #f3f4f6;
+  border: 1px solid #edeff1; 
+  border-radius: 8px; 
+  padding: 16px;
+  position: sticky;
+  top: 80px;
+
+  /* NEW */
+  max-height: calc(100vh - 100px); 
+  overflow-y: auto;
+}
+
+
+.vpRightHeader { 
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  margin-bottom: 16px; 
+}
+
+.vpRightAvatarSmall { 
+  width: 48px; 
+  height: 48px; 
+  border-radius: 50%; 
+  overflow: hidden;
+  background: #787e7a;
+}
+
+.vpRightAvatarSmall img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+}
+
+.vpRightUsername { 
+  font-weight: 600; 
+  font-size: 16px; 
+  flex: 1;
+  margin-left: 12px;
+}
+
+.vpShareBtn { 
+  font-size: 20px; 
+  cursor: pointer; 
+  background: none; 
+  border: none; 
+  color: #787c7e;
+  padding: 0;
+  line-height: 1;
+}
+
+.vpStatsGrid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 16px; 
+  margin-bottom: 16px; 
+  
+}
+
+.vpStatValue { 
+  font-weight: 600; 
+  font-size: 18px; 
+}
+
+.vpStatLabel { 
+  color: #787c7e; 
+  font-size: 12px; 
+  margin-top: 4px;
+}
+
+
+.vpDivider { 
+  border: none; 
+  border-top: 1px solid #edeff1; 
+  margin: 16px 0; 
+}
+
+.vpAchievements h3 { 
+  font-size: 12px; 
+  font-weight: 600; 
+  text-transform: uppercase; 
+  margin-bottom: 8px; 
+  color: #1c1c1c; 
+}
+
+.vpAchievementsRow { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  margin-bottom: 8px; 
+}
+
+.vpAchievementsRow img { 
+  width: 40px; 
+  height: 40px; 
+}
+
+.vpMoreAchievements { 
+  color: #787c7e; 
+  font-size: 12px; 
+}
+
+.vpAchievementsCount { 
+  display: flex; 
+  justify-content: space-between; 
+  font-size: 14px; 
+  color: #1c1c1c; 
+}
+
+.vpViewAll { 
+  color: #0079d3; 
+  text-decoration: none; 
+}
+
+.vpViewAll:hover { 
+  text-decoration: underline; 
+}
+
+/* NEW STYLES FOR ADDED SECTIONS */
+.vpProfileSection {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #edeff1;
+}
+
+.vpProfileSection:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.vpSectionHeader {
+  margin-bottom: 8px;
+}
+
+.vpSectionHeader h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 2px 0;
+  color: #1c1c1c;
+}
+
+.vpSectionSubtitle {
+  font-size: 12px;
+  color: #787c7e;
+  display: block;
+}
+
+.vpSectionBtn {
+  background-color: #1c1c1c;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  width: 100%;
+}
+.vpSectionHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.vpSectionBtnSmall {
+   background-color: #1c1c1c;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.vpSectionBtnSmall:hover {
+   background-color: #1c1c1c;
+  color: white;
+}
+
+
+.vpSectionBtn:hover {
+   background-color: #1c1c1c;
+  color: white;
+}
+
+.vpSocialLinks {
+  margin-top: 16px;
+}
+
+.vpSocialLinks h4 {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0 0 8px 0;
+  color: #1c1c1c;
+}
+.vpSocialBtn {
+  background-color: #14042e;
+  width: 100%;
+  border-radius: 10px;
+  padding: 1px 1px;
+  height: 100px;
+  position: relative; 
+}
+
+
+
+
+.Vpback {
+  background-color: #14042e;
+  width: 100%;
+  border-radius: 10px;
+  padding: 1px 1px;
+  height: 100px;
+  position: relative; 
+}
+
+
+.vpBackBtn {
+  background-color: #f3f4f6;
+  border: none;
+  width: 35px;               
+  height: 35px;
+  border-radius: 50%;        
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  position: absolute;
+  bottom: 10px;                 
+  right: 10px;               
+  display: flex;             
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+.vpSocialBtn:hover {
+  background-color: #f0f8ff;
+  
+}
+
+.vpSocialBtn
+{
+ background-color: transparent;
+  color: #0079d3;
+  border: 1px solid #0079d3;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .vpPageContent {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  .vpRightSidebar {
+    width: 280px;
+  }
+}
+
+@media (max-width: 992px) {
+  .vpRightSidebar {
+    display: none;
+  }
+}
+
+
+
+/* Main tabs container styling */
+.vpTabs {
+  display: flex;
+  border-bottom: 1px solid #edeff1;
+  padding: 0 16px;
+  overflow-x: auto;
+  background-color: white;
+  gap: 0;
+}
+
+/* Individual tab button styling */
+.vpTabBtn {
+  padding: 16px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #878a8c;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  margin-bottom: -1px;
+  position: relative;
+  border-radius: 20px;
+}
+
+.vpTabBtn:hover,
+.vpTabBtn.vpActiveTab:hover {
+  color: #1a1a1b;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Active tab */
+.vpTabBtn.vpActiveTab {
+  color: #1a1a1b;
+  border-bottom-color: #ff4500;
+  background-color: transparent;
+}
+
+/* Content area */
+.vpTabContent {
+  width: 100%;
+  background-color: white;
+}
+
+/* Empty state styling */
+.vpEmptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 10px;
+  text-align: center;
+  background-color: white;
+  border-top: 1px solid #edeff1;
+  margin-top: 10px;
+}
+
+.vpEmptyRobot {
+  margin-bottom: 20px;
+}
+
+.vpEmptyState img {
+  filter: brightness(0) saturate(100%) invert(37%) sepia(93%) saturate(5000%) hue-rotate(360deg) brightness(105%);
+}
+
+.vpEmptyState h2 {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  margin: 2px 0 8px;
+}
+
+.vpEmptyState p {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: #787c7e;
+  max-width: 500px;
+  margin: 0 auto 24px;
+  line-height: 1.5;
+}
+
+/* Update Settings Button */
+.vpUpdateSettingsBtn {
+  background: #0079d3;
+  color: white;
+  padding: 8px 24px;
+  border-radius: 999px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.vpUpdateSettingsBtn:hover {
+  background-color: #1484d6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .vpTabs {
+    padding: 0 8px;
+  }
+
+  .vpTabBtn {
+    padding: 14px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Hide scrollbar but keep functionality */
+.vpTabsContainer,
+.vpTabs,
+.vpTabContent,
+.vpEmptyState,
+.vpTabContent > * {
+  scrollbar-width: none; /* Firefox */
+}
+
+.vpTabsContainer::-webkit-scrollbar,
+.vpTabs::-webkit-scrollbar,
+.vpTabContent::-webkit-scrollbar,
+.vpEmptyState::-webkit-scrollbar,
+.vpTabContent > *::-webkit-scrollbar {
+  display: none; 
+}
+
+
+/* Keep your existing vpNewButton styles exactly as they are */
+.vpNewButton {
+  background-color: transparent;
+  color: #1a1a1b;
+  border: 1px solid #878a8c;
+  border-radius: 9999px;
+  padding: 4px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1;
+  letter-spacing: 0.5px;
+}
+
+.vpNewButton:hover {
+  background-color: rgba(135, 138, 140, 0.1);
+}
+
+.vpNewButton:active {
+  background-color: rgba(135, 138, 140, 0.2);
+  transform: scale(0.98);
+}
+
+/* Only add dropdown container styling */
+.vpFeedButtonWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown options styling - positioned relative to the button */
+.feed-options-bar {
+  position: absolute;
+  top: calc(100% + 4px); /* Just below the button */
+  right: 0; /* Align to right edge of button */
+  background: white;
+  border: 1px solid #edeff1;
+  border-radius: 4px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+/* Dropdown header */
+.feed-options-header {
+  padding: 8px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #7c7c7c;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: #f6f7f8;
+  border-bottom: 1px solid #edeff1;
+}
+
+/* Options list */
+.feed-options-list {
+  padding: 4px 0;
+}
+
+/* Individual option item */
+.feed-option-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #1a1a1b;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.feed-option-item:hover {
+  background-color: #f6f7f8;
+}
+
+.feed-option-active {
+  background-color: #f6f7f8;
+}
+
+.feed-option-active .feed-option-text {
+  color: #ff4500;
+  font-weight: 600;
+}
+
+/* Option icon */
+.feed-option-icon {
+  margin-right: 8px;
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+/* Option text */
+.feed-option-text {
+  font-weight: 500;
+}
+
+/* Arrow indicator in the button - keep as is */
+.vpNewButton span {
+  margin-left: 4px;
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.time-option-circle {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #000;
+  border-radius: 50%;
+  margin-left: 8px;
+  background-color: transparent; /* مش مختارة */
+  transition: background-color 0.2s;
+}
+
+.time-option.time-option-selected .time-option-circle {
+  background-color: #000; /* مختارة */
+}

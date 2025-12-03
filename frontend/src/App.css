@@ -34,6 +34,19 @@
   background-color: rgba(255,255,255,0.1);
 }
 
+
+.profile-icon {
+  font-size: 26px;
+  margin-left: 20px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.profile-icon:hover {
+  opacity: 0.7;
+}
+
 .post-list {
   margin-top: 20px;
 }

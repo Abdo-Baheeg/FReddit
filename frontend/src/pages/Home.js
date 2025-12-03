@@ -17,7 +17,7 @@ const Home = () => {
       setPosts(response.data);
       setLoading(false);
     } catch (err) {
-      setError('Failed to load posts');
+      setError(' Sorry Failed to load posts');
       setLoading(false);
     }
   };
