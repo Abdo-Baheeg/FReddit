@@ -11,6 +11,7 @@ import PostDetail from './pages/PostDetail';
 import Chat from './pages/Chat';
 import RedditProfilePage from './pages/viewprofile.js';
 import AI_Summary from './components/AI-summary';
+import Setting from './pages/setting';
 
 function App() {
   return (
@@ -28,6 +29,8 @@ function App() {
               <Route path="/chat" element={<Chat />} />
               <Route path="/chat/:conversationId" element={<Chat />} />
               <Route path="/viewprofile" element={<RedditProfilePage />} />
+              <Route path="/setting" element={<Setting />} />
+
               <Route path="*" element={<h2>404: Page Not Found</h2>} />
             </Routes>
           </div>
