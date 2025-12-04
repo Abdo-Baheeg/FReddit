@@ -8,6 +8,9 @@ const { Server } = require('socket.io');
 // Load environment variables
 dotenv.config();
 
+// Redis configuration
+const { connectRedis } = require('./config/redis');
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -35,6 +38,7 @@ const connectDB = async () => {
 };
 
 connectDB();
+connectRedis();
 
 // Routes
 app.get('/api/health', (req, res) => {
@@ -53,6 +57,9 @@ const communitiesRoutes = require('./routes/communityRoutes');
 const postRoutes = require('./routes/postRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const voteRoutes = require('./routes/voteRoutes');
+const membershipRoutes = require('./routes/membershipRoutes');
+const feedRoutes = require('./routes/feedRoutes');
 
 // Use routes
 app.use('/api/users', userRoutes);
@@ -60,6 +67,9 @@ app.use('/api/communities', communitiesRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/votes', voteRoutes);
+app.use('/api/memberships', membershipRoutes);
+app.use('/api/feed', feedRoutes);
 
 // Socket.IO setup
 const socketAuthMiddleware = require('./middleware/socketAuth');

@@ -1,0 +1,178 @@
+:root {
+  --bg: #ffffff;
+  --muted-bg: #eef2f3; /* light input background */
+  --muted-border: #e6eaec;
+  --primary: #0079d3; /* link / accent blue */
+  --text: #111827; /* dark heading */
+  --muted-text: #6b7280; /* secondary text */
+  --danger: #e02424; /* asterisk red */
+}
+
+/* Container for the continue buttons (phone/google/apple/etc.) */
+.continue-button-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.continue-button,
+.continue-button-container a.continue-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg);
+  border: 1px solid var(--muted-border);
+  border-radius: 999px;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+  box-shadow: none;
+  text-decoration: none;
+}
+
+.continue-button:hover {
+  background: #fbfcfd;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(16, 24, 40, 0.04);
+}
+
+.continue-button:active {
+  transform: translateY(0);
+}
+
+.continue-button-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Input component */
+.input-container {
+  width: 100%;
+  margin: 14px 0;
+  position: relative;
+}
+
+.input-field {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: var(--muted-bg);
+  border: none;
+  font-size: 15px;
+  color: var(--text);
+  outline: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.input-field::placeholder {
+  color: var(--muted-text);
+}
+
+.input-field:focus {
+  box-shadow: 0 0 0 4px rgba(0, 121, 211, 0.06);
+  background: #f6fbfc;
+}
+
+.required-asterisk {
+  color: var(--danger);
+  font-weight: 700;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+}
+
+/* Login button */
+.login-button {
+  width: 100%;
+  display: inline-block;
+  padding: 14px 18px;
+  border-radius: 22px;
+  background: #f0f2f3; /* disabled-looking */
+  color: #b9bcc0;
+  border: none;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: not-allowed;
+  margin-top: 18px;
+}
+
+.login-button.enabled {
+  background: var(--primary);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+/* Small helper text (links etc) - matches screenshot spacing */
+.helper-line {
+  font-size: 13px;
+  color: var(--muted-text);
+  margin-top: 8px;
+}
+
+.helper-line a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+/* Accessibility: focus visible outlines for keyboard users */
+.continue-button:focus,
+.login-button:focus,
+.input-field:focus {
+  outline: none;
+}
+
+@media (max-width: 420px) {
+  .continue-button {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .input-field {
+    padding: 12px 14px;
+  }
+}
+
+/* Utility to visually separate sections (the OR divider in screenshot) */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--muted-border);
+  border-radius: 1px;
+}
+
+.divider span {
+  color: var(--muted-text);
+  font-size: 12px;
+  padding: 0 8px;
+}
+
+/* Keep the icon vertically centered when used alone left of text */
+.continue-button .continue-button-icon {
+  margin-right: 8px;
+}
+
+/* Slightly smaller variant for subtle one-time-link row */
+.continue-button.small {
+  padding: 10px 14px;
+  font-size: 13px;
+}

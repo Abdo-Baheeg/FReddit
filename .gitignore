@@ -37,3 +37,5 @@ coverage/
 # Misc
 .cache/
 .temp/
+frontend/package-lock.json
+.gitignore

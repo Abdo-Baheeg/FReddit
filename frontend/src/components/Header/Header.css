@@ -1,0 +1,209 @@
+/* ================= Header Container ================= */
+#Header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 16px;
+  background-color: #fff;
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
+  font-family: "Arial", sans-serif;
+  gap: 16px;
+}
+
+/* ================= Logo ================= */
+.Header-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.logo-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.logo-text img {
+  height: 20px;
+  object-fit: contain;
+}
+
+/* ================= Search Bar ================= */
+#Header-searchbar {
+  flex: 1;
+  max-width: 400px;
+}
+
+#Header-searchbar input[type="search"] {
+  width: 100%;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#Header-searchbar input[type="search"]:focus {
+  border-color: #0a449b;
+  box-shadow: 0 0 0 2px rgba(10, 68, 155, 0.3);
+}
+
+/* ================= Left Section: Header Icons ================= */
+#Header-icons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Get App button with icon */
+#get-app-all {
+  display: flex;
+  align-items: center;
+}
+
+#get-app-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #e5ebee;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#get-app-btn:hover {
+  background-color: #dbe4e9;
+}
+
+.menu-icon-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.menu-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Login button */
+#login-button {
+  background-color: #0a449b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#login-button:hover {
+  background-color: #0a2f6c;
+}
+
+/* ================= Right Section: Menu ================= */
+#Header-menu {
+  margin-left: 16px;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+/* Icons.css */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #fff;
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.get-app-btn,
+.login-button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s ease;
+}
+
+.get-app-btn {
+  background-color: #0079d3;
+  color: #fff;
+}
+
+.get-app-btn:hover {
+  background-color: #005999;
+}
+
+.login-button {
+  background-color: #f6f7f8;
+  color: #0079d3;
+}
+
+.login-button:hover {
+  background-color: #e1e4e8;
+}
+
+.menu-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+}
+
+.menu-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.header-menu {
+  position: relative;
+}
+
+.menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 15px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.menu-item:hover {
+  background-color: #f0f0f0;
+}
+
+.menu-item-icon {
+  width: 18px;
+  height: 18px;
+}

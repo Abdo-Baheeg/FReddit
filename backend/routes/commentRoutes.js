@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Comment = require('../models/Comment');
 const Post = require('../models/Post');
+const Vote = require('../models/Vote');
+const User = require('../models/User');
 const authMiddleware = require('../middleware/auth');
 
 // @route   GET /api/comments/post/:postId
@@ -38,6 +40,9 @@ router.post('/', authMiddleware, async (req, res) => {
 
     // Update post comment count
     await Post.findByIdAndUpdate(postId, { $inc: { commentCount: 1 } });
+    
+    // Increment user's comment count
+    await User.findByIdAndUpdate(req.user._id, { $inc: { commentCount: 1 } });
 
     res.status(201).json(comment);
   } catch (error) {
@@ -46,31 +51,57 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 // @route   PUT /api/comments/:id/vote
-// @desc    Vote on a comment
+// @desc    Vote on a comment (deprecated - use /api/votes instead)
 // @access  Private
 router.put('/:id/vote', authMiddleware, async (req, res) => {
   try {
     const { voteType } = req.body;
-    const comment = await Comment.findById(req.params.id);
+    
+    // Convert to new vote system format
+    const voteValue = voteType === 'upvote' ? 1 : voteType === 'downvote' ? -1 : 0;
+    
+    if (voteValue === 0) {
+      return res.status(400).json({ message: 'Invalid vote type' });
+    }
 
+    const comment = await Comment.findById(req.params.id);
     if (!comment) {
       return res.status(404).json({ message: 'Comment not found' });
     }
 
-    const userId = req.user._id;
+    // Find existing vote
+    const existingVote = await Vote.findOne({
+      userId: req.user._id,
+      targetId: req.params.id,
+      targetType: 'Comment'
+    });
 
-    // Remove existing votes
-    comment.upvotes = comment.upvotes.filter(id => !id.equals(userId));
-    comment.downvotes = comment.downvotes.filter(id => !id.equals(userId));
+    let oldVoteType = existingVote ? existingVote.voteType : 0;
+    let newVoteType = voteValue;
 
-    // Add new vote
-    if (voteType === 'upvote') {
-      comment.upvotes.push(userId);
-    } else if (voteType === 'downvote') {
-      comment.downvotes.push(userId);
+    // If clicking same vote, remove it
+    if (existingVote && existingVote.voteType === voteValue) {
+      await Vote.deleteOne({ _id: existingVote._id });
+      newVoteType = 0;
+    } else if (existingVote) {
+      existingVote.voteType = voteValue;
+      await existingVote.save();
+    } else {
+      await Vote.create({
+        userId: req.user._id,
+        targetId: req.params.id,
+        targetType: 'Comment',
+        voteType: voteValue
+      });
     }
 
-    comment.score = comment.upvotes.length - comment.downvotes.length;
+    // Update vote counts
+    if (oldVoteType === 1) comment.upvoteCount -= 1;
+    if (oldVoteType === -1) comment.downvoteCount -= 1;
+    if (newVoteType === 1) comment.upvoteCount += 1;
+    if (newVoteType === -1) comment.downvoteCount += 1;
+    
+    comment.score = comment.upvoteCount - comment.downvoteCount;
     await comment.save();
 
     res.json(comment);
@@ -96,6 +127,12 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 
     // Update post comment count
     await Post.findByIdAndUpdate(comment.post, { $inc: { commentCount: -1 } });
+    
+    // Delete all votes for this comment
+    await Vote.deleteMany({ targetId: req.params.id, targetType: 'Comment' });
+    
+    // Decrement user's comment count
+    await User.findByIdAndUpdate(req.user._id, { $inc: { commentCount: -1 } });
 
     await comment.deleteOne();
     res.json({ message: 'Comment deleted successfully' });
