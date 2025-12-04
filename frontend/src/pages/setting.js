@@ -1,28 +1,16 @@
-// SettingsPage.jsx
-import React, { useState } from 'react';
-import './setting.css';
+// setting.js
+import React from 'react';
+// Remove incorrect imports:
+// import './App.css'; // This is wrong - App.css is in src folder, not pages folder
+// import SettingsPage from './components/SettingsPage'; // This component doesn't exist yet
 
-const SettingsPage = () => 
-    {
-  const [activeTab, setActiveTab] = useState('Profile');
-  const [displayName, setDisplayName] = useState('');
-  const [aboutDescription, setAboutDescription] = useState('');
-  const [isMature, setIsMature] = useState(false);
-
-  const tabs = ['Account', 'Profile', 'Privacy', 'Preferences', 'Notifications', 'Email'];
-
-
-
+const Setting = () => {
   return (
-    
-    <div className="settings-container"> 
-    <div className='empty'>
-
+    <div>
+      <h1>Settings Page</h1>
+      <p>This is the settings page. You can create a proper SettingsPage component later.</p>
     </div>
-        <h1>ettings</h1>
-      </div>
   );
 };
 
-
-export default SettingsPage;
+export default Setting;
