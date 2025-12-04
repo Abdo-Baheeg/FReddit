@@ -20,15 +20,15 @@ const postSchema = new mongoose.Schema({
     ref: 'Community',
     required: true
   },
-  upvotes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  downvotes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
   score: {
+    type: Number,
+    default: 0
+  },
+  upvoteCount: {
+    type: Number,
+    default: 0
+  },
+  downvoteCount: {
     type: Number,
     default: 0
   },
@@ -45,5 +45,12 @@ const postSchema = new mongoose.Schema({
     default: Date.now
   }
 });
+
+// Indexes for faster queries
+postSchema.index({ author: 1, createdAt: -1 });
+postSchema.index({ community: 1, score: -1 });
+postSchema.index({ community: 1, createdAt: -1 });
+postSchema.index({ createdAt: -1 });
+postSchema.index({ score: -1 });
 
 module.exports = mongoose.model('Post', postSchema);

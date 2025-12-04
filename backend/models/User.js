@@ -33,15 +33,29 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  postCount: {
+    type: Number,
+    default: 0
+  },
+  commentCount: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now
   },
-  joined_communities: [{
+  settings: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Community'
-  }]
+    ref: 'Settings'
+  }
 });
+
+// Indexes for faster queries
+userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ username: 1 }, { unique: true });
+userSchema.index({ karma: -1 });
+userSchema.index({ createdAt: -1 });
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {

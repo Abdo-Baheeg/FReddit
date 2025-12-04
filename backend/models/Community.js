@@ -11,24 +11,22 @@ const communitySchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
+    memberCount: {
+        type: Number,
+        default: 0
     },
-    members: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }],
     rules: [{
         type: String
     }],
-    moderators: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }],
-    bookmarks: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }]
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 });
+
+// Indexes for faster queries
+communitySchema.index({ name: 1 }, { unique: true });
+communitySchema.index({ memberCount: -1 });
+communitySchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('Community', communitySchema);

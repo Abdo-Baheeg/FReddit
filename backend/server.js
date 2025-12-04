@@ -53,6 +53,8 @@ const communitiesRoutes = require('./routes/communityRoutes');
 const postRoutes = require('./routes/postRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const voteRoutes = require('./routes/voteRoutes');
+const membershipRoutes = require('./routes/membershipRoutes');
 
 // Use routes
 app.use('/api/users', userRoutes);
@@ -60,6 +62,8 @@ app.use('/api/communities', communitiesRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/votes', voteRoutes);
+app.use('/api/memberships', membershipRoutes);
 
 // Socket.IO setup
 const socketAuthMiddleware = require('./middleware/socketAuth');

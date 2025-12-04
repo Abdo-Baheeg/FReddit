@@ -20,15 +20,15 @@ const commentSchema = new mongoose.Schema({
     ref: 'Comment',
     default: null
   },
-  upvotes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  downvotes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
   score: {
+    type: Number,
+    default: 0
+  },
+  upvoteCount: {
+    type: Number,
+    default: 0
+  },
+  downvoteCount: {
     type: Number,
     default: 0
   },
@@ -37,5 +37,11 @@ const commentSchema = new mongoose.Schema({
     default: Date.now
   }
 });
+
+// Indexes for faster queries
+commentSchema.index({ post: 1, createdAt: -1 });
+commentSchema.index({ author: 1, createdAt: -1 });
+commentSchema.index({ parentComment: 1 });
+commentSchema.index({ post: 1, score: -1 });
 
 module.exports = mongoose.model('Comment', commentSchema);

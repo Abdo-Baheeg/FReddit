@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Post = require('../models/Post');
+const Vote = require('../models/Vote');
+const User = require('../models/User');
 const authMiddleware = require('../middleware/auth');
 const { GoogleGenAI } = require('@google/genai');
 
@@ -48,14 +50,17 @@ router.post('/create', authMiddleware, async (req, res) => {
       title,
       content,
       author: req.user._id,
-      upvotes: [],
-      downvotes: [],
-      score: 0, 
+      score: 0,
+      upvoteCount: 0,
+      downvoteCount: 0,
       community: subreddit
     });
 
     await post.save();
     await post.populate('author', 'username');
+
+    // Increment user's post count
+    await User.findByIdAndUpdate(req.user._id, { $inc: { postCount: 1 } });
 
     res.status(201).json(post);
   } catch (error) {
@@ -64,31 +69,57 @@ router.post('/create', authMiddleware, async (req, res) => {
 });
 
 // @route   PUT /api/posts/:id/vote
-// @desc    Vote on a post
+// @desc    Vote on a post (deprecated - use /api/votes instead)
 // @access  Private
 router.put('/:id/vote', authMiddleware, async (req, res) => {
   try {
     const { voteType } = req.body; // 'upvote' or 'downvote'
-    const post = await Post.findById(req.params.id);
+    
+    // Convert to new vote system format
+    const voteValue = voteType === 'upvote' ? 1 : voteType === 'downvote' ? -1 : 0;
+    
+    if (voteValue === 0) {
+      return res.status(400).json({ message: 'Invalid vote type' });
+    }
 
+    const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    const userId = req.user._id;
+    // Find existing vote
+    const existingVote = await Vote.findOne({
+      userId: req.user._id,
+      targetId: req.params.id,
+      targetType: 'Post'
+    });
 
-    // Remove existing votes
-    post.upvotes = post.upvotes.filter(id => !id.equals(userId));
-    post.downvotes = post.downvotes.filter(id => !id.equals(userId));
+    let oldVoteType = existingVote ? existingVote.voteType : 0;
+    let newVoteType = voteValue;
 
-    // Add new vote
-    if (voteType === 'upvote') {
-      post.upvotes.push(userId);
-    } else if (voteType === 'downvote') {
-      post.downvotes.push(userId);
+    // If clicking same vote, remove it
+    if (existingVote && existingVote.voteType === voteValue) {
+      await Vote.deleteOne({ _id: existingVote._id });
+      newVoteType = 0;
+    } else if (existingVote) {
+      existingVote.voteType = voteValue;
+      await existingVote.save();
+    } else {
+      await Vote.create({
+        userId: req.user._id,
+        targetId: req.params.id,
+        targetType: 'Post',
+        voteType: voteValue
+      });
     }
 
-    post.score = post.upvotes.length - post.downvotes.length;
+    // Update vote counts
+    if (oldVoteType === 1) post.upvoteCount -= 1;
+    if (oldVoteType === -1) post.downvoteCount -= 1;
+    if (newVoteType === 1) post.upvoteCount += 1;
+    if (newVoteType === -1) post.downvoteCount += 1;
+    
+    post.score = post.upvoteCount - post.downvoteCount;
     await post.save();
 
     res.json(post);
@@ -113,6 +144,13 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     }
 
     await post.deleteOne();
+    
+    // Delete all votes for this post
+    await Vote.deleteMany({ targetId: req.params.id, targetType: 'Post' });
+    
+    // Decrement user's post count
+    await User.findByIdAndUpdate(req.user._id, { $inc: { postCount: -1 } });
+
     res.json({ message: 'Post deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

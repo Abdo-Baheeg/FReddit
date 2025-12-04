@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Community = require('../models/Community');
+const Membership = require('../models/Membership');
 const authMiddleware = require('../middleware/auth');
 
 // @route   POST /api/communities
@@ -9,18 +10,28 @@ const authMiddleware = require('../middleware/auth');
 router.post('/create', authMiddleware, async (req, res) => {
   try {
     const { name, description } = req.body;
+    
     // Check if community exists
     let community = await Community.findOne({ name });
     if (community) {
       return res.status(400).json({ message: 'Community already exists' });
     }
+    
     // Create new community
     community = new Community({
       name,
-        description,
-        creator: req.user._id
+      description,
+      memberCount: 1
     });
     await community.save();
+    
+    // Add creator as moderator
+    await Membership.create({
+      userId: req.user._id,
+      communityId: community._id,
+      role: 'moderator'
+    });
+    
     res.status(201).json(community);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -59,20 +70,31 @@ router.get('/:id', async (req, res) => {
 router.post('/:id/join', authMiddleware, async (req, res) => {
   try {
     const community = await Community.findById(req.params.id);
-    const userId = req.user._id;
     if (!community) {
       return res.status(404).json({ message: 'Community not found' });
     }
-    // Add user to members if not already a member
-    if (!community.members.includes(userId)) {
-      community.members.push(userId);
-      await community.save();
+
+    // Check if already a member
+    const existingMembership = await Membership.findOne({
+      userId: req.user._id,
+      communityId: req.params.id
+    });
+
+    if (existingMembership) {
+      return res.status(400).json({ message: 'Already a member of this community' });
     }
-    // add community from user's joinedCommunities if already present
-    if (!req.user.joinedCommunities.includes(community._id)) {
-        req.user.joinedCommunities.push(community._id);
-        await req.user.save();
-    }
+
+    // Create membership
+    await Membership.create({
+      userId: req.user._id,
+      communityId: req.params.id,
+      role: 'member'
+    });
+
+    // Increment member count
+    community.memberCount += 1;
+    await community.save();
+
     res.json({ message: 'Joined community successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -88,16 +110,21 @@ router.post('/:id/leave', authMiddleware, async (req, res) => {
     if (!community) {
       return res.status(404).json({ message: 'Community not found' });
     }
-    // Remove user from members if a member
-    community.members = community.members.filter(
-      memberId => !memberId.equals(req.user._id)
-    );
+
+    // Delete membership
+    const membership = await Membership.findOneAndDelete({
+      userId: req.user._id,
+      communityId: req.params.id
+    });
+
+    if (!membership) {
+      return res.status(404).json({ message: 'Not a member of this community' });
+    }
+
+    // Decrement member count
+    community.memberCount = Math.max(0, community.memberCount - 1);
     await community.save();
-    // remove community from user's joinedCommunities
-    req.user.joinedCommunities = req.user.joinedCommunities.filter(
-      communityId => !communityId.equals(community._id)
-    );
-    await req.user.save();
+
     res.json({ message: 'Left community successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
