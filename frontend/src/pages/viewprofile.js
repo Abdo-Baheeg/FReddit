@@ -51,9 +51,9 @@ export default function RedditProfilePageMock() {
     setActiveView('top'); // Switch back to top view after selecting time
   };
 
-  // Handle navigation to settings
-  const handleNavigateToSettings = () => {
-    navigate("/settings");
+  // Handle navigation to setting (not settings)
+  const handleNavigateToSetting = () => {
+    navigate("/setting");
   };
 
   // Time options data
@@ -239,7 +239,7 @@ export default function RedditProfilePageMock() {
                   <div className="vpContentHeader">
                     <div 
                       className="vpShowContent"
-                      onClick={handleNavigateToSettings}
+                      onClick={handleNavigateToSetting}
                       style={{ cursor: "pointer" }} 
                     >
                       <span className="vpEyeIcon">👁️</span>

@@ -32,8 +32,8 @@ function App() {
               <Route path="/chat/:conversationId" element={<Chat />} />
               <Route path="/viewprofile" element={<RedditProfilePage />} />
               <Route path="/setting" element={<Setting />} />
-              {/* Remove or comment out SettingsPage route until it exists */}
-              {/* <Route path="/settings" element={<SettingsPage />} /> */}
+              {/* Removed the duplicate /setting route that was pointing to non-existent settingsPage */}
+              
               <Route path="*" element={<h2>404: Page Not Found</h2>} />
             </Routes>
           </div>

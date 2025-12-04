@@ -1,16 +1,24 @@
-// setting.js
 import React from 'react';
-// Remove incorrect imports:
-// import './App.css'; // This is wrong - App.css is in src folder, not pages folder
-// import SettingsPage from './components/SettingsPage'; // This component doesn't exist yet
+import './setting.css'; // Assuming your CSS file is named settings.css
 
-const Setting = () => {
+const Settings = () => {
   return (
-    <div>
-      <h1>Settings Page</h1>
-      <p>This is the settings page. You can create a proper SettingsPage component later.</p>
+    <div className="settings-container">
+      <div className="settings-header">
+        <h1>Settings</h1>
+        <p>Manage your account settings and preferences</p>
+      </div>
+    
+      
+      {/* Your settings content here */}
+      <div className="settings-content">
+        <div className="settings-section">
+          <h2>Account Settings</h2>
+          <p>Your settings content goes here...</p>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Setting;
+export default Settings;
