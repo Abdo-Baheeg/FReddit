@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './viewprofile.css';
 
 export default function RedditProfilePageMock() {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Overview');
   const [activeView, setActiveView] = useState('top'); // 'top' or 'back'
   const [selectedTime, setSelectedTime] = useState('Today');
-  
+ 
   // Separate state for each dropdown
   const [showOptions, setShowOptions] = useState({
     feed: false,
@@ -47,6 +49,11 @@ export default function RedditProfilePageMock() {
   const handleTimeSelect = (time) => {
     setSelectedTime(time);
     setActiveView('top'); // Switch back to top view after selecting time
+  };
+
+  // Handle navigation to settings
+  const handleNavigateToSettings = () => {
+    navigate("/settings");
   };
 
   // Time options data
@@ -103,30 +110,30 @@ export default function RedditProfilePageMock() {
           <div className="vpSidebarContent">
             {/* Navigation */}
             <nav className="vpSidebarNav">
-              <a href="#" className="vpSidebarLink">
+              <div className="vpSidebarLink" onClick={() => navigate("/")}>
                 <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/></svg>
                 Home
-              </a>
-              <a href="#" className="vpSidebarLink vpActiveLink">
+              </div>
+              <div className="vpSidebarLink vpActiveLink">
                 <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-2-5h4v-2H8v2zm-4-4h10v-2H4v2zm2-4h6V5H6v2z"/></svg>
                 Popular
-              </a>
-              <a href="#" className="vpSidebarLink">
+              </div>
+              <div className="vpSidebarLink">
                 <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/></svg>
                 Answers <span className="vpBetaTag">BETA</span>
-              </a>
-              <a href="#" className="vpSidebarLink">
+              </div>
+              <div className="vpSidebarLink">
                 <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/></svg>
                 Explore
-              </a>
-              <a href="#" className="vpSidebarLink">
+              </div>
+              <div className="vpSidebarLink">
                 <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/></svg>
                 All
-              </a>
-              <a href="#" className="vpSidebarLink vpCreateCommunity">
+              </div>
+              <div className="vpSidebarLink vpCreateCommunity">
                 <svg className="vpSidebarIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 4v16m8-8H4"/></svg>
                 Start a community
-              </a>
+              </div>
             </nav>
 
             <hr className="vpSidebarDivider" />
@@ -164,20 +171,20 @@ export default function RedditProfilePageMock() {
 
             <div className="vpSidebarSection">
               <div className="vpSidebarSectionTitle">CUSTOM FEEDS</div>
-              <a href="#" className="vpSidebarLink">
+              <div className="vpSidebarLink">
                 <svg className="vpSidebarIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 4v16m8-8H4"/></svg>
                 Create Custom Feed
-              </a>
+              </div>
             </div>
 
              <hr className="vpSidebarDivider" />
 
             <div className="vpSidebarSection">
               <div className="vpSidebarSectionTitle">COMMUNITIES</div>
-              <a href="#" className="vpSidebarLink">
+              <div className="vpSidebarLink">
                 <svg className="vpSidebarIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 Manage Communities
-              </a>
+              </div>
             </div>
           </div>
         </aside>
@@ -230,7 +237,11 @@ export default function RedditProfilePageMock() {
                 {/* Show "Showing all content" section only for Overview, Posts, and Comments tabs */}
                 {(activeTab === 'Overview' || activeTab === 'Posts' || activeTab === 'Comments') && (
                   <div className="vpContentHeader">
-                    <div className="vpShowContent">
+                    <div 
+                      className="vpShowContent"
+                      onClick={handleNavigateToSettings}
+                      style={{ cursor: "pointer" }} 
+                    >
                       <span className="vpEyeIcon">👁️</span>
                       <span className="vpText">Showing all content</span>
                       <span className="vpShowArrow"> > </span>
@@ -330,32 +341,31 @@ export default function RedditProfilePageMock() {
                             </div>
 
                             {/* Time Filter Options - Only show when in "Back" mode */}
-{activeView === 'back' && (
-  <div className="time-options">
-    {timeOptions.map((time) => (
-      <div 
-        key={time.value}
-        className={`time-option ${selectedTime === time.value ? 'time-option-selected' : ''}`}
-        style={{ cursor: 'pointer' }}
-      >
-        {/* اضغط على النص */}
-        <span 
-          className="time-option-label"
-          onClick={() => handleTimeSelect(time.value)}
-        >
-          {time.label}
-        </span>
+                            {activeView === 'back' && (
+                              <div className="time-options">
+                                {timeOptions.map((time) => (
+                                  <div 
+                                    key={time.value}
+                                    className={`time-option ${selectedTime === time.value ? 'time-option-selected' : ''}`}
+                                    style={{ cursor: 'pointer' }}
+                                  >
+                                    
+                                    <span 
+                                      className="time-option-label"
+                                      onClick={() => handleTimeSelect(time.value)}
+                                    >
+                                      {time.label}
+                                    </span>
 
-        {/* اضغط على الدائرة */}
-        <span 
-          className="time-option-circle"
-          onClick={() => handleTimeSelect(time.value)}
-        ></span>
-      </div>
-    ))}
-  </div>
-)}
-
+                                    
+                                    <span 
+                                      className="time-option-circle"
+                                      onClick={() => handleTimeSelect(time.value)}
+                                    ></span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
 
                             
                             <div className="feed-options-header">View</div>
@@ -381,9 +391,9 @@ export default function RedditProfilePageMock() {
                       <div className="vpEmptyRobot">
                         <img
                           src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                          alt="Thinking Snoo"
                           width={120}
                           height={120}
+                          alt="Thinking Snoo"
                         />
                       </div>
                       <h2><b>You don't have any posts yet</b></h2>
@@ -536,9 +546,9 @@ export default function RedditProfilePageMock() {
 
                   <div className="vpAchievementsCount">
                     4 unlocked 
-                    <a href="#" className="vpViewAll">
+                    <div className="vpViewAll">
                       <button className="vpSectionBtn">View All</button>
-                    </a>
+                    </div>
                   </div>
                 </div>
 

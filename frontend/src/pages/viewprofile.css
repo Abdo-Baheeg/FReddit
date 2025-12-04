@@ -5,8 +5,7 @@
   gap: 10px;               
   width: 100%;
   min-height: 100vh;
-  background-color: white;
-
+background-color: white;
   margin-top: 40px; 
   border: 1px ; 
 }
@@ -15,13 +14,13 @@
 
 /* ==================== SIDEBAR (Modified to be part of flow) ==================== */
 .vpLeftSidebar {
-  position: sticky; /* Sticks to side, doesn't scroll away */
+  position: sticky; 
   top: 48px;
   height: calc(100vh - 48px);
   background: white;
   border-right: 1px solid #edeff1;
   z-index: 1000;
-  flex-shrink: 0; /* Prevents sidebar from shrinking */
+  flex-shrink: 0; 
   overflow-y: auto;
   transition: width 0.3s ease, margin 0.3s ease;
 }
@@ -202,14 +201,15 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  min-width: 0; /* Prevents overflow issues in flex items */
+  min-width: 0; 
 }
 
 /* ==================== HAMBURGER BUTTON ==================== */
 .vpHamburgerContainer {
-  padding: 12px 24px 0 24px;
+  padding: 12px 0 0 0;
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .vpHamburgerBtnNew {
@@ -225,6 +225,10 @@
   cursor: pointer;
   transition: all 0.2s ease;
   color: #1c1c1c;
+  position: absolute;
+  left: -20px;
+  z-index: 1001;
+  
 }
 
 .vpHamburgerBtnNew:hover {
@@ -338,9 +342,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #f5f5f5;
+  
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: 25px;
   font-family: Arial, sans-serif;
   font-size: 16px;
   color: #333;
@@ -367,10 +371,16 @@
   gap: 8px; 
   color: #000508; 
   font-size: 14px; 
-  background: #f3f4f6;
+  background: #f3f4f6; 
   margin-bottom: 16px; 
   cursor: pointer; 
 }
+
+.vpShowContent * {
+  background: transparent !important;
+}
+  
+
 
 .vpShowArrow { 
   font-size: 18px; 
@@ -380,7 +390,7 @@
 .vpButtonsContainer {
   display: flex;
   align-items: center;
-  gap: 12px; /* المسافة بين الزرين */
+  gap: 12px; 
   margin-bottom: 40px;
 }
 
@@ -618,6 +628,7 @@
   align-items: center; 
   gap: 8px; 
   margin-bottom: 8px; 
+  
 }
 
 .vpAchievementsRow img { 
@@ -975,8 +986,8 @@
 /* Dropdown options styling - positioned relative to the button */
 .feed-options-bar {
   position: absolute;
-  top: calc(100% + 4px); /* Just below the button */
-  right: 0; /* Align to right edge of button */
+  top: calc(100% + 4px); 
+  right: 0; 
   background: white;
   border: 1px solid #edeff1;
   border-radius: 4px;
@@ -1054,10 +1065,10 @@
   border: 2px solid #000;
   border-radius: 50%;
   margin-left: 8px;
-  background-color: transparent; /* مش مختارة */
+  background-color: transparent; 
   transition: background-color 0.2s;
 }
 
 .time-option.time-option-selected .time-option-circle {
-  background-color: #000; /* مختارة */
+  background-color: #000; 
 }

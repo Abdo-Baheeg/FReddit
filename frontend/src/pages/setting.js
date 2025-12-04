@@ -11,19 +11,18 @@ const SettingsPage = () =>
 
   const tabs = ['Account', 'Profile', 'Privacy', 'Preferences', 'Notifications', 'Email'];
 
-  const handleSave = () => {
-    alert('Settings saved!');
-  };
+
 
   return (
-    <div className="settings-container">
-      <header className="settings-header">
-        <h1>Settings</h1>
-      </header>
+    
+    <div className="settings-container"> 
+    <div className='empty'>
 
-      
+    </div>
+        <h1>ettings</h1>
       </div>
   );
 };
+
 
 export default SettingsPage;
