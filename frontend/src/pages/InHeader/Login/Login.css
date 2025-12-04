@@ -1,0 +1,180 @@
+/* Login Modal Overlay - fullscreen semi-transparent background */
+.login-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal box - centered white container */
+.login-modal {
+  background: var(--bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 420px;
+  padding: 24px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Close button (X) in top-right corner */
+.login-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--muted-text);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 120ms ease;
+}
+
+.login-close-btn:hover {
+  color: var(--text);
+}
+
+.login-close-btn:active {
+  transform: scale(0.95);
+}
+
+/* Back button (←) in top-left corner */
+.login-back-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--muted-text);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 120ms ease;
+}
+
+.login-back-btn:hover {
+  color: var(--text);
+}
+
+.login-back-btn:active {
+  transform: scale(0.95);
+}
+
+/* Login page styles matching the modal screenshot
+	 - Uses color variables defined in Components/components.css
+	 - Centers the main title + intro, adds the OR divider, and styles links
+*/
+
+.login-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 10px 0 6px;
+}
+
+/* Generic subtitle used in two places: the intro (centered) and the helpers (left-aligned).
+	 By default make subtitles left-aligned, and center only the first subtitle inside this component. */
+.subtitle {
+  display: block;
+  color: var(--muted-text);
+  font-size: 13px;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+.subtitle:first-of-type {
+  text-align: center;
+  margin: 6px auto 18px;
+  max-width: 78%;
+}
+
+.login-links {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Button styled as a link for navigation */
+.login-links-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+.login-links-btn:hover {
+  text-decoration: underline;
+}
+
+/* Button styled as subtitle for "Forgot password?" and "Need help?" */
+.subtitle-link-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 8px;
+  display: block;
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+.subtitle-link-btn:hover {
+  text-decoration: underline;
+}
+
+/* The 'OR' divider used between the continue buttons and the form */
+#login-or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+  color: var(--muted-text);
+  font-size: 12px;
+  justify-content: center;
+}
+
+#login-or::before,
+#login-or::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--muted-border);
+  border-radius: 1px;
+}
+
+/* Ensure the form controls align nicely with the modal edges */
+.input-container {
+  width: 100%;
+}
+
+/* Slight spacing tweak for the small helper links below the inputs */
+.subtitle + .subtitle {
+  margin-top: 12px;
+}
