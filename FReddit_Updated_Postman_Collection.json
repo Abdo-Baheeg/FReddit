@@ -1,0 +1,513 @@
+{
+	"info": {
+		"_postman_id": "freddit-api-v2-collection",
+		"name": "FReddit API v2 (Scalable)",
+		"description": "Updated API with Vote and Membership models for scalability",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"john_doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login User",
+					"event": [{
+						"listen": "test",
+						"script": {
+							"exec": [
+								"if (pm.response.code === 200) {",
+								"    var jsonData = pm.response.json();",
+								"    pm.environment.set(\"authToken\", jsonData.token);",
+								"}"
+							],
+							"type": "text/javascript"
+						}
+					}],
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "login"]
+						}
+					}
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "me"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Votes (New)",
+			"item": [
+				{
+					"name": "Create/Update Vote",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{authToken}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"targetId\": \"post_or_comment_id\",\n  \"targetType\": \"Post\",\n  \"voteType\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/votes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "votes"]
+						},
+						"description": "Create/update/remove vote.\n\n**targetType**: Post or Comment\n**voteType**: 1 (upvote), -1 (downvote)\n\nClicking same vote removes it."
+					}
+				},
+				{
+					"name": "Get User Vote",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/api/votes/user/:targetId/:targetType",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "votes", "user", ":targetId", ":targetType"],
+							"variable": [
+								{"key": "targetId", "value": "post_or_comment_id"},
+								{"key": "targetType", "value": "Post"}
+							]
+						},
+						"description": "Get current user's vote on a post/comment"
+					}
+				},
+				{
+					"name": "Get Vote Counts",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/votes/:targetId/:targetType",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "votes", ":targetId", ":targetType"],
+							"variable": [
+								{"key": "targetId", "value": "post_or_comment_id"},
+								{"key": "targetType", "value": "Post"}
+							]
+						},
+						"description": "Get total vote counts for a post/comment"
+					}
+				}
+			],
+			"description": "New scalable voting system using Vote collection"
+		},
+		{
+			"name": "Memberships (New)",
+			"item": [
+				{
+					"name": "Join Community",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{authToken}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"communityId\": \"community_id_here\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/memberships",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "memberships"]
+						}
+					}
+				},
+				{
+					"name": "Leave Community",
+					"request": {
+						"method": "DELETE",
+						"header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/api/memberships/:communityId",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "memberships", ":communityId"],
+							"variable": [{"key": "communityId", "value": "community_id_here"}]
+						}
+					}
+				},
+				{
+					"name": "Get User's Communities",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/api/memberships/user",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "memberships", "user"]
+						}
+					}
+				},
+				{
+					"name": "Get Community Members",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/memberships/community/:communityId?page=1&limit=50&role=member",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "memberships", "community", ":communityId"],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "limit", "value": "50"},
+								{"key": "role", "value": "member"}
+							],
+							"variable": [{"key": "communityId", "value": "community_id_here"}]
+						}
+					}
+				},
+				{
+					"name": "Update Member Role",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{authToken}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"user_id_here\",\n  \"role\": \"moderator\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/memberships/:communityId/role",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "memberships", ":communityId", "role"],
+							"variable": [{"key": "communityId", "value": "community_id_here"}]
+						},
+						"description": "Moderator only - change member role"
+					}
+				},
+				{
+					"name": "Check Membership",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/api/memberships/check/:communityId",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "memberships", "check", ":communityId"],
+							"variable": [{"key": "communityId", "value": "community_id_here"}]
+						}
+					}
+				}
+			],
+			"description": "New membership system using Membership collection"
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Get All Posts",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/posts",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "posts"]
+						}
+					}
+				},
+				{
+					"name": "Get Post By ID",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/posts/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "posts", ":id"],
+							"variable": [{"key": "id", "value": "post_id_here"}]
+						}
+					}
+				},
+				{
+					"name": "Create Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{authToken}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"My Post Title\",\n  \"content\": \"Post content here\",\n  \"subreddit\": \"community_id_here\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/posts/create",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "posts", "create"]
+						}
+					}
+				},
+				{
+					"name": "Vote on Post (Deprecated)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{authToken}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"voteType\": \"upvote\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/posts/:id/vote",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "posts", ":id", "vote"],
+							"variable": [{"key": "id", "value": "post_id_here"}]
+						},
+						"description": "⚠️ Deprecated: Use /api/votes instead"
+					}
+				},
+				{
+					"name": "Generate Post Summary (AI)",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/api/posts/:id/summary",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "posts", ":id", "summary"],
+							"variable": [{"key": "id", "value": "post_id_here"}]
+						}
+					}
+				},
+				{
+					"name": "Delete Post",
+					"request": {
+						"method": "DELETE",
+						"header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/api/posts/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "posts", ":id"],
+							"variable": [{"key": "id", "value": "post_id_here"}]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Get Comments for Post",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/comments/post/:postId",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "comments", "post", ":postId"],
+							"variable": [{"key": "postId", "value": "post_id_here"}]
+						}
+					}
+				},
+				{
+					"name": "Create Comment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{authToken}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"content\": \"My comment\",\n  \"postId\": \"post_id_here\",\n  \"parentCommentId\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/comments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "comments"]
+						}
+					}
+				},
+				{
+					"name": "Vote on Comment (Deprecated)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{authToken}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"voteType\": \"upvote\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/comments/:id/vote",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "comments", ":id", "vote"],
+							"variable": [{"key": "id", "value": "comment_id_here"}]
+						},
+						"description": "⚠️ Deprecated: Use /api/votes instead"
+					}
+				},
+				{
+					"name": "Delete Comment",
+					"request": {
+						"method": "DELETE",
+						"header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/api/comments/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "comments", ":id"],
+							"variable": [{"key": "id", "value": "comment_id_here"}]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Communities",
+			"item": [
+				{
+					"name": "Get All Communities",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/communities/communities",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "communities", "communities"]
+						}
+					}
+				},
+				{
+					"name": "Get Community By ID",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/communities/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "communities", ":id"],
+							"variable": [{"key": "id", "value": "community_id_here"}]
+						}
+					}
+				},
+				{
+					"name": "Create Community",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{authToken}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"tech_enthusiasts\",\n  \"description\": \"A community for tech lovers\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/communities/create",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "communities", "create"]
+						}
+					}
+				},
+				{
+					"name": "Join Community (Deprecated)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/api/communities/:id/join",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "communities", ":id", "join"],
+							"variable": [{"key": "id", "value": "community_id_here"}]
+						},
+						"description": "⚠️ Deprecated: Use /api/memberships instead"
+					}
+				},
+				{
+					"name": "Leave Community (Deprecated)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/api/communities/:id/leave",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "communities", ":id", "leave"],
+							"variable": [{"key": "id", "value": "community_id_here"}]
+						},
+						"description": "⚠️ Deprecated: Use /api/memberships instead"
+					}
+				}
+			]
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"auth": {"type": "noauth"},
+				"method": "GET",
+				"url": {
+					"raw": "{{baseUrl}}/api/health",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "health"]
+				}
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5050",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
