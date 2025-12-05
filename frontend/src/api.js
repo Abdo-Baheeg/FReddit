@@ -1,6 +1,8 @@
 // api methods using environment variable for base URL
 import axios from 'axios';
-const API_URL = process.env.API_URL ;
+const API_URL = process.env.REACT_APP_API_URL;
+
+console.log('API_URL configured as:', API_URL);
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
@@ -62,16 +64,6 @@ export const postApi = {
     return response.data;
   },
 
-  // Vote on post
-  voteOnPost: async (postId, voteType) => {
-    const response = await axios.put(
-      `${API_URL}/api/posts/${postId}/vote`,
-      { voteType },
-      { headers: getAuthHeaders() }
-    );
-    return response.data;
-  },
-
   // Generate post summary (AI)
   generateSummary: async (postId) => {
     const response = await axios.put(
@@ -110,16 +102,6 @@ export const commentApi = {
     return response.data;
   },
 
-  // Vote on comment
-  voteOnComment: async (commentId, voteType) => {
-    const response = await axios.put(
-      `${API_URL}/api/comments/${commentId}/vote`,
-      { voteType },
-      { headers: getAuthHeaders() }
-    );
-    return response.data;
-  },
-
   // Delete comment
   deleteComment: async (commentId) => {
     const response = await axios.delete(
@@ -152,25 +134,126 @@ export const communityApi = {
       { headers: getAuthHeaders() }
     );
     return response.data;
-  },
+  }
+};
 
-  // Join community
-  joinCommunity: async (communityId) => {
+// Vote API endpoints (NEW - unified voting system)
+export const voteApi = {
+  // Vote on post or comment
+  vote: async (targetId, targetType, voteType) => {
     const response = await axios.post(
-      `${API_URL}/api/communities/${communityId}/join`,
-      {},
+      `${API_URL}/api/votes`,
+      { targetId, targetType, voteType },
       { headers: getAuthHeaders() }
     );
     return response.data;
   },
 
-  // Leave community
-  leaveCommunity: async (communityId) => {
-    const response = await axios.post(
-      `${API_URL}/api/communities/${communityId}/leave`,
-      {},
+  // Get user's vote on a target
+  getUserVote: async (targetId, targetType) => {
+    const response = await axios.get(
+      `${API_URL}/api/votes/user/${targetId}/${targetType}`,
       { headers: getAuthHeaders() }
     );
+    return response.data;
+  },
+
+  // Get all votes for a target
+  getVotes: async (targetId, targetType) => {
+    const response = await axios.get(
+      `${API_URL}/api/votes/${targetId}/${targetType}`
+    );
+    return response.data;
+  }
+};
+
+// Membership API endpoints (NEW - community membership management)
+export const membershipApi = {
+  // Join a community
+  join: async (communityId) => {
+    const response = await axios.post(
+      `${API_URL}/api/memberships`,
+      { communityId },
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Leave a community
+  leave: async (communityId) => {
+    const response = await axios.delete(
+      `${API_URL}/api/memberships/${communityId}`,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Get user's memberships
+  getUserMemberships: async () => {
+    const response = await axios.get(
+      `${API_URL}/api/memberships/user`,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Get community members
+  getCommunityMembers: async (communityId, page = 1, limit = 50) => {
+    const response = await axios.get(
+      `${API_URL}/api/memberships/community/${communityId}`,
+      {
+        headers: getAuthHeaders(),
+        params: { page, limit }
+      }
+    );
+    return response.data;
+  },
+
+  // Update member role
+  updateRole: async (communityId, userId, role) => {
+    const response = await axios.put(
+      `${API_URL}/api/memberships/${communityId}/role`,
+      { userId, role },
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Check if user is member
+  checkMembership: async (communityId) => {
+    const response = await axios.get(
+      `${API_URL}/api/memberships/check/${communityId}`,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  }
+};
+
+// Feed API endpoints (NEW - personalized feeds with caching)
+export const feedApi = {
+  // Get trending posts
+  getTrending: async (page = 1, limit = 20) => {
+    const response = await axios.get(`${API_URL}/api/feed/trending`, {
+      params: { page, limit }
+    });
+    return response.data;
+  },
+
+  // Get personalized home feed
+  getHomeFeed: async (page = 1, limit = 20) => {
+    const response = await axios.get(`${API_URL}/api/feed/home`, {
+      headers: getAuthHeaders(),
+      params: { page, limit }
+    });
+    return response.data;
+  },
+
+  // Get suggested feed (discovery)
+  getSuggestedFeed: async (page = 1, limit = 20) => {
+    const response = await axios.get(`${API_URL}/api/feed/suggested`, {
+      headers: getAuthHeaders(),
+      params: { page, limit }
+    });
     return response.data;
   }
 };

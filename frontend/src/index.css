@@ -4,13 +4,64 @@
   box-sizing: border-box;
 }
 
+:root {
+  /* Reddit Brand Colors */
+  --reddit-orange: #FF4500;
+  --reddit-orange-hover: #FF5700;
+  --reddit-blue: #0079D3;
+  --reddit-blue-hover: #1484D6;
+  
+  /* Background Colors */
+  --reddit-bg: #DAE0E6;
+  --reddit-card-bg: #FFFFFF;
+  --reddit-nav-bg: #FFFFFF;
+  
+  /* Text Colors */
+  --reddit-text-primary: #1C1C1C;
+  --reddit-text-secondary: #7C7C7C;
+  --reddit-text-meta: #787C7E;
+  
+  /* Border Colors */
+  --reddit-border: #EDEFF1;
+  --reddit-border-dark: #CCCCCC;
+  
+  /* Vote Colors */
+  --upvote-orange: #FF4500;
+  --downvote-blue: #7193FF;
+  
+  /* UI Colors */
+  --hover-bg: #F6F7F8;
+  --active-bg: #E9F5FD;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  
+  /* Border Radius */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
+  background-color: var(--reddit-bg);
+  color: var(--reddit-text-primary);
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 code {
@@ -25,4 +76,27 @@ a {
 
 ul {
   list-style: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--reddit-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--reddit-border-dark);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--reddit-text-secondary);
 }

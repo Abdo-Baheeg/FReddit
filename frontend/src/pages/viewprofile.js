@@ -1,11 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { userApi, postApi, membershipApi } from '../api';
 import './viewprofile.css';
 
 export default function RedditProfilePageMock() {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Overview');
   const [activeView, setActiveView] = useState('top'); // 'top' or 'back'
   const [selectedTime, setSelectedTime] = useState('Today');
+  
+  // User data
+  const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [memberships, setMemberships] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   
   // Separate state for each dropdown
   const [showOptions, setShowOptions] = useState({
@@ -18,6 +28,43 @@ export default function RedditProfilePageMock() {
   const commentsOptionsRef = useRef(null);
   const commentsButtonRef = useRef(null);
   const topBackButtonRef = useRef(null);
+
+  // Fetch user data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          navigate('/login');
+          return;
+        }
+
+        // Fetch user profile
+        const userData = await userApi.getCurrentUser();
+        setUser(userData);
+
+        // Fetch user's posts
+        const allPosts = await postApi.getAllPosts();
+        const userPosts = allPosts.filter(post => post.author?._id === userData.id);
+        setPosts(userPosts);
+
+        // Fetch user's memberships
+        const userMemberships = await membershipApi.getUserMemberships();
+        setMemberships(userMemberships);
+
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+        setError('Failed to load profile');
+        setLoading(false);
+        if (err.response?.status === 401) {
+          navigate('/login');
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [navigate]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prev => !prev);
@@ -91,6 +138,18 @@ export default function RedditProfilePageMock() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showOptions.feed, showOptions.comments]);
+
+  if (loading) {
+    return <div className="vpBody"><div className="loading">Loading profile...</div></div>;
+  }
+
+  if (error) {
+    return <div className="vpBody"><div className="error">{error}</div></div>;
+  }
+
+  if (!user) {
+    return <div className="vpBody"><div className="error">User not found</div></div>;
+  }
 
   return (
     <div className="vpBody">
@@ -261,13 +320,14 @@ export default function RedditProfilePageMock() {
               <div className="vpProfileInfo">
                 <div className="vpAvatarLarge">
                   <img
-                    src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
+                    src={user.imgURL || "https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"}
                     alt="avatar"
                   />
                 </div>
                 <div className="vpNameSection">
-                  <h1 className="vpUsername">Tough-Sherbert-2286</h1>
-                  <p className="vpHandle">u/Tough-Sherbert-2286</p>
+                  <h1 className="vpUsername">{user.username}</h1>
+                  <p className="vpHandle">u/{user.username}</p>
+                  <p className="vpKarma">⭐ {user.karma || 0} karma</p>
                 </div>
               </div>
 
@@ -293,7 +353,7 @@ export default function RedditProfilePageMock() {
                     <div className="vpShowContent">
                       <span className="vpEyeIcon">👁️</span>
                       <span className="vpText">Showing all content</span>
-                      <span className="vpShowArrow"> > </span>
+                      <span className="vpShowArrow"> {'>'} </span>
                     </div>
                     
                     {activeTab === 'Comments' && (
@@ -305,7 +365,7 @@ export default function RedditProfilePageMock() {
                             className="vpNewButton"
                             onClick={toggleCommentsOptions}
                           >
-                            New <span>></span>
+                            New <span>{'>'}</span>
                           </button>
                           
                           {/* Comments options dropdown menu */}
@@ -351,7 +411,7 @@ export default function RedditProfilePageMock() {
                         className="vpfeedBtn"
                         onClick={toggleFeedOptions}
                       >
-                        <span>-></span>
+                        <span>{'->'}</span>
                       </button>
                       
                       {/* Options dropdown menu - appears next to the button */}
@@ -437,34 +497,76 @@ export default function RedditProfilePageMock() {
                 <div className="vpTabContent">
 
                   {activeTab === 'Overview' && (
-                    <div className="vpEmptyState">
-                      <div className="vpEmptyRobot">
-                        <img
-                          src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                          alt="Thinking Snoo"
-                          width={120}
-                          height={120}
-                        />
-                      </div>
-                      <h2><b>You don't have any posts yet</b></h2>
-                      <p>Once you post to a community, it'll show up here.</p>
-                      <button className="vpUpdateSettingsBtn">Update Settings</button>
+                    <div>
+                      {posts.length === 0 ? (
+                        <div className="vpEmptyState">
+                          <div className="vpEmptyRobot">
+                            <img
+                              src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
+                              alt="Thinking Snoo"
+                              width={120}
+                              height={120}
+                            />
+                          </div>
+                          <h2><b>You don't have any posts yet</b></h2>
+                          <p>Once you post to a community, it'll show up here.</p>
+                        </div>
+                      ) : (
+                        <div className="vpPostsList">
+                          {posts.map(post => (
+                            <div key={post._id} className="vpPostCard" onClick={() => navigate(`/post/${post._id}`)}>
+                              <div className="vpPostHeader">
+                                <span className="vpCommunity">r/{post.community?.name || post.subreddit}</span>
+                                <span className="vpPostTime"> • {new Date(post.createdAt).toLocaleDateString()}</span>
+                              </div>
+                              <h3 className="vpPostTitle">{post.title}</h3>
+                              <p className="vpPostContent">{post.content?.substring(0, 200)}{post.content?.length > 200 ? '...' : ''}</p>
+                              <div className="vpPostFooter">
+                                <span>↑ {post.upvoteCount || 0}</span>
+                                <span>↓ {post.downvoteCount || 0}</span>
+                                <span>💬 {post.comments?.length || 0} comments</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
 
                   {activeTab === 'Posts' && (
-                    <div className="vpEmptyState">
-                      <div className="vpEmptyRobot">
-                        <img
-                          src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                          alt="Thinking Snoo"
-                          width={120}
-                          height={120}
-                        />
-                      </div>
-                       <h2><b>You don't have any posts yet</b></h2>
-                      <p>Once you post to a community, it'll show up here.</p>
-                      <button className="vpUpdateSettingsBtn">Update Settings</button>
+                    <div>
+                      {posts.length === 0 ? (
+                        <div className="vpEmptyState">
+                          <div className="vpEmptyRobot">
+                            <img
+                              src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
+                              alt="Thinking Snoo"
+                              width={120}
+                              height={120}
+                            />
+                          </div>
+                          <h2><b>You don't have any posts yet</b></h2>
+                          <p>Once you post to a community, it'll show up here.</p>
+                        </div>
+                      ) : (
+                        <div className="vpPostsList">
+                          {posts.map(post => (
+                            <div key={post._id} className="vpPostCard" onClick={() => navigate(`/post/${post._id}`)}>
+                              <div className="vpPostHeader">
+                                <span className="vpCommunity">r/{post.community?.name || post.subreddit}</span>
+                                <span className="vpPostTime"> • {new Date(post.createdAt).toLocaleDateString()}</span>
+                              </div>
+                              <h3 className="vpPostTitle">{post.title}</h3>
+                              <p className="vpPostContent">{post.content?.substring(0, 200)}{post.content?.length > 200 ? '...' : ''}</p>
+                              <div className="vpPostFooter">
+                                <span>↑ {post.upvoteCount || 0}</span>
+                                <span>↓ {post.downvoteCount || 0}</span>
+                                <span>💬 {post.comments?.length || 0} comments</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -565,12 +667,25 @@ export default function RedditProfilePageMock() {
                 </div>
 
                 <div className="vpRightHeader">
-                  <div className="vpRightUsername">Tough-Sherbert-2286</div>
+                  <div className="vpRightUsername">{user.username}</div>
                 </div>
 
                 <div className="vpProfileSection">
+                  <div className="vpStatsRow">
+                    <div className="vpStat">
+                      <div className="vpStatValue">{user.karma || 0}</div>
+                      <div className="vpStatLabel">Karma</div>
+                    </div>
+                    <div className="vpStat">
+                      <div className="vpStatValue">{posts.length}</div>
+                      <div className="vpStatLabel">Posts</div>
+                    </div>
+                    <div className="vpStat">
+                      <div className="vpStatValue">{memberships.length}</div>
+                      <div className="vpStatLabel">Communities</div>
+                    </div>
+                  </div>
                   <div className="vpSectionHeaderRow">
-                    
                     <button className="vpSectionBtnSmall">Share</button>
                   </div>
                 </div> 
