@@ -40,4 +40,4 @@ function Reset({ isOpen, onClose, onShowLogin }) {
   );
 }
 
-//export default Reset;
+export default Reset;

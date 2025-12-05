@@ -1,27 +1,34 @@
 .chat-container {
   display: flex;
-  height: calc(100vh - 120px);
-  background: white;
-  border-radius: 8px;
+  height: calc(100vh - 96px);
+  max-width: 1248px;
+  margin: var(--spacing-lg) auto;
+  background: var(--reddit-card-bg);
+  border: 1px solid var(--reddit-border);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .chat-sidebar {
-  width: 300px;
-  border-right: 1px solid #e0e0e0;
+  width: 320px;
+  border-right: 1px solid var(--reddit-border);
   display: flex;
   flex-direction: column;
+  background: var(--reddit-card-bg);
 }
 
 .chat-sidebar-header {
-  padding: 20px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--reddit-border);
+  background: var(--reddit-card-bg);
 }
 
 .chat-sidebar-header h2 {
   margin: 0;
-  font-size: 20px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--reddit-text-primary);
 }
 
 .conversation-list {
@@ -32,31 +39,34 @@
 .conversation-item {
   display: flex;
   align-items: center;
-  padding: 15px;
+  padding: var(--spacing-md);
   cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--reddit-border);
   transition: background-color 0.2s;
 }
 
 .conversation-item:hover {
-  background-color: #f5f5f5;
+  background-color: var(--hover-bg);
 }
 
 .conversation-item.active {
-  background-color: #e3f2fd;
+  background-color: var(--active-bg);
+  border-left: 3px solid var(--reddit-blue);
 }
 
 .conversation-avatar {
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: #ff4500;
+  background: linear-gradient(135deg, var(--reddit-orange) 0%, var(--reddit-blue) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  margin-right: 12px;
+  font-size: 20px;
+  margin-right: var(--spacing-md);
   flex-shrink: 0;
+  color: white;
+  font-weight: 700;
 }
 
 .conversation-info {
@@ -65,35 +75,36 @@
 }
 
 .conversation-name {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-xs);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-xs);
+  color: var(--reddit-text-primary);
 }
 
 .conversation-preview {
   font-size: 13px;
-  color: #666;
+  color: var(--reddit-text-meta);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .unread-badge {
-  background: #ff4500;
+  background: var(--reddit-orange);
   color: white;
   font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: var(--radius-xl);
+  font-weight: 700;
 }
 
 .no-conversations {
-  padding: 20px;
+  padding: var(--spacing-xl);
   text-align: center;
-  color: #666;
+  color: var(--reddit-text-meta);
 }
 
 .chat-main {
@@ -103,31 +114,34 @@
 }
 
 .chat-header {
-  padding: 20px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--reddit-border);
+  background: var(--reddit-card-bg);
 }
 
 .chat-header h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--reddit-text-primary);
 }
 
 .chat-header-subtitle {
-  margin: 4px 0 0 0;
-  font-size: 13px;
-  color: #666;
+  margin: var(--spacing-xs) 0 0 0;
+  font-size: 12px;
+  color: var(--reddit-text-meta);
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
-  background: #f9f9f9;
+  padding: var(--spacing-lg);
+  background: var(--reddit-bg);
 }
 
 .message {
   display: flex;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-lg);
 }
 
 .message-own {
@@ -142,13 +156,15 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #ddd;
+  background: linear-gradient(135deg, var(--reddit-orange) 0%, var(--reddit-blue) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 8px;
-  font-size: 18px;
+  margin-right: var(--spacing-sm);
+  font-size: 16px;
   flex-shrink: 0;
+  color: white;
+  font-weight: 700;
 }
 
 .message-content {
@@ -157,28 +173,28 @@
 
 .message-sender {
   font-size: 12px;
-  color: #666;
-  margin-bottom: 4px;
-  font-weight: 600;
+  color: var(--reddit-text-meta);
+  margin-bottom: var(--spacing-xs);
+  font-weight: 700;
 }
 
 .message-bubble {
-  padding: 10px 14px;
-  border-radius: 18px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-lg);
   position: relative;
 }
 
 .message-own .message-bubble {
-  background: #ff4500;
+  background: var(--reddit-blue);
   color: white;
-  border-bottom-right-radius: 4px;
+  border-bottom-right-radius: var(--radius-sm);
 }
 
 .message-other .message-bubble {
-  background: white;
-  color: #333;
-  border-bottom-left-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  background: var(--reddit-card-bg);
+  color: var(--reddit-text-primary);
+  border-bottom-left-radius: var(--radius-sm);
+  border: 1px solid var(--reddit-border);
 }
 
 .message-bubble p {
@@ -191,56 +207,59 @@
 .message-time {
   font-size: 11px;
   opacity: 0.7;
-  margin-left: 8px;
+  margin-left: var(--spacing-sm);
 }
 
 .typing-indicator {
   font-size: 13px;
-  color: #666;
+  color: var(--reddit-text-meta);
   font-style: italic;
-  padding: 8px;
+  padding: var(--spacing-sm);
 }
 
 .chat-input-form {
   display: flex;
-  padding: 15px;
-  border-top: 1px solid #e0e0e0;
-  background: white;
+  padding: var(--spacing-md);
+  border-top: 1px solid var(--reddit-border);
+  background: var(--reddit-card-bg);
+  gap: var(--spacing-sm);
 }
 
 .chat-input {
   flex: 1;
-  padding: 12px 16px;
-  border: 1px solid #ddd;
-  border-radius: 24px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--reddit-border);
+  border-radius: var(--radius-xl);
   font-size: 14px;
+  background: var(--reddit-card-bg);
+  color: var(--reddit-text-primary);
   outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
 }
 
 .chat-input:focus {
-  border-color: #ff4500;
+  border-color: var(--reddit-blue);
+  box-shadow: 0 0 0 1px var(--reddit-blue);
 }
 
 .chat-send-btn {
-  margin-left: 10px;
-  padding: 12px 24px;
-  background: #ff4500;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--reddit-blue);
   color: white;
   border: none;
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .chat-send-btn:hover:not(:disabled) {
-  background: #ff5722;
+  background: var(--reddit-blue-hover);
 }
 
 .chat-send-btn:disabled {
-  background: #ccc;
+  background: var(--reddit-border-dark);
   cursor: not-allowed;
 }
 
@@ -249,18 +268,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
+  color: var(--reddit-text-meta);
   font-size: 16px;
 }
 
 .chat-disconnected {
-  padding: 20px;
+  padding: var(--spacing-lg);
   text-align: center;
   color: #ff9800;
-  font-weight: 600;
+  font-weight: 700;
+  background: #FFF3E0;
+  border-radius: var(--radius-md);
+  margin: var(--spacing-md);
 }
 
 @media (max-width: 768px) {
+  .chat-container {
+    margin: 0;
+    border-radius: 0;
+    height: calc(100vh - 48px);
+  }
+  
   .chat-sidebar {
     width: 100%;
     border-right: none;
@@ -282,3 +310,4 @@
     max-width: 80%;
   }
 }
+

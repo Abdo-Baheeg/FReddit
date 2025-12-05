@@ -1,3 +1,157 @@
+/* ==================== TOP BAR ==================== */
+.vpNewTopBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 1003;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.vpTopBarContainer {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.vpLogoNew {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.vpLogoIcon {
+  width: 32px;
+  height: 32px;
+}
+
+.vpLogoTextNew {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ff4500;
+}
+
+.vpSearchContainer {
+  flex: 1;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.vpSearchWrapper {
+  position: relative;
+}
+
+.vpSearchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
+  pointer-events: none;
+}
+
+.vpSearchInput {
+  width: 100%;
+  padding: 10px 16px 10px 44px;
+  background: #f3f4f6;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.vpSearchInput:focus {
+  outline: none;
+  background: white;
+  border-color: #ff4500;
+  box-shadow: 0 0 0 4px rgba(255,69,0,0.15);
+}
+
+.vpRightIcons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vpIconBtn {
+  position: relative;
+  padding: 8px;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+
+.vpIconBtn:hover {
+  background: #f3f4f6;
+}
+
+.vpAdLabel {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #dbe4de;
+  color: white;
+  font-size: 8px;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.vpCreateBtnNew {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fdfcfc;
+  color: rgb(3, 1, 1);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+
+.vpCreateBtnNew:hover {
+  background: #020201;
+}
+
+.vpUserAvatarNew {
+  position: relative;
+  cursor: pointer;
+}
+
+.vpAvatarImg {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2.5px solid #13100f;
+  object-fit: cover;
+}
+
+.vpOnlineIndicator {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 14px;
+  height: 14px;
+  background: #10b981;
+  border: 3px solid white;
+  border-radius: 50%;
+}
+
 /* ==================== LAYOUT STRUCTURE ==================== */
 .vpLayoutContainer {
   display: flex;
@@ -5,7 +159,8 @@
   gap: 10px;               
   width: 100%;
   min-height: 100vh;
-background-color: white;
+  background-color: white;
+
   margin-top: 40px; 
   border: 1px ; 
 }
@@ -14,13 +169,13 @@ background-color: white;
 
 /* ==================== SIDEBAR (Modified to be part of flow) ==================== */
 .vpLeftSidebar {
-  position: sticky; 
+  position: sticky; /* Sticks to side, doesn't scroll away */
   top: 48px;
   height: calc(100vh - 48px);
   background: white;
   border-right: 1px solid #edeff1;
   z-index: 1000;
-  flex-shrink: 0; 
+  flex-shrink: 0; /* Prevents sidebar from shrinking */
   overflow-y: auto;
   transition: width 0.3s ease, margin 0.3s ease;
 }
@@ -201,15 +356,14 @@ background-color: white;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  min-width: 0; 
+  min-width: 0; /* Prevents overflow issues in flex items */
 }
 
 /* ==================== HAMBURGER BUTTON ==================== */
 .vpHamburgerContainer {
-  padding: 12px 0 0 0;
+  padding: 12px 24px 0 24px;
   display: flex;
   align-items: center;
-  position: relative;
 }
 
 .vpHamburgerBtnNew {
@@ -225,10 +379,6 @@ background-color: white;
   cursor: pointer;
   transition: all 0.2s ease;
   color: #1c1c1c;
-  position: absolute;
-  left: -20px;
-  z-index: 1001;
-  
 }
 
 .vpHamburgerBtnNew:hover {
@@ -342,9 +492,9 @@ background-color: white;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
+  background-color: #f5f5f5;
   padding: 12px 16px;
-  border-radius: 25px;
+  border-radius: 8px;
   font-family: Arial, sans-serif;
   font-size: 16px;
   color: #333;
@@ -371,16 +521,10 @@ background-color: white;
   gap: 8px; 
   color: #000508; 
   font-size: 14px; 
-  background: #f3f4f6; 
+  background: #f3f4f6;
   margin-bottom: 16px; 
   cursor: pointer; 
 }
-
-.vpShowContent * {
-  background: transparent !important;
-}
-  
-
 
 .vpShowArrow { 
   font-size: 18px; 
@@ -390,7 +534,7 @@ background-color: white;
 .vpButtonsContainer {
   display: flex;
   align-items: center;
-  gap: 12px; 
+  gap: 12px; /* المسافة بين الزرين */
   margin-bottom: 40px;
 }
 
@@ -628,7 +772,6 @@ background-color: white;
   align-items: center; 
   gap: 8px; 
   margin-bottom: 8px; 
-  
 }
 
 .vpAchievementsRow img { 
@@ -986,8 +1129,8 @@ background-color: white;
 /* Dropdown options styling - positioned relative to the button */
 .feed-options-bar {
   position: absolute;
-  top: calc(100% + 4px); 
-  right: 0; 
+  top: calc(100% + 4px); /* Just below the button */
+  right: 0; /* Align to right edge of button */
   background: white;
   border: 1px solid #edeff1;
   border-radius: 4px;
@@ -1065,10 +1208,10 @@ background-color: white;
   border: 2px solid #000;
   border-radius: 50%;
   margin-left: 8px;
-  background-color: transparent; 
+  background-color: transparent; /* مش مختارة */
   transition: background-color 0.2s;
 }
 
 .time-option.time-option-selected .time-option-circle {
-  background-color: #000; 
+  background-color: #000; /* مختارة */
 }

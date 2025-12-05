@@ -57,4 +57,4 @@ function Signup({ isOpen, onClose, onShowLogin }) {
   );
 }
 
-//export default Signup;
+export default Signup;

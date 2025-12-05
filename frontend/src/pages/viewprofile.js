@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { userApi, postApi, membershipApi } from '../api';
 import './viewprofile.css';
 
 export default function RedditProfilePageMock() {
@@ -8,7 +9,14 @@ export default function RedditProfilePageMock() {
   const [activeTab, setActiveTab] = useState('Overview');
   const [activeView, setActiveView] = useState('top'); // 'top' or 'back'
   const [selectedTime, setSelectedTime] = useState('Today');
- 
+  
+  // User data
+  const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [memberships, setMemberships] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  
   // Separate state for each dropdown
   const [showOptions, setShowOptions] = useState({
     feed: false,
@@ -20,6 +28,43 @@ export default function RedditProfilePageMock() {
   const commentsOptionsRef = useRef(null);
   const commentsButtonRef = useRef(null);
   const topBackButtonRef = useRef(null);
+
+  // Fetch user data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          navigate('/login');
+          return;
+        }
+
+        // Fetch user profile
+        const userData = await userApi.getCurrentUser();
+        setUser(userData);
+
+        // Fetch user's posts
+        const allPosts = await postApi.getAllPosts();
+        const userPosts = allPosts.filter(post => post.author?._id === userData.id);
+        setPosts(userPosts);
+
+        // Fetch user's memberships
+        const userMemberships = await membershipApi.getUserMemberships();
+        setMemberships(userMemberships);
+
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+        setError('Failed to load profile');
+        setLoading(false);
+        if (err.response?.status === 401) {
+          navigate('/login');
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [navigate]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prev => !prev);
@@ -49,11 +94,6 @@ export default function RedditProfilePageMock() {
   const handleTimeSelect = (time) => {
     setSelectedTime(time);
     setActiveView('top'); // Switch back to top view after selecting time
-  };
-
-  // Handle navigation to setting (not settings)
-  const handleNavigateToSetting = () => {
-    navigate("/setting");
   };
 
   // Time options data
@@ -99,8 +139,80 @@ export default function RedditProfilePageMock() {
     };
   }, [showOptions.feed, showOptions.comments]);
 
+  if (loading) {
+    return <div className="vpBody"><div className="loading">Loading profile...</div></div>;
+  }
+
+  if (error) {
+    return <div className="vpBody"><div className="error">{error}</div></div>;
+  }
+
+  if (!user) {
+    return <div className="vpBody"><div className="error">User not found</div></div>;
+  }
+
   return (
     <div className="vpBody">
+      
+      {/* Top Bar (Fixed) */}
+      <header className="vpNewTopBar">
+        <div className="vpTopBarContainer">
+          <div className="vpLogoNew">
+            <img
+              src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
+              alt="Reddit"
+              className="vpLogoIcon"
+            />
+            <span className="vpLogoTextNew">reddit</span>
+          </div>
+
+          <div className="vpSearchContainer">
+            <div className="vpSearchWrapper">
+              <svg className="vpSearchIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input type="text" placeholder="Search Reddit" className="vpSearchInput" />
+            </div>
+          </div>
+
+          <div className="vpRightIcons">
+            <button className="vpIconBtn" aria-label="Advertise">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-9.75 14h-1.5v-7.5h1.5V17zm-.75-8.5a.75.75 0 110-1.5.75.75 0 010 1.5zm6.5 8.5h-1.5v-4.75c0-1.24-.56-1.95-1.58-1.95-.88 0-1.42.59-1.42 1.95V17h-1.5v-7.5h1.5v1.03c.2-.62.95-1.28 2.03-1.28 1.48 0 2.47 1.01 2.47 3.22V17z"/>
+              </svg>
+              <span className="vpAdLabel">AD</span>
+            </button>
+
+            <button className="vpIconBtn" aria-label="Chat">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2zm-2 12H6v-1h12v1zm0-3H6V9h12v2zm0-3H6V5h12v2z"/>
+              </svg>
+            </button>
+
+            <button className="vpCreateBtnNew">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 4v16m8-8H4" />
+              </svg>
+              Create
+            </button>
+
+            <button className="vpIconBtn" aria-label="Notifications">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+              </svg>
+            </button>
+
+            <div className="vpUserAvatarNew">
+              <img
+                src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
+                alt="User"
+                className="vpAvatarImg"
+              />
+              <div className="vpOnlineIndicator"></div>
+            </div>
+          </div>
+        </div>
+      </header>
 
       {/* Main Layout Container (Flexbox) */}
       <div className="vpLayoutContainer">
@@ -110,30 +222,30 @@ export default function RedditProfilePageMock() {
           <div className="vpSidebarContent">
             {/* Navigation */}
             <nav className="vpSidebarNav">
-              <div className="vpSidebarLink" onClick={() => navigate("/")}>
+              <a href="#" className="vpSidebarLink">
                 <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/></svg>
                 Home
-              </div>
-              <div className="vpSidebarLink vpActiveLink">
+              </a>
+              <a href="#" className="vpSidebarLink vpActiveLink">
                 <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-2-5h4v-2H8v2zm-4-4h10v-2H4v2zm2-4h6V5H6v2z"/></svg>
                 Popular
-              </div>
-              <div className="vpSidebarLink">
+              </a>
+              <a href="#" className="vpSidebarLink">
                 <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/></svg>
                 Answers <span className="vpBetaTag">BETA</span>
-              </div>
-              <div className="vpSidebarLink">
+              </a>
+              <a href="#" className="vpSidebarLink">
                 <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/></svg>
                 Explore
-              </div>
-              <div className="vpSidebarLink">
+              </a>
+              <a href="#" className="vpSidebarLink">
                 <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/></svg>
                 All
-              </div>
-              <div className="vpSidebarLink vpCreateCommunity">
+              </a>
+              <a href="#" className="vpSidebarLink vpCreateCommunity">
                 <svg className="vpSidebarIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 4v16m8-8H4"/></svg>
                 Start a community
-              </div>
+              </a>
             </nav>
 
             <hr className="vpSidebarDivider" />
@@ -171,20 +283,20 @@ export default function RedditProfilePageMock() {
 
             <div className="vpSidebarSection">
               <div className="vpSidebarSectionTitle">CUSTOM FEEDS</div>
-              <div className="vpSidebarLink">
+              <a href="#" className="vpSidebarLink">
                 <svg className="vpSidebarIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 4v16m8-8H4"/></svg>
                 Create Custom Feed
-              </div>
+              </a>
             </div>
 
              <hr className="vpSidebarDivider" />
 
             <div className="vpSidebarSection">
               <div className="vpSidebarSectionTitle">COMMUNITIES</div>
-              <div className="vpSidebarLink">
+              <a href="#" className="vpSidebarLink">
                 <svg className="vpSidebarIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 Manage Communities
-              </div>
+              </a>
             </div>
           </div>
         </aside>
@@ -208,13 +320,14 @@ export default function RedditProfilePageMock() {
               <div className="vpProfileInfo">
                 <div className="vpAvatarLarge">
                   <img
-                    src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
+                    src={user.imgURL || "https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"}
                     alt="avatar"
                   />
                 </div>
                 <div className="vpNameSection">
-                  <h1 className="vpUsername">Tough-Sherbert-2286</h1>
-                  <p className="vpHandle">u/Tough-Sherbert-2286</p>
+                  <h1 className="vpUsername">{user.username}</h1>
+                  <p className="vpHandle">u/{user.username}</p>
+                  <p className="vpKarma">⭐ {user.karma || 0} karma</p>
                 </div>
               </div>
 
@@ -237,14 +350,10 @@ export default function RedditProfilePageMock() {
                 {/* Show "Showing all content" section only for Overview, Posts, and Comments tabs */}
                 {(activeTab === 'Overview' || activeTab === 'Posts' || activeTab === 'Comments') && (
                   <div className="vpContentHeader">
-                    <div 
-                      className="vpShowContent"
-                      onClick={handleNavigateToSetting}
-                      style={{ cursor: "pointer" }} 
-                    >
+                    <div className="vpShowContent">
                       <span className="vpEyeIcon">👁️</span>
                       <span className="vpText">Showing all content</span>
-                      <span className="vpShowArrow"> > </span>
+                      <span className="vpShowArrow"> {'>'} </span>
                     </div>
                     
                     {activeTab === 'Comments' && (
@@ -256,7 +365,7 @@ export default function RedditProfilePageMock() {
                             className="vpNewButton"
                             onClick={toggleCommentsOptions}
                           >
-                            New <span>></span>
+                            New <span>{'>'}</span>
                           </button>
                           
                           {/* Comments options dropdown menu */}
@@ -302,7 +411,7 @@ export default function RedditProfilePageMock() {
                         className="vpfeedBtn"
                         onClick={toggleFeedOptions}
                       >
-                        <span>-></span>
+                        <span>{'->'}</span>
                       </button>
                       
                       {/* Options dropdown menu - appears next to the button */}
@@ -341,31 +450,32 @@ export default function RedditProfilePageMock() {
                             </div>
 
                             {/* Time Filter Options - Only show when in "Back" mode */}
-                            {activeView === 'back' && (
-                              <div className="time-options">
-                                {timeOptions.map((time) => (
-                                  <div 
-                                    key={time.value}
-                                    className={`time-option ${selectedTime === time.value ? 'time-option-selected' : ''}`}
-                                    style={{ cursor: 'pointer' }}
-                                  >
-                                    
-                                    <span 
-                                      className="time-option-label"
-                                      onClick={() => handleTimeSelect(time.value)}
-                                    >
-                                      {time.label}
-                                    </span>
+{activeView === 'back' && (
+  <div className="time-options">
+    {timeOptions.map((time) => (
+      <div 
+        key={time.value}
+        className={`time-option ${selectedTime === time.value ? 'time-option-selected' : ''}`}
+        style={{ cursor: 'pointer' }}
+      >
+        {/* اضغط على النص */}
+        <span 
+          className="time-option-label"
+          onClick={() => handleTimeSelect(time.value)}
+        >
+          {time.label}
+        </span>
 
-                                    
-                                    <span 
-                                      className="time-option-circle"
-                                      onClick={() => handleTimeSelect(time.value)}
-                                    ></span>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
+        {/* اضغط على الدائرة */}
+        <span 
+          className="time-option-circle"
+          onClick={() => handleTimeSelect(time.value)}
+        ></span>
+      </div>
+    ))}
+  </div>
+)}
+
 
                             
                             <div className="feed-options-header">View</div>
@@ -387,34 +497,76 @@ export default function RedditProfilePageMock() {
                 <div className="vpTabContent">
 
                   {activeTab === 'Overview' && (
-                    <div className="vpEmptyState">
-                      <div className="vpEmptyRobot">
-                        <img
-                          src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                          width={120}
-                          height={120}
-                          alt="Thinking Snoo"
-                        />
-                      </div>
-                      <h2><b>You don't have any posts yet</b></h2>
-                      <p>Once you post to a community, it'll show up here.</p>
-                      <button className="vpUpdateSettingsBtn">Update Settings</button>
+                    <div>
+                      {posts.length === 0 ? (
+                        <div className="vpEmptyState">
+                          <div className="vpEmptyRobot">
+                            <img
+                              src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
+                              alt="Thinking Snoo"
+                              width={120}
+                              height={120}
+                            />
+                          </div>
+                          <h2><b>You don't have any posts yet</b></h2>
+                          <p>Once you post to a community, it'll show up here.</p>
+                        </div>
+                      ) : (
+                        <div className="vpPostsList">
+                          {posts.map(post => (
+                            <div key={post._id} className="vpPostCard" onClick={() => navigate(`/post/${post._id}`)}>
+                              <div className="vpPostHeader">
+                                <span className="vpCommunity">r/{post.community?.name || post.subreddit}</span>
+                                <span className="vpPostTime"> • {new Date(post.createdAt).toLocaleDateString()}</span>
+                              </div>
+                              <h3 className="vpPostTitle">{post.title}</h3>
+                              <p className="vpPostContent">{post.content?.substring(0, 200)}{post.content?.length > 200 ? '...' : ''}</p>
+                              <div className="vpPostFooter">
+                                <span>↑ {post.upvoteCount || 0}</span>
+                                <span>↓ {post.downvoteCount || 0}</span>
+                                <span>💬 {post.comments?.length || 0} comments</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
 
                   {activeTab === 'Posts' && (
-                    <div className="vpEmptyState">
-                      <div className="vpEmptyRobot">
-                        <img
-                          src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                          alt="Thinking Snoo"
-                          width={120}
-                          height={120}
-                        />
-                      </div>
-                       <h2><b>You don't have any posts yet</b></h2>
-                      <p>Once you post to a community, it'll show up here.</p>
-                      <button className="vpUpdateSettingsBtn">Update Settings</button>
+                    <div>
+                      {posts.length === 0 ? (
+                        <div className="vpEmptyState">
+                          <div className="vpEmptyRobot">
+                            <img
+                              src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
+                              alt="Thinking Snoo"
+                              width={120}
+                              height={120}
+                            />
+                          </div>
+                          <h2><b>You don't have any posts yet</b></h2>
+                          <p>Once you post to a community, it'll show up here.</p>
+                        </div>
+                      ) : (
+                        <div className="vpPostsList">
+                          {posts.map(post => (
+                            <div key={post._id} className="vpPostCard" onClick={() => navigate(`/post/${post._id}`)}>
+                              <div className="vpPostHeader">
+                                <span className="vpCommunity">r/{post.community?.name || post.subreddit}</span>
+                                <span className="vpPostTime"> • {new Date(post.createdAt).toLocaleDateString()}</span>
+                              </div>
+                              <h3 className="vpPostTitle">{post.title}</h3>
+                              <p className="vpPostContent">{post.content?.substring(0, 200)}{post.content?.length > 200 ? '...' : ''}</p>
+                              <div className="vpPostFooter">
+                                <span>↑ {post.upvoteCount || 0}</span>
+                                <span>↓ {post.downvoteCount || 0}</span>
+                                <span>💬 {post.comments?.length || 0} comments</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -515,12 +667,25 @@ export default function RedditProfilePageMock() {
                 </div>
 
                 <div className="vpRightHeader">
-                  <div className="vpRightUsername">Tough-Sherbert-2286</div>
+                  <div className="vpRightUsername">{user.username}</div>
                 </div>
 
                 <div className="vpProfileSection">
+                  <div className="vpStatsRow">
+                    <div className="vpStat">
+                      <div className="vpStatValue">{user.karma || 0}</div>
+                      <div className="vpStatLabel">Karma</div>
+                    </div>
+                    <div className="vpStat">
+                      <div className="vpStatValue">{posts.length}</div>
+                      <div className="vpStatLabel">Posts</div>
+                    </div>
+                    <div className="vpStat">
+                      <div className="vpStatValue">{memberships.length}</div>
+                      <div className="vpStatLabel">Communities</div>
+                    </div>
+                  </div>
                   <div className="vpSectionHeaderRow">
-                    
                     <button className="vpSectionBtnSmall">Share</button>
                   </div>
                 </div> 
@@ -546,9 +711,9 @@ export default function RedditProfilePageMock() {
 
                   <div className="vpAchievementsCount">
                     4 unlocked 
-                    <div className="vpViewAll">
+                    <a href="#" className="vpViewAll">
                       <button className="vpSectionBtn">View All</button>
-                    </div>
+                    </a>
                   </div>
                 </div>
 
