@@ -5,7 +5,7 @@ let isRedisConnected = false;
 
 const connectRedis = async () => {
   try {
-    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+    const redisUrl = process.env.REDIS_URL ;
     
     redisClient = redis.createClient({
       url: redisUrl,
