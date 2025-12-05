@@ -1,0 +1,287 @@
+/* Title */
+.login-title {
+  font-size: 1.5rem; /* text-24 */
+  line-height: 1.75rem;
+  font-weight: 700; /* bold */
+  margin: 1em 0 0.5em;
+  text-align: center;
+  color: var(--color-a-default);
+}
+
+/* Paragraph */
+.login-paragraph {
+  display: inline; /* so it can be inline with links */
+  margin-bottom: 1rem;
+  font-size: 0.875rem; /* text-14 */
+  line-height: 1.25rem;
+  color: var(--color-a-default);
+}
+
+/* Link */
+.login-link {
+  display: inline;
+  color: #1e90ff; /* لبني */
+  text-decoration: none;
+  font-size: 0.875rem; /* نفس حجم الفقرة */
+  line-height: 1.25rem;
+}
+
+.login-link-text {
+  display: inline;
+  margin: 0; /* إزالة الـ margin الافتراضي */
+}
+
+.login-link:hover {
+  color: #1e90ff; /* نفس اللبني */
+  text-decoration: underline;
+}
+
+/* Utilities */
+.no-underline {
+  text-decoration: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.my-xs {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Styles for the "Continue with ..." buttons*/
+/* الزرار الخارجي */
+.continue-with-container-rounded {
+  width: 100%; /* كامل العرض */
+  max-width: 400px; /* أقصى عرض */
+  height: 48px;
+  border-radius: 9999px; /* Fully rounded */
+  border: 1px solid rgb(218, 220, 224);
+  background-color: rgb(255, 255, 255);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  margin-bottom: 12px; /* مسافة بين الأزرار */
+  box-sizing: border-box;
+}
+
+/* Hover effect */
+.continue-with-container-rounded:hover {
+  background-color: rgb(245, 245, 245);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* المحتوى الداخلي */
+.continue-with-container-inner {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+  position: relative;
+}
+
+/* أيقونة على اليسار */
+.continue-with-icon {
+  position: absolute;
+  left: 16px; /* مسافة من اليسار */
+  display: flex;
+  align-items: center;
+}
+
+/* صورة الأيقونة */
+.continue-with-icon-handler {
+  height: 24px;
+  width: 24px;
+}
+
+/* النص */
+.continue-with-text {
+  color: rgb(19, 19, 19);
+  font-size: 0.95rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  text-align: center;
+}
+/* نهاية ملف CSS الخاص بزر "Continue with ..." */
+
+/* ============================= */
+/* OR Divider Styles             */
+/* ============================= */
+.OR {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* مسافة بين النص والخطوط */
+  margin: 1rem 0; /* مسافة فوق وتحت */
+}
+
+.OR .line {
+  flex: 1; /* الخطوط تمتد على كامل المساحة المتاحة */
+  border: none;
+  height: 1px;
+  background-color: #ccc; /* لون الخط */
+}
+
+.OR .or-text {
+  font-size: 0.875rem; /* نفس حجم الفقرة */
+  color: #999; /* لون النص */
+  white-space: nowrap; /* منع الكسر */
+}
+
+/* ============================= */
+/* Input Text Styles            */
+.input-container {
+  position: relative;
+  width: 300px;
+  background: #eef2f5; /* اللون اللي جوه */
+  border-radius: 12px;
+  border: 2px solid transparent; /* بدون إطار في الطبيعي */
+  transition: 0.2s ease;
+  margin-bottom: 20px; /* مسافة تحت كل input */
+}
+
+/* لما يعمل Focus → يبان الإطار الأزرق */
+.input-container.focused {
+  border-color: #0a66ff;
+}
+
+/* الـ input */
+.input-field {
+  width: 100%;
+  padding: 18px 14px 6px;
+  font-size: 16px;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+/* الـ label داخل الصندوق */
+.input-label {
+  position: absolute;
+  left: 14px;
+  top: 12px; /* نازلة لتحت شوية في الطبيعي */
+  font-size: 16px; /* أكبر من العادي */
+  color: #6b7280; /* رمادي جميل */
+  pointer-events: none;
+  transition: 0.2s ease;
+}
+
+/* لما المستخدم يكتب أو يعمل focus → label تطلع فوق */
+.input-container.focused .input-label,
+.input-container.filled .input-label {
+  top: -6px;
+  left: 10px;
+  font-size: 12px;
+  background: #eef2f5;
+  padding: 0 4px;
+  color: #0a66ff;
+}
+
+/* ============================= */
+/* submit Button Styles          */
+.login-submit {
+  width: 300px; /* نفس عرض input */
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* النص دايماً أبيض */
+.submit-text {
+  color: white;
+  font-weight: 600;
+}
+
+/* زرار غير جاهز */
+.login-submit.disabled {
+  background: #bfc4c9; /* رمادي فاتح */
+  cursor: not-allowed;
+}
+
+/* زرار جاهز (inputs مليانة) */
+.login-submit.active {
+  background: #ff4500; /* البرتقالي بتاع Reddit */
+}
+
+/* buttons*/
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+
+  width: 28px;
+  height: 28px;
+
+  border-radius: 50%;
+  border: 1px solid #d0d0d0; /* رصاصي فاتح */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: white;
+  color: #555; /* رصاصي */
+  font-size: 18px;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.close-btn:hover {
+  background: #f0f0f0; /* أغمق شوية */
+  border-color: #b5b5b5;
+}
+
+.close-btn:active {
+  transform: scale(0.9);
+}
+
+.back-btn {
+  position: absolute;
+  top: 8px;
+  right: 48px; /* علشان يكون قبل زرار الـ X */
+
+  width: 28px;
+  height: 28px;
+
+  border-radius: 50%;
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: transparent;
+  color: #555; /* رصاصي بسيط */
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.2s;
+
+  /* في الطبيعي مش ظاهر كدائرة */
+}
+
+.back-btn:hover {
+  background: #f0f0f0; /* نفس لون هوفر زرار الخروج */
+  border: 1px solid #d0d0d0;
+}
+
+.back-btn:active {
+  transform: scale(0.9);
+}
+
+/* ============================= */
+/* End of Login Components Styles  */

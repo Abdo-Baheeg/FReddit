@@ -1,0 +1,162 @@
+/* ==================== TOP BAR ==================== */
+.vpNewTopBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 1003;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.vpTopBarContainer {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.vpLogoNew {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.vpLogoIcon {
+  width: 32px;
+  height: 32px;
+}
+
+.vpLogoTextNew {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ff4500;
+}
+
+.vpSearchContainer {
+  flex: 1;
+  max-width: 720px;
+  margin: 0 auto;
+   background: #f3f4f6;
+   border-radius: 25px; 
+}
+
+.vpSearchWrapper {
+  position: relative;
+}
+
+.vpSearchIcon {
+  position: absolute;
+  
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
+  pointer-events: none;
+  
+}
+.vpSearchContainer * {
+  background: transparent !important;
+}
+
+.vpSearchInput {
+  width: 100%;
+  padding: 10px 16px 10px 44px;
+  background: #f3f4f6;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 14px;
+  transition: all 0.2s;
+  
+}
+
+.vpSearchInput:focus {
+  outline: none;
+  background: white;
+  border-color: #ff4500;
+  box-shadow: 0 0 0 4px rgba(255,69,0,0.15);
+  
+}
+
+.vpRightIcons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vpIconBtn {
+  position: relative;
+  padding: 8px;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+
+.vpIconBtn:hover {
+  background: #f3f4f6;
+}
+
+.vpAdLabel {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #dbe4de;
+  color: white;
+  font-size: 8px;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.vpCreateBtnNew {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fdfcfc;
+  color: rgb(3, 1, 1);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+
+.vpCreateBtnNew:hover {
+  background: #020201;
+}
+
+.vpUserAvatarNew {
+  position: relative;
+  cursor: pointer;
+}
+
+.vpAvatarImg {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2.5px solid #13100f;
+  object-fit: cover;
+}
+
+.vpOnlineIndicator {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 14px;
+  height: 14px;
+  background: #10b981;
+  border: 3px solid white;
+  border-radius: 50%;
+}

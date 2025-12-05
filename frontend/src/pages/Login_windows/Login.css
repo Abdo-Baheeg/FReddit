@@ -1,0 +1,166 @@
+/* ========== Overlay Background ========== */
+.login-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(28, 28, 28, 0.6); /* زي Reddit بالظبط */
+  z-index: 2000;
+}
+
+/* علشان تمنع الكليك من يقفل مجرد بالداخل */
+.login-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+  width: 100%;
+  height: 100%;
+}
+
+/* ========== WINDOW ========== */
+.login-notclose {
+  width: 440px; /* نفس عرض Reddit */
+  background: #ffffff;
+  border-radius: 16px; /* نفس radius Reddit */
+  padding: 32px 28px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.12);
+  position: relative;
+  animation: fadeInScale 0.18s ease-out;
+  font-family: Arial, sans-serif;
+}
+
+/* ========== Close Button ========== */
+.my-window-close-button {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+}
+
+/* ========== Title ========== */
+.logintile {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1b;
+  margin-bottom: 18px;
+}
+
+/* ========== Paragraphs (User Agreement + Privacy) ========== */
+.paragraphs {
+  text-align: center;
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 22px;
+  line-height: 1.35;
+}
+
+/* الروابط */
+.paragraphs a,
+.forgot\? a {
+  color: #0079d3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.paragraphs a:hover,
+.forgot\? a:hover {
+  text-decoration: underline;
+}
+
+/* ========== Continue With Buttons ========== */
+.continues {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.continues button,
+.continue-button {
+  width: 100%;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid #e1e1e1;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #1a1a1b;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.continues button:hover {
+  background: #f8f8f8;
+}
+
+/* ========== OR Divider ========== */
+.OR {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 18px 0;
+}
+
+/* ========== Inputs ========== */
+.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.inputs input {
+  width: 100%;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #d0d7de;
+  padding: 0 14px;
+  font-size: 14px;
+  transition: border 0.2s;
+}
+
+.inputs input:focus {
+  border-color: #0079d3;
+  outline: none;
+}
+
+/* ========== Forgot password + New to Reddit ========== */
+.forgot\? {
+  text-align: left;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #555;
+}
+
+/* ========== Submit button ========== */
+.submits {
+  margin-top: 16px;
+}
+
+.submits button {
+  width: 100%;
+  height: 42px;
+  border: none;
+  border-radius: 10px;
+  background: #ff4500;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+/* ========== Animation ========== */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

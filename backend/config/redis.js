@@ -6,7 +6,7 @@ let isRedisConnected = false;
 const connectRedis = async () => {
   try {
     // Railway Redis uses REDIS_PRIVATE_URL or REDIS_URL
-    const redisUrl = process.env.REDIS_PRIVATE_URL || process.env.REDIS_URL || 'redis://localhost:6379';
+    const redisUrl = process.env.REDIS_PRIVATE_URL || process.env.REDIS_URL ;
     
     console.log('Attempting to connect to Redis...');
     console.log('Redis URL configured:', redisUrl.replace(/:\/\/.*@/, '://***@')); // Hide credentials in logs
