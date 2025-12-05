@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import Menu from "./Menu/Menu.js";
-import Login from "../../pages/InHeader/Login/Login.js";
-import Signup from "../../pages/InHeader/Login/Signup.js";
-import Reset from "../../pages/InHeader/Login/Reset.js";
+import Login from "../../pages/Login_windows/Login.js";
 import "./Header.css";
 
 const Logo = () => {
@@ -30,8 +28,8 @@ const Icons = () => {
   const [activeModal, setActiveModal] = useState(null); // null, 'login', 'signup', 'reset'
 
   const handleShowLogin = () => setActiveModal("login");
-  const handleShowSignup = () => setActiveModal("signup");
-  const handleShowReset = () => setActiveModal("reset");
+  // const handleShowSignup = () => setActiveModal("signup");
+  // const handleShowReset = () => setActiveModal("reset");
   const handleCloseAll = () => setActiveModal(null);
 
   // Array of menu items
@@ -69,10 +67,10 @@ const Icons = () => {
       <Login
         isOpen={activeModal === "login"}
         onClose={handleCloseAll}
-        onShowSignup={handleShowSignup}
-        onShowReset={handleShowReset}
+        // onShowSignup={handleShowSignup}
+        // onShowReset={handleShowReset}
       />
-      <Signup
+      {/* <Signup
         isOpen={activeModal === "signup"}
         onClose={handleCloseAll}
         onShowLogin={handleShowLogin}
@@ -81,7 +79,7 @@ const Icons = () => {
         isOpen={activeModal === "reset"}
         onClose={handleCloseAll}
         onShowLogin={handleShowLogin}
-      />
+      /> */}
     </div>
   );
 };

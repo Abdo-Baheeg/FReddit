@@ -4,7 +4,7 @@ import "./App.css";
 import { SocketProvider } from "./context/SocketContext";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
+//import Login from "./pages/Login";
 import Register from "./pages/Register";
 import CreatePost from "./pages/CreatePost";
 import PostDetail from "./pages/PostDetail";
@@ -13,6 +13,8 @@ import RedditProfilePage from "./pages/viewprofile.js";
 import AI_Summary from "./components/AI-summary";
 import Setting from "./pages/setting";
 import Header from "./components/Header/Header.js";
+import Login from "./pages/Login_windows/Login.js";
+import Trylogin from "./pages/Login_windows/Try.js";
 
 function App() {
   return (
@@ -20,7 +22,10 @@ function App() {
       <Router>
         <div className="App">
           <Navbar />
-          
+
+          {/* This is just for trying login window */}
+          <Trylogin />
+
           <div className="container">
             <Routes>
               <Route path="/" element={<Home />} />
@@ -33,7 +38,7 @@ function App() {
               <Route path="/viewprofile" element={<RedditProfilePage />} />
               <Route path="/setting" element={<Setting />} />
               {/* Removed the duplicate /setting route that was pointing to non-existent settingsPage */}
-              
+
               <Route path="*" element={<h2>404: Page Not Found</h2>} />
             </Routes>
           </div>
