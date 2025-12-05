@@ -33,7 +33,7 @@ const Settings = () => {
     }
   };
 
-  // Render Account tab content (from image)
+  // Render Account tab content (updated to match the new image)
   const renderAccountContent = () => (
     <div className="settings-main">
       <div className="general-section">
@@ -46,7 +46,7 @@ const Settings = () => {
               <span className="label-main">Email address</span>
             </div>
             <div className="setting-control">
-              <span className="account-email">basmala.hanyym@gmail.com</span>
+              <span className="account-email">basmala.hanyy.m@gmail.com</span>
             </div>
           </div>
 
@@ -70,7 +70,83 @@ const Settings = () => {
                 <span className="toggle-label">
                   Use approximate location (based on IP)
                 </span>
+                <label className="toggle-switch">
+                  <input type="checkbox" id="location-toggle" defaultChecked />
+                  <span className="toggle-slider"></span>
+                </label>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 className="section-title" style={{marginTop: '40px'}}>Account authorization</h2>
+        
+        <div className="settings-table">
+          {/* Google */}
+          <div className="settings-row">
+            <div className="setting-label">
+              <span className="label-main">Google</span>
+              <span className="label-sub">
+                Connect to log in to Reddit with your Google account
+              </span>
+            </div>
+            <div className="setting-control">
+              <button className="connect-button disconnect">
+                Disconnect
+              </button>
+            </div>
+          </div>
+
+          {/* Apple */}
+          <div className="settings-row">
+            <div className="setting-label">
+              <span className="label-main">Apple</span>
+              <span className="label-sub">
+                Connect to log in to Reddit with your Apple account
+              </span>
+            </div>
+            <div className="setting-control">
+              <button className="connect-button">
+                Connect
+              </button>
+            </div>
+          </div>
+
+          {/* Two-factor authentication */}
+          <div className="settings-row">
+            <div className="setting-label">
+              <span className="label-main">Two-factor authentication</span>
+            </div>
+            <div className="setting-control">
+              <span className="privacy-arrow">&gt;</span>
+            </div>
+          </div>
+        </div>
+
+        <h2 className="section-title" style={{marginTop: '40px'}}>Reddit Premium</h2>
+        
+        <div className="settings-table">
+          {/* Get premium */}
+          <div className="settings-row">
+            <div className="setting-label">
+              <span className="label-main">Get premium</span>
+            </div>
+            <div className="setting-control">
+              <span className="privacy-arrow">&gt;</span>
+            </div>
+          </div>
+        </div>
+
+        <h2 className="section-title" style={{marginTop: '40px'}}>Advanced</h2>
+        
+        <div className="settings-table">
+          {/* Delete account */}
+          <div className="settings-row">
+            <div className="setting-label">
+              <span className="label-main">Delete account</span>
+            </div>
+            <div className="setting-control">
+              <span className="privacy-arrow">&gt;</span>
             </div>
           </div>
         </div>
@@ -151,7 +227,7 @@ const Settings = () => {
     </div>
   );
 
-  // Render Privacy tab content (from the image you provided)
+  // Render Privacy tab content
   const renderPrivacyContent = () => (
     <div className="settings-main">
       <div className="general-section">
@@ -310,7 +386,7 @@ const Settings = () => {
     </div>
   );
 
-  // Render Preferences tab content (from the new image you provided)
+  // Render Preferences tab content
   const renderPreferencesContent = () => (
     <div className="settings-main">
       <div className="general-section">
@@ -443,7 +519,7 @@ const Settings = () => {
     </div>
   );
 
-  // Render Notifications tab content (from the new image you provided)
+  // Render Notifications tab content
   const renderNotificationsContent = () => (
     <div className="settings-main">
       <div className="general-section">
@@ -729,7 +805,7 @@ const Settings = () => {
     </div>
   );
 
-  // Render Email tab content (from the new image you provided)
+  // Render Email tab content
   const renderEmailContent = () => (
     <div className="settings-main">
       <div className="general-section">
@@ -815,7 +891,7 @@ const Settings = () => {
             </div>
           </div>
 
-          {/* Upvotes on your posts (note: image says "Uprotes" but assuming it's "Upvotes") */}
+          {/* Upvotes on your posts */}
           <div className="settings-row">
             <div className="setting-label">
               <span className="label-main">Upvotes on your posts</span>
