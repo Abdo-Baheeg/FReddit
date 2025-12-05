@@ -5,18 +5,23 @@ let isRedisConnected = false;
 
 const connectRedis = async () => {
   try {
-    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+    // Railway Redis uses REDIS_PRIVATE_URL or REDIS_URL
+    const redisUrl = process.env.REDIS_PRIVATE_URL || process.env.REDIS_URL ;
+    
+    console.log('Attempting to connect to Redis...');
+    console.log('Redis URL configured:', redisUrl.replace(/:\/\/.*@/, '://***@')); // Hide credentials in logs
     
     redisClient = redis.createClient({
       url: redisUrl,
       socket: {
         reconnectStrategy: (retries) => {
-          if (retries > 10) {
+          if (retries > 5) {
             console.log('Redis: Too many reconnection attempts, stopping...');
             return new Error('Too many retries');
           }
-          return retries * 500; // Exponential backoff
-        }
+          return retries * 1000; // Exponential backoff
+        },
+        connectTimeout: 10000 // 10 seconds timeout
       }
     });
 

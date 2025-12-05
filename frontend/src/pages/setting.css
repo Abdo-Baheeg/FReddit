@@ -39,40 +39,52 @@ body {
   color: #000;
 }
 
-/* Top Navigation Tabs */
-.settings-tabs {
+/* Settings Layout */
+.settings-content {
   display: flex;
-  border-bottom: 2px solid #e5e5e5;
-  margin-bottom: 40px;
-  padding-bottom: 0;
+  gap: 40px;
 }
 
-.tab-item {
-  padding: 15px 25px;
+/* Sidebar */
+.settings-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+}
+
+.settings-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.settings-tab {
+  padding: 12px 16px;
   font-size: 14px;
   font-weight: 500;
   color: #666;
+  background: none;
+  border: none;
+  text-align: left;
   cursor: pointer;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
+  border-radius: 4px;
   transition: all 0.2s;
 }
 
-.tab-item:hover {
+.settings-tab:hover {
+  background-color: #f5f5f5;
   color: #333;
 }
 
-.tab-item.active {
+.settings-tab.active {
+  background-color: #f0f0f0;
   color: #000;
   font-weight: 600;
-  border-bottom: 2px solid #000;
 }
 
-/* Main Content Layout */
-.settings-main {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 40px;
+/* Main Content */
+.settings-main-content {
+  flex: 1;
+  min-width: 0;
 }
 
 /* General Section */
@@ -206,43 +218,6 @@ input:checked + .toggle-slider:before {
   transform: translateX(24px);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .settings-container {
-    padding: 20px;
-  }
-  
-  .settings-row {
-    flex-direction: column;
-    gap: 15px;
-    align-items: flex-start;
-  }
-  
-  .setting-label {
-    width: 100%;
-    padding-right: 0;
-  }
-  
-  .settings-tabs {
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-  
-  .label-sub {
-    white-space: normal;
-  }
-  
-  .toggle-control {
-    justify-content: flex-start;
-    width: 100%;
-  }
-  
-  .setting-control {
-    justify-content: flex-start;
-    width: 100%;
-  }
-}
-
 /* Privacy tab specific styles */
 .privacy-option {
   display: flex;
@@ -312,4 +287,58 @@ input:checked + .toggle-slider:before {
 
 .connect-button.disconnect:hover {
   background-color: #fff0f0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 20px;
+  }
+  
+  .settings-content {
+    flex-direction: column;
+  }
+  
+  .settings-sidebar {
+    width: 100%;
+  }
+  
+  .settings-tabs {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .settings-tab {
+    white-space: nowrap;
+  }
+  
+  .settings-row {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .setting-label {
+    width: 100%;
+    padding-right: 0;
+  }
+  
+  .label-sub {
+    white-space: normal;
+  }
+  
+  .toggle-control {
+    justify-content: flex-start;
+    width: 100%;
+  }
+  
+  .setting-control {
+    justify-content: flex-start;
+    width: 100%;
+  }
+  
+  .notifications-toggle-group {
+    justify-content: flex-start;
+  }
 }

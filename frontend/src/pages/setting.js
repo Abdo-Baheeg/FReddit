@@ -1020,28 +1020,30 @@ const Settings = () => {
     </div>
   );
 
+  // Main component render
   return (
     <div className="settings-container">
-      {/* Header */}
       <div className="settings-header">
         <h1>Settings</h1>
       </div>
-
-      {/* Top Navigation Tabs */}
-      <div className="settings-tabs">
-        {tabs.map((tab) => (
-          <div
-            key={tab}
-            className={`tab-item ${activeTab === tab ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab}
+      <div className="settings-content">
+        <div className="settings-sidebar">
+          <div className="settings-tabs">
+            {tabs.map((tab) => (
+              <button
+                key={tab}
+                className={`settings-tab ${activeTab === tab ? 'active' : ''}`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
-        ))}
+        </div>
+        <div className="settings-main-content">
+          {renderMainContent()}
+        </div>
       </div>
-
-      {/* Main Content - Dynamically rendered based on active tab */}
-      {renderMainContent()}
     </div>
   );
 };
