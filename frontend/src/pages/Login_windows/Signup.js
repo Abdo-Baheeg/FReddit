@@ -4,16 +4,20 @@ import {
   Logintitle,
   Loginparagraph,
   Loginlink,
-  ContinueWith,
+  ContinueWithLink,
+  ContinueWithWindow,
   OR,
   InputText,
   Submit,
   CloseButton,
+  LoginMover,
 } from "./components.js";
+import Login from "./Login.js";
 
 const Signup = ({ setOpen }) => {
   const [username, setUsername] = useState("");
   const disabled = username.trim() === "";
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   return (
     <div className="login-container">
       <div className="login-overlay" onClick={() => setOpen(false)}>
@@ -36,15 +40,15 @@ const Signup = ({ setOpen }) => {
             <Loginparagraph text=" ." />
           </div>
           <div className="continues">
-            <ContinueWith
+            <ContinueWithLink
               text="Continue with Phone Number"
               icon="/icons/login/phonenumber.svg"
             />
-            <ContinueWith
+            <ContinueWithLink
               text="Continue with Google"
               icon="/icons/login/google.svg"
             />
-            <ContinueWith
+            <ContinueWithLink
               text="Continue with Apple"
               icon="/icons/login/apple.svg"
             />
@@ -65,7 +69,10 @@ const Signup = ({ setOpen }) => {
 
           <div className="forgot?">
             <Loginparagraph text="Already a reddittor? " />
+            <LoginMover data="Log In" onOpen={() => setOpen(false)} />
+            {isLoginOpen && <Login setOpen={setIsLoginOpen} />}
           </div>
+
           <div className="submits">
             <Submit text="Continue" disabled={disabled} />
           </div>

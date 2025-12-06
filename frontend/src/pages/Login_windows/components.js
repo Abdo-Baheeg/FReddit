@@ -36,7 +36,7 @@ const LoginMover = ({ data, onOpen }) => {
   );
 };
 
-const ContinueWith = ({ text, icon, link }) => {
+const ContinueWithLink = ({ text, icon, link }) => {
   return (
     <div className="continue-with-container-rounded">
       <a href={link} className="continue-with-container-inner">
@@ -48,6 +48,31 @@ const ContinueWith = ({ text, icon, link }) => {
         </div>
       </a>
     </div>
+  );
+};
+
+const ContinueWithWindow = ({ text, icon, onOpen }) => {
+  return (
+    <button className="continue-with-container-rounded" onClick={onOpen}>
+      <div
+        className="continue-with-container-inner"
+        style={{
+          background: "none",
+          border: "none",
+          padding: 0,
+          margin: 0,
+          cursor: "pointer",
+          font: "inherit",
+        }}
+      >
+        <div className="continue-with-icon">
+          <img src={icon} alt="icon" className="continue-with-icon-handler" />
+        </div>
+        <div className="continue-with-text">
+          <span>{text}</span>
+        </div>
+      </div>
+    </button>
   );
 };
 
@@ -89,14 +114,15 @@ const RequiredAsterisk = () => <span style={{ color: "red" }}> *</span>;
 //   );
 // };
 
-const InputText = ({ label, type = "text", required, value, onChange }) => {
+const InputText = ({ label, type = "text", required, onChange }) => {
+  const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
   return (
     <div className={`input-container`}>
       <input
         type={type}
         value={value}
-        onChange={onChange}
+        onChange={onChange && ((e) => setValue(e.target.value))}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         className="input-field"
@@ -128,12 +154,9 @@ const CloseButton = ({ onClose }) => {
   );
 };
 
-const BackButton = ({ target }) => {
+const BackButton = ({ target, onClose }) => {
   return (
-    <button
-      className="back-btn"
-      onClick={() => (window.location.href = target)}
-    >
+    <button className="back-btn" onClick={onClose}>
       ←
     </button>
   );
@@ -143,7 +166,8 @@ export {
   Logintitle,
   Loginparagraph,
   Loginlink,
-  ContinueWith,
+  ContinueWithLink,
+  ContinueWithWindow,
   OR,
   InputText,
   Submit,

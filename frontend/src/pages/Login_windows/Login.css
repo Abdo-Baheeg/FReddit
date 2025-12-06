@@ -21,7 +21,8 @@
 
 /* ========== WINDOW ========== */
 .login-notclose {
-  width: 440px; /* نفس عرض Reddit */
+  width: 480px; /* نفس عرض Reddit */
+  height: 780px;
   background: #ffffff;
   border-radius: 16px; /* نفس radius Reddit */
   padding: 32px 28px;
