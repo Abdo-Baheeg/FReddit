@@ -120,6 +120,14 @@ export const communityApi = {
     return response.data;
   },
 
+  // Search communities
+  searchCommunities: async (query, page = 1, limit = 20) => {
+    const response = await axios.get(`${API_URL}/api/communities/search`, {
+      params: { q: query, page, limit }
+    });
+    return response.data;
+  },
+
   // Get community by ID
   getCommunityById: async (communityId) => {
     const response = await axios.get(`${API_URL}/api/communities/${communityId}`);

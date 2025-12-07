@@ -1,0 +1,757 @@
+{
+  "info": {
+    "name": "FReddit Feed API",
+    "_postman_id": "feed-api-collection",
+    "description": "API collection for FReddit feed endpoints including trending, home, and suggested feeds",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5050",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Feed",
+      "item": [
+        {
+          "name": "Get Trending Posts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has posts array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('posts');",
+                  "    pm.expect(jsonData.posts).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Response has pagination info\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('currentPage');",
+                  "    pm.expect(jsonData).to.have.property('totalPages');",
+                  "    pm.expect(jsonData).to.have.property('totalPosts');",
+                  "    pm.expect(jsonData).to.have.property('hasMore');",
+                  "});",
+                  "",
+                  "pm.test(\"Posts have required fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.posts.length > 0) {",
+                  "        var post = jsonData.posts[0];",
+                  "        pm.expect(post).to.have.property('_id');",
+                  "        pm.expect(post).to.have.property('title');",
+                  "        pm.expect(post).to.have.property('author');",
+                  "        pm.expect(post).to.have.property('community');",
+                  "        pm.expect(post).to.have.property('upvotes');",
+                  "        pm.expect(post).to.have.property('downvotes');",
+                  "        pm.expect(post).to.have.property('commentCount');",
+                  "        pm.expect(post).to.have.property('createdAt');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/feed/trending?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "feed", "trending"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Items per page (default: 20, max: 100)"
+                }
+              ]
+            },
+            "description": "Get trending posts based on velocity algorithm (public endpoint, no authentication required)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trending Posts - Page 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Current page is 2\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.currentPage).to.equal(2);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/feed/trending?page=2&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "feed", "trending"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get second page of trending posts with custom limit"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trending Posts - Invalid Params",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message present\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('error');",
+                  "    pm.expect(jsonData.error).to.include('Invalid pagination parameters');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/feed/trending?page=0&limit=200",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "feed", "trending"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "Invalid: page must be >= 1"
+                },
+                {
+                  "key": "limit",
+                  "value": "200",
+                  "description": "Invalid: limit must be <= 100"
+                }
+              ]
+            },
+            "description": "Test validation with invalid pagination parameters"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Home Feed",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has posts array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('posts');",
+                  "    pm.expect(jsonData.posts).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Response has pagination info\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('currentPage');",
+                  "    pm.expect(jsonData).to.have.property('totalPages');",
+                  "    pm.expect(jsonData).to.have.property('totalPosts');",
+                  "    pm.expect(jsonData).to.have.property('hasMore');",
+                  "});",
+                  "",
+                  "pm.test(\"Posts are from joined communities\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.posts.length > 0) {",
+                  "        var post = jsonData.posts[0];",
+                  "        pm.expect(post).to.have.property('community');",
+                  "        pm.expect(post.community).to.have.property('_id');",
+                  "        pm.expect(post.community).to.have.property('name');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/feed/home?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "feed", "home"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Items per page (default: 20, max: 100)"
+                }
+              ]
+            },
+            "description": "Get personalized home feed with posts from joined communities (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Home Feed - Unauthorized",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message present\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('error');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/feed/home?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "feed", "home"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Test home feed without authentication token"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Suggested Feed",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has posts array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('posts');",
+                  "    pm.expect(jsonData.posts).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Response has pagination info\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('currentPage');",
+                  "    pm.expect(jsonData).to.have.property('totalPages');",
+                  "    pm.expect(jsonData).to.have.property('totalPosts');",
+                  "    pm.expect(jsonData).to.have.property('hasMore');",
+                  "});",
+                  "",
+                  "pm.test(\"Posts are from non-joined communities\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.posts.length > 0) {",
+                  "        var post = jsonData.posts[0];",
+                  "        pm.expect(post).to.have.property('community');",
+                  "        pm.expect(post.community).to.have.property('_id');",
+                  "        pm.expect(post.community).to.have.property('name');",
+                  "        pm.expect(post.community).to.have.property('memberCount');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/feed/suggested?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "feed", "suggested"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Items per page (default: 20, max: 100)"
+                }
+              ]
+            },
+            "description": "Get suggested posts from communities the user hasn't joined yet (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Suggested Feed - Unauthorized",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message present\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('error');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/feed/suggested?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "feed", "suggested"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Test suggested feed without authentication token"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Home Feed - Custom Pagination",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Correct page and limit\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.currentPage).to.equal(2);",
+                  "    pm.expect(jsonData.posts.length).to.be.at.most(15);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/feed/home?page=2&limit=15",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "feed", "home"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2"
+                },
+                {
+                  "key": "limit",
+                  "value": "15"
+                }
+              ]
+            },
+            "description": "Test home feed with custom pagination parameters"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Suggested Feed - Custom Pagination",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Correct page and limit\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.currentPage).to.equal(3);",
+                  "    pm.expect(jsonData.posts.length).to.be.at.most(10);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/feed/suggested?page=3&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "feed", "suggested"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "3"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Test suggested feed with custom pagination parameters"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth Setup",
+      "item": [
+        {
+          "name": "Login and Save Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Token received\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('token');",
+                  "    pm.collectionVariables.set(\"authToken\", jsonData.token);",
+                  "    console.log(\"Auth token saved to collection variable\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "login"]
+            },
+            "description": "Login and automatically save the auth token to collection variable for use in authenticated requests"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Community Search",
+      "item": [
+        {
+          "name": "Search Communities",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has communities array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('communities');",
+                  "    pm.expect(jsonData.communities).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Response has pagination info\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('pagination');",
+                  "    pm.expect(jsonData.pagination).to.have.property('currentPage');",
+                  "    pm.expect(jsonData.pagination).to.have.property('totalPages');",
+                  "    pm.expect(jsonData.pagination).to.have.property('totalResults');",
+                  "});",
+                  "",
+                  "pm.test(\"Communities have required fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.communities.length > 0) {",
+                  "        var community = jsonData.communities[0];",
+                  "        pm.expect(community).to.have.property('_id');",
+                  "        pm.expect(community).to.have.property('name');",
+                  "        pm.expect(community).to.have.property('description');",
+                  "        pm.expect(community).to.have.property('memberCount');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/communities/search?q=programming&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "communities", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "programming",
+                  "description": "Search query (required)"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page (default: 20)"
+                }
+              ]
+            },
+            "description": "Search communities by name or description"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Communities - No Query",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message present\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData.message).to.include('Search query is required');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/communities/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "communities", "search"]
+            },
+            "description": "Test search without query parameter"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Communities - Page 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Current page is 2\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.pagination.currentPage).to.equal(2);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/communities/search?q=dev&page=2&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "communities", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "dev"
+                },
+                {
+                  "key": "page",
+                  "value": "2"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Test pagination on search results"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
