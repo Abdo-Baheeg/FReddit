@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import { SocketProvider } from "./context/SocketContext";
@@ -12,6 +12,7 @@ import RedditProfilePage from "./pages/viewprofile.js";
 import Setting from "./pages/setting";
 import Header from "./components/Header/Header.js";
 import Sidebar from "./components/Sidebar";
+import Trylogin from "./pages/Login_windows/Try.js";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <div className="App">
           <Header />
           <Sidebar />
+          <Trylogin />
 
           <div className="main-content">
             <Routes>

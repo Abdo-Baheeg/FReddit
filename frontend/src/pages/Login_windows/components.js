@@ -54,17 +54,7 @@ const ContinueWithLink = ({ text, icon, link }) => {
 const ContinueWithWindow = ({ text, icon, onOpen }) => {
   return (
     <button className="continue-with-container-rounded" onClick={onOpen}>
-      <div
-        className="continue-with-container-inner"
-        style={{
-          background: "none",
-          border: "none",
-          padding: 0,
-          margin: 0,
-          cursor: "pointer",
-          font: "inherit",
-        }}
-      >
+      <div className="continue-with-container-inner">
         <div className="continue-with-icon">
           <img src={icon} alt="icon" className="continue-with-icon-handler" />
         </div>
@@ -88,44 +78,40 @@ const OR = () => {
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}> *</span>;
 
-// const InputText = ({ label, type = "text", required }) => {
-//   const [value, setValue] = useState("");
-//   const [focused, setFocused] = useState(false);
-
-//   return (
-//     <div
-//       className={`input-container ${focused ? "focused" : ""} ${
-//         value ? "filled" : ""
-//       }`}
-//     >
-//       <input
-//         type={type}
-//         value={value}
-//         onChange={(e) => setValue(e.target.value)}
-//         onFocus={() => setFocused(true)}
-//         onBlur={() => setFocused(false)}
-//         className="input-field"
-//       />
-
-//       <label className="input-label">
-//         {label} {required && <RequiredAsterisk />}
-//       </label>
-//     </div>
-//   );
-// };
-
 const InputText = ({ label, type = "text", required, onChange }) => {
   const [value, setValue] = useState("");
-  const [focused, setFocused] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    if (value === "") {
+      setIsFocused(false);
+    } else {
+      // لو فيه value → label يفضل فوق
+      // لكن الإطار الأزرق هيختفي من CSS
+      setIsFocused(false);
+    }
+  };
+
   return (
-    <div className={`input-container`}>
+    <div
+      className={`input-container ${value !== "" ? "filled" : ""} ${
+        isFocused ? "focused" : ""
+      }`}
+    >
       <input
         type={type}
         value={value}
-        onChange={onChange && ((e) => setValue(e.target.value))}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        className="input-field"
+        onChange={(e) => {
+          setValue(e.target.value);
+          onChange && onChange(e);
+        }}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        className={`input-field ${isFocused ? "input-focused" : ""}`}
       />
 
       <label className="input-label">
@@ -154,7 +140,7 @@ const CloseButton = ({ onClose }) => {
   );
 };
 
-const BackButton = ({ target, onClose }) => {
+const BackButton = ({ onClose }) => {
   return (
     <button className="back-btn" onClick={onClose}>
       ←

@@ -62,13 +62,45 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 16px;
+  padding: 0 px;
   font-family: var(--font-sans);
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
-  margin-bottom: 12px; /* مسافة بين الأزرار */
+  margin-bottom: 10px; /* مسافة بين الأزرار */
   box-sizing: border-box;
+}
+.input-container {
+  position: relative;
+  width: 400px;
+  height: 56px;
+  background: #eef2f5f6; /* اللون اللي جوه */
+  border-radius: 12px;
+  border: 2px solid transparent; /* بدون إطار في الطبيعي */
+  transition: 0.2s ease;
+  margin-bottom: 10px; /* مسافة تحت كل input */
+  border-radius: 100px; /* Fully rounded */
+}
+
+/* لما يعمل Focus → يبان الإطار الأزرق */
+.input-field.input-focused {
+  border: 2px solid #5b9df9; /* الأزرق */
+  box-shadow: 0 0 4px rgba(91, 157, 249, 0.5);
+}
+
+/* الـ input */
+.input-field {
+  width: 100%;
+  padding: 18px 14px 6px;
+  font-size: 16px;
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 400px;
+  height: 56px;
+  border: 2px solid #d3d3d3;
+  outline: none;
+  transition: 0.2s;
 }
 
 /* Hover effect */
@@ -137,30 +169,6 @@
 
 /* ============================= */
 /* Input Text Styles            */
-.input-container {
-  position: relative;
-  width: 300px;
-  background: #eef2f5; /* اللون اللي جوه */
-  border-radius: 12px;
-  border: 2px solid transparent; /* بدون إطار في الطبيعي */
-  transition: 0.2s ease;
-  margin-bottom: 20px; /* مسافة تحت كل input */
-}
-
-/* لما يعمل Focus → يبان الإطار الأزرق */
-.input-container.focused {
-  border-color: #0a66ff;
-}
-
-/* الـ input */
-.input-field {
-  width: 100%;
-  padding: 18px 14px 6px;
-  font-size: 16px;
-  border: none;
-  outline: none;
-  background: transparent;
-}
 
 /* الـ label داخل الصندوق */
 .input-label {
@@ -200,20 +208,21 @@
 }
 
 /* النص دايماً أبيض */
-.submit-text {
+.submit-text.disabled {
   color: white;
   font-weight: 600;
 }
 
 /* زرار غير جاهز */
 .login-submit.disabled {
-  background: #bfc4c9; /* رمادي فاتح */
+  background: rgb(230, 232, 235); /* رمادي فاتح */
   cursor: not-allowed;
 }
 
 /* زرار جاهز (inputs مليانة) */
 .login-submit.active {
   background: #ff4500; /* البرتقالي بتاع Reddit */
+  color: white;
 }
 
 /* buttons*/
@@ -226,13 +235,13 @@
   height: 28px;
 
   border-radius: 50%;
-  border: 1px solid #d0d0d0; /* رصاصي فاتح */
+  border: 1px solid transparent; /* رصاصي فاتح */
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background: white;
+  background: #f0f0f0;
   color: #555; /* رصاصي */
   font-size: 18px;
   font-weight: bold;
@@ -266,8 +275,10 @@
   justify-content: center;
 
   background: transparent;
-  color: #555; /* رصاصي بسيط */
+  color: black; /* رصاصي بسيط */
   font-size: 18px;
+  font-weight: bold;
+
   cursor: pointer;
   transition: 0.2s;
 

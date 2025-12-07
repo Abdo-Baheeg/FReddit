@@ -38,6 +38,11 @@
   top: 14px;
   right: 14px;
 }
+.my-window-back-button {
+  position: absolute;
+  top: 14px;
+  left: 95px;
+}
 
 /* ========== Title ========== */
 .logintile {
@@ -116,17 +121,27 @@
 
 .inputs input {
   width: 100%;
-  height: 42px;
+  height: 56px;
   border-radius: 10px;
-  border: 1px solid #d0d7de;
+  border: 1px solid transparent;
   padding: 0 14px;
   font-size: 14px;
   transition: border 0.2s;
+  border-radius: 100px;
 }
 
-.inputs input:focus {
-  border-color: #0079d3;
-  outline: none;
+/* لو عليه فوكس → الليبل يطلع فوق */
+.input-container.focused .input-label {
+  top: -4px;
+  font-size: 10px;
+  color: #5b9df9;
+}
+
+/* لو فيه كتابة → الليبل يفضل فوق حتى لو مش فوكس */
+.input-container.filled .input-label {
+  top: -8px;
+  font-size: 13px;
+  color: #555;
 }
 
 /* ========== Forgot password + New to Reddit ========== */
@@ -139,20 +154,26 @@
 
 /* ========== Submit button ========== */
 .submits {
-  margin-top: 16px;
+  position: absolute;
+  bottom: 32px;
+  height: fit-content;
+  text-align: center;
 }
 
 .submits button {
-  width: 100%;
-  height: 42px;
-  border: none;
-  border-radius: 10px;
-  background: #ff4500;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
+  position: relative;
+  width: 400px; /* نفس عرض input اللي فوقه */
+  height: 56px; /* ارتفاع مشابه للـ input */
+  background: #eef2f5f6; /* نفس لون الـ input */
+  border-radius: 100px; /* Fully rounded */
+  border: 2px solid transparent; /* بدون إطار */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: 0.2s ease;
+  margin-top: 10px; /* مسافة فوقه أو تحته حسب الحاجة */
 }
 /* ========== Animation ========== */
 @keyframes fadeInScale {
