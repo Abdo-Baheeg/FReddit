@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import api from "../api"; 
+import "./createCommunity.css";
 
 export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
   const [name, setName] = useState("");
