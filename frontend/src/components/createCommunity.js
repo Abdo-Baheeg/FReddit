@@ -1,4 +1,3 @@
-// src/components/CreateCommunityModal.jsx
 import React, { useEffect, useState, useRef } from "react";
 import api from "../api"; 
 
@@ -20,7 +19,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
 
   useEffect(() => {
     if (!isOpen) resetAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   function resetAll() {
@@ -101,18 +99,12 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
     setStep((s) => Math.max(1, s - 1));
   };
 
-  /**
-   * Helper: build form payload.
-   * Prefer FormData when there are files (banner/icon).
-   * If no files, send JSON body (axios will set Content-Type application/json).
-   */
   function buildPayload() {
     const rules = rulesText
       .split(/\r?\n/)
       .map((r) => r.trim())
       .filter((r) => r.length > 0);
 
-    // If either file exists, use FormData
     if (bannerFile || iconFile) {
       const fd = new FormData();
       fd.append("name", name.trim());
@@ -125,7 +117,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
       return { body: fd, isFormData: true };
     }
 
-    // Otherwise, send JSON object (backend may also accept data URLs if you prefer)
     const json = {
       name: name.trim(),
       description: description.trim(),
@@ -140,7 +131,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
     e.preventDefault();
     setError(null);
 
-    // final required validation
     if (!validateStepOne()) {
       setStep(1);
       return;
@@ -150,7 +140,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
       return;
     }
 
-    // Require login if user context exists
     if (typeof user !== "undefined" && !user) {
       setError("You must be logged in to create a community.");
       return;
@@ -163,7 +152,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
 
       let res;
       if (isFormData) {
-        // When sending FormData, do not set Content-Type header manually; axios will set the multipart boundary.
         res = await api.post("/communities/create", body, {
           headers: { "Accept": "application/json" },
         });
@@ -171,10 +159,8 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
         res = await api.post("/communities/create", body);
       }
 
-      // backend may respond with created community in different shapes
       const created = res?.data?.community ?? res?.data ?? null;
 
-      // if backend doesn't return the created object, create a local representation
       const createdFallback =
         created ||
         ({
@@ -187,19 +173,16 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
             .map((r) => r.trim())
             .filter((r) => r.length > 0),
           ageVerified: Boolean(ageVerified),
-          // if server didn't store images, send local previews as fallback
           banner: bannerPreview || null,
           icon: iconPreview || null,
           createdAt: new Date().toISOString(),
         });
 
-      // call callback so parent page can update list
       onCreated && onCreated(createdFallback);
       onClose && onClose();
       resetAll();
     } catch (err) {
       console.error("Create community error:", err);
-      // prefer server-sent message
       const msg =
         err?.response?.data?.message ||
         err?.response?.data?.error ||
@@ -242,7 +225,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
           </div>
 
           <form onSubmit={handleSubmit}>
-            {/* Step 1: name, description */}
             {step === 1 && (
               <div>
                 <div className="form-group">
@@ -273,7 +255,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
               </div>
             )}
 
-            {/* Step 2: public/private and age */}
             {step === 2 && (
               <div>
                 <div className="form-group">
@@ -319,7 +300,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
               </div>
             )}
 
-            {/* Step 3: rules (optional) */}
             {step === 3 && (
               <div>
                 <div className="form-group">
@@ -340,7 +320,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
               </div>
             )}
 
-            {/* Step 4: images (optional) */}
             {step === 4 && (
               <div>
                 <div className="form-group">
