@@ -1,179 +1,293 @@
-/* Reddit-style Sidebar */
-
-.sidebar-toggle {
-  display: none;
+/* ==================== SIDEBAR COMPONENT ==================== */
+.sidebar-left {
   position: fixed;
-  top: 60px;
-  left: var(--spacing-md);
-  z-index: 99;
-  background: var(--reddit-card-bg);
-  border: 1px solid var(--reddit-border);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-sm);
-  font-size: 20px;
-  cursor: pointer;
-  box-shadow: var(--shadow-md);
-  transition: all 0.2s;
-}
-
-.sidebar-toggle:hover {
-  background: var(--hover-bg);
-}
-
-.reddit-sidebar {
-  position: fixed;
+  top: 48px; /* Below navbar */
   left: 0;
-  top: 48px;
-  width: 260px;
   height: calc(100vh - 48px);
-  background: var(--reddit-card-bg);
-  border-right: 1px solid var(--reddit-border);
+  background: white;
+  border-right: 1px solid #edeff1;
+  z-index: 900;
+  flex-shrink: 0;
   overflow-y: auto;
-  overflow-x: hidden;
-  padding: var(--spacing-md) 0;
-  z-index: 50;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, width 0.3s ease;
+  box-shadow: 1px 0 2px rgba(0, 0, 0, 0.05);
 }
 
-.reddit-sidebar::-webkit-scrollbar {
-  width: 8px;
+/* Open State */
+.sidebar-open {
+  transform: translateX(0);
+  width: 270px;
 }
 
-.reddit-sidebar::-webkit-scrollbar-thumb {
-  background: var(--reddit-border-dark);
+/* Closed State */
+.sidebar-closed {
+  transform: translateX(-100%);
+  width: 270px;
+}
+
+/* Sidebar Content */
+.sidebar-content {
+  padding: 16px;
+  width: 270px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Hamburger Button */
+.sidebar-hamburger-container {
+  position: fixed;
+  top: 60px; /* Below navbar */
+  left: 12px;
+  z-index: 1000;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: left 0.3s ease;
+}
+
+.sidebar-open ~ .sidebar-hamburger-container {
+  left: 282px; /* Move with sidebar */
+}
+
+.sidebar-hamburger-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid #d3d3d3;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #1c1c1c;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-hamburger-btn:hover {
+  background: #f6f7f8;
+  border-color: #878a8c;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-hamburger-icon {
+  width: 20px;
+  height: 20px;
+  color: #1c1c1c;
+}
+
+/* Sidebar Navigation */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #1c1c1c;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.sidebar-nav a:hover {
+  background: #f6f7f8;
+}
+
+.sidebar-active-link {
+  background: #f6f7f8 !important;
+  color: #000 !important;
+  font-weight: 600 !important;
+}
+
+.sidebar-beta-tag {
+  background: #ff4500;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
   border-radius: 4px;
+  margin-left: auto;
+}
+
+.sidebar-create-community {
+  color: #1c1c1c !important;
+  font-weight: 500 !important;
+}
+
+.sidebar-icon {
+  width: 20px;
+  height: 20px;
+  color: #1c1c1c;
+}
+
+/* Sidebar Divider */
+.sidebar-divider {
+  border: none;
+  border-top: 1px solid #edeff1;
+  margin: 16px 0;
 }
 
 /* Sidebar Sections */
 .sidebar-section {
-  padding: var(--spacing-xs) 0;
+  margin-top: 20px;
 }
 
-.sidebar-header {
-  padding: var(--spacing-sm) var(--spacing-lg);
+.sidebar-section-title {
   font-size: 10px;
   font-weight: 700;
-  color: var(--reddit-text-meta);
-  letter-spacing: 0.5px;
   text-transform: uppercase;
-  margin: 0;
+  color: #878a8c;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
 }
 
-.sidebar-divider {
-  height: 1px;
-  background: var(--reddit-border);
-  margin: var(--spacing-sm) 0;
-}
-
-/* Sidebar Items */
-.sidebar-item {
+/* Game Items */
+.sidebar-game-item {
   display: flex;
   align-items: center;
-  width: 100%;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background: none;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 4px;
+  background: transparent;
   border: none;
-  text-decoration: none;
-  color: var(--reddit-text-primary);
-  font-size: 14px;
-  font-weight: 500;
+  position: relative;
+  margin-bottom: 6px;
+  transition: background 0.2s;
   cursor: pointer;
-  transition: all 0.2s;
+  width: 100%;
   text-align: left;
-  gap: var(--spacing-md);
 }
 
-.sidebar-item:hover {
-  background: var(--hover-bg);
+.sidebar-game-item:hover {
+  background: rgba(0, 0, 0, 0.04);
 }
 
-.sidebar-item.active {
-  background: var(--active-bg);
-  color: var(--reddit-blue);
-  font-weight: 700;
-}
-
-.sidebar-item-primary {
-  color: var(--reddit-blue);
-  font-weight: 700;
-}
-
-.sidebar-item-primary:hover {
-  background: var(--active-bg);
-}
-
-.sidebar-item-danger {
-  color: #EA0027;
-}
-
-.sidebar-item-danger:hover {
-  background: #FFF0F0;
-}
-
-.sidebar-icon {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
+.sidebar-game-icon {
+  width: 32px;
+  height: 32px;
+  background: #edeff1;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 12px;
+  color: #1c1c1c;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1;
+  padding: 0;
   flex-shrink: 0;
+  font-family: Arial, sans-serif;
 }
 
-.sidebar-text {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.sidebar-game-name {
+  font-weight: 500;
+  font-size: 14px;
+  color: #1c1c1c;
+  line-height: 1.2;
 }
 
-/* Sidebar Footer */
-.sidebar-footer {
-  padding: var(--spacing-lg);
-  margin-top: auto;
-  border-top: 1px solid var(--reddit-border);
-}
-
-.sidebar-footer-text {
+.sidebar-game-players {
   font-size: 11px;
-  color: var(--reddit-text-meta);
-  margin: var(--spacing-xs) 0;
+  color: #878a8c;
+  margin-top: 2px;
 }
 
-/* Collapsed State */
-.reddit-sidebar.collapsed {
-  transform: translateX(-100%);
+.sidebar-new-game {
+  border: 1px solid #edeff1;
+  background: #f6f7f8;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.sidebar-new-game:hover {
+  background: #e8e9ea;
+}
+
+.sidebar-new-game .sidebar-game-icon {
+  background: linear-gradient(135deg, #ff4500, #ff6b35);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.sidebar-new-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #46d160;
+  color: white;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-  .sidebar-toggle {
-    display: block;
+@media (max-width: 768px) {
+  .sidebar-left {
+    top: 0;
+    height: 100vh;
+    z-index: 999;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
   }
 
-  .reddit-sidebar {
+  .sidebar-hamburger-container {
+    top: 12px;
+    left: 12px;
+    z-index: 1000;
+  }
+
+  .sidebar-open ~ .sidebar-hamburger-container {
+    left: 12px;
+  }
+
+  /* Overlay for mobile */
+  .sidebar-closed {
     transform: translateX(-100%);
-    box-shadow: var(--shadow-lg);
   }
 
-  .reddit-sidebar.collapsed {
+  .sidebar-open {
     transform: translateX(0);
   }
-}
 
-@media (max-width: 768px) {
-  .reddit-sidebar {
-    width: 240px;
+  .sidebar-open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
   }
 }
 
-/* Adjust main content when sidebar is visible */
-.app-with-sidebar {
-  margin-left: 260px;
+/* Hide scrollbar but keep functionality */
+.sidebar-content::-webkit-scrollbar {
+  width: 6px;
 }
 
-@media (max-width: 1024px) {
-  .app-with-sidebar {
-    margin-left: 0;
-  }
+.sidebar-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }

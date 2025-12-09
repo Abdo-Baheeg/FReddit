@@ -1,143 +1,180 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './Sidebar.css';
+import React, { useState, useEffect, useRef } from 'react';
+import './sideBar.css';
 
-const Sidebar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const navigate = useNavigate();
+export default function Sidebar() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const sidebarRef = useRef(null);
+  const hamburgerRef = useRef(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsLoggedIn(!!token);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsLoggedIn(false);
-    navigate('/login');
+  const toggleSidebar = () => {
+    setIsSidebarOpen(prev => !prev);
   };
+
+  // Close sidebar when clicking outside (mobile)
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (window.innerWidth <= 768) {
+        if (
+          isSidebarOpen &&
+          sidebarRef.current &&
+          !sidebarRef.current.contains(event.target) &&
+          hamburgerRef.current &&
+          !hamburgerRef.current.contains(event.target)
+        ) {
+          setIsSidebarOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSidebarOpen]);
+
+  // Auto-close on mobile when resizing
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768 && isSidebarOpen) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isSidebarOpen]);
 
   return (
     <>
-      {/* Sidebar Toggle Button for Mobile */}
-      <button 
-        className="sidebar-toggle"
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        aria-label="Toggle sidebar"
+      {/* Hamburger Button */}
+      <div className="sidebar-hamburger-container">
+        <button
+          ref={hamburgerRef}
+          onClick={toggleSidebar}
+          className="sidebar-hamburger-btn"
+          aria-label={isSidebarOpen ? "Close menu" : "Open menu"}
+        >
+          <svg className="sidebar-hamburger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Sidebar */}
+      <aside 
+        ref={sidebarRef}
+        className={`sidebar-left ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}
       >
-        ☰
-      </button>
+        <div className="sidebar-content">
+          {/* Navigation */}
+          <nav className="sidebar-nav">
+            <a href="/" className="sidebar-link">
+              <svg className="sidebar-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/>
+              </svg>
+              Home
+            </a>
+            <a href="/popular" className="sidebar-link sidebar-active-link">
+              <svg className="sidebar-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-2-5h4v-2H8v2zm-4-4h10v-2H4v2zm2-4h6V5H6v2z"/>
+              </svg>
+              Popular
+            </a>
+            <a href="/answers" className="sidebar-link">
+              <svg className="sidebar-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/>
+              </svg>
+              Answers <span className="sidebar-beta-tag">BETA</span>
+            </a>
+            <a href="/explore" className="sidebar-link">
+              <svg className="sidebar-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/>
+              </svg>
+              Explore
+            </a>
+            <a href="/all" className="sidebar-link">
+              <svg className="sidebar-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/>
+              </svg>
+              All
+            </a>
+            <a href="/create-community" className="sidebar-link sidebar-create-community">
+              <svg className="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 4v16m8-8H4"/>
+              </svg>
+              Start a community
+            </a>
+          </nav>
 
-      <aside className={`reddit-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
-        {/* Home Section */}
-        <div className="sidebar-section">
-          <Link to="/" className="sidebar-item">
-            <span className="sidebar-icon">🏠</span>
-            <span className="sidebar-text">Home</span>
-          </Link>
-          <Link to="/create-post" className="sidebar-item">
-            <span className="sidebar-icon">➕</span>
-            <span className="sidebar-text">Create Post</span>
-          </Link>
-        </div>
+          <hr className="sidebar-divider" />
 
-        <div className="sidebar-divider"></div>
-
-        {/* Features Section */}
-        <div className="sidebar-section">
-          <h3 className="sidebar-header">FEATURES</h3>
-          <Link to="/chat" className="sidebar-item">
-            <span className="sidebar-icon">💬</span>
-            <span className="sidebar-text">Messages</span>
-          </Link>
-          <button className="sidebar-item" onClick={() => alert('Search coming soon!')}>
-            <span className="sidebar-icon">🔍</span>
-            <span className="sidebar-text">Search</span>
-          </button>
-          <button className="sidebar-item" onClick={() => alert('Notifications coming soon!')}>
-            <span className="sidebar-icon">🔔</span>
-            <span className="sidebar-text">Notifications</span>
-          </button>
-        </div>
-
-        <div className="sidebar-divider"></div>
-
-        {/* Communities Section */}
-        <div className="sidebar-section">
-          <h3 className="sidebar-header">COMMUNITIES</h3>
-          <button className="sidebar-item" onClick={() => alert('Create Community coming soon!')}>
-            <span className="sidebar-icon">➕</span>
-            <span className="sidebar-text">Create Community</span>
-          </button>
-          <Link to="/?filter=popular" className="sidebar-item">
-            <span className="sidebar-icon">🔥</span>
-            <span className="sidebar-text">Popular</span>
-          </Link>
-          <Link to="/?filter=all" className="sidebar-item">
-            <span className="sidebar-icon">🌍</span>
-            <span className="sidebar-text">All</span>
-          </Link>
-        </div>
-
-        <div className="sidebar-divider"></div>
-
-        {/* Resources Section */}
-        <div className="sidebar-section">
-          <h3 className="sidebar-header">RESOURCES</h3>
-          <button className="sidebar-item" onClick={() => alert('About coming soon!')}>
-            <span className="sidebar-icon">ℹ️</span>
-            <span className="sidebar-text">About</span>
-          </button>
-          <button className="sidebar-item" onClick={() => alert('Help coming soon!')}>
-            <span className="sidebar-icon">❓</span>
-            <span className="sidebar-text">Help</span>
-          </button>
-          <Link to="/setting" className="sidebar-item">
-            <span className="sidebar-icon">⚙️</span>
-            <span className="sidebar-text">Settings</span>
-          </Link>
-        </div>
-
-        {/* User Section at Bottom */}
-        {isLoggedIn ? (
-          <>
-            <div className="sidebar-divider"></div>
-            <div className="sidebar-section">
-              <Link to="/viewprofile" className="sidebar-item">
-                <span className="sidebar-icon">👤</span>
-                <span className="sidebar-text">Profile</span>
-              </Link>
-              <button className="sidebar-item sidebar-item-danger" onClick={handleLogout}>
-                <span className="sidebar-icon">🚪</span>
-                <span className="sidebar-text">Logout</span>
-              </button>
+          {/* Games Section */}
+          <div className="sidebar-section">
+            <div className="sidebar-section-title">GAMES ON REDDIT</div>
+            <div className="sidebar-game-item sidebar-new-game">
+              <div className="sidebar-game-icon">Pocket Grids</div>
+              <div>
+                <div className="sidebar-game-name">Daily mini crosswords</div>
+                <div className="sidebar-game-players">80K monthly players</div>
+              </div>
+              <span className="sidebar-new-badge">NEW</span>
             </div>
-          </>
-        ) : (
-          <>
-            <div className="sidebar-divider"></div>
-            <div className="sidebar-section">
-              <Link to="/login" className="sidebar-item sidebar-item-primary">
-                <span className="sidebar-icon">🔐</span>
-                <span className="sidebar-text">Log In</span>
-              </Link>
-              <Link to="/register" className="sidebar-item">
-                <span className="sidebar-icon">📝</span>
-                <span className="sidebar-text">Sign Up</span>
-              </Link>
+            <div className="sidebar-game-item">
+              <div className="sidebar-game-icon">HC</div>
+              <div><div className="sidebar-game-name">Hot and Cold</div></div>
             </div>
-          </>
-        )}
+            <div className="sidebar-game-item">
+              <div className="sidebar-game-icon">FM</div>
+              <div><div className="sidebar-game-name">Farm Merge Valley</div></div>
+            </div>
+            <div className="sidebar-game-item">
+              <div className="sidebar-game-icon">NG</div>
+              <div><div className="sidebar-game-name">Ninigrams</div></div>
+            </div>
+            <div className="sidebar-game-item">
+              <div className="sidebar-game-icon">+</div>
+              <div><div className="sidebar-game-name">Discover More Games</div></div>
+            </div>
+          </div>
+          
+          <hr className="sidebar-divider" />
 
-        {/* Footer */}
-        <div className="sidebar-footer">
-          <p className="sidebar-footer-text">© 2025 FReddit, Inc.</p>
-          <p className="sidebar-footer-text">v1.0.0</p>
+          <div className="sidebar-section">
+            <div className="sidebar-section-title">CUSTOM FEEDS</div>
+            <a href="/custom-feeds" className="sidebar-link">
+              <svg className="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 4v16m8-8H4"/>
+              </svg>
+              Create Custom Feed
+            </a>
+          </div>
+
+          <hr className="sidebar-divider" />
+
+          <div className="sidebar-section">
+            <div className="sidebar-section-title">COMMUNITIES</div>
+            <a href="/manage-communities" className="sidebar-link">
+              <svg className="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              Manage Communities
+            </a>
+          </div>
+
+          {/* User Communities (if logged in) */}
+          <div className="sidebar-section">
+            <div className="sidebar-section-title">YOUR COMMUNITIES</div>
+            <a href="/your-communities" className="sidebar-link">
+              <svg className="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+              </svg>
+              Your Communities
+            </a>
+          </div>
         </div>
       </aside>
     </>
   );
-};
-
-export default Sidebar;
+}

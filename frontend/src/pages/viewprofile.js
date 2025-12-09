@@ -5,7 +5,6 @@ import './viewprofile.css';
 
 export default function RedditProfilePageMock() {
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Overview');
   const [activeView, setActiveView] = useState('top'); // 'top' or 'back'
   const [selectedTime, setSelectedTime] = useState('Today');
@@ -65,10 +64,6 @@ export default function RedditProfilePageMock() {
 
     fetchUserData();
   }, [navigate]);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(prev => !prev);
-  };
 
   const toggleFeedOptions = () => {
     setShowOptions(prev => ({
@@ -153,166 +148,13 @@ export default function RedditProfilePageMock() {
 
   return (
     <div className="vpBody">
-      
-      {/* Top Bar (Fixed) */}
-      <header className="vpNewTopBar">
-        <div className="vpTopBarContainer">
-          <div className="vpLogoNew">
-            <img
-              src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-              alt="Reddit"
-              className="vpLogoIcon"
-            />
-            <span className="vpLogoTextNew">reddit</span>
-          </div>
-
-          <div className="vpSearchContainer">
-            <div className="vpSearchWrapper">
-              <svg className="vpSearchIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input type="text" placeholder="Search Reddit" className="vpSearchInput" />
-            </div>
-          </div>
-
-          <div className="vpRightIcons">
-            <button className="vpIconBtn" aria-label="Advertise">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-9.75 14h-1.5v-7.5h1.5V17zm-.75-8.5a.75.75 0 110-1.5.75.75 0 010 1.5zm6.5 8.5h-1.5v-4.75c0-1.24-.56-1.95-1.58-1.95-.88 0-1.42.59-1.42 1.95V17h-1.5v-7.5h1.5v1.03c.2-.62.95-1.28 2.03-1.28 1.48 0 2.47 1.01 2.47 3.22V17z"/>
-              </svg>
-              <span className="vpAdLabel">AD</span>
-            </button>
-
-            <button className="vpIconBtn" aria-label="Chat">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2zm-2 12H6v-1h12v1zm0-3H6V9h12v2zm0-3H6V5h12v2z"/>
-              </svg>
-            </button>
-
-            <button className="vpCreateBtnNew">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 4v16m8-8H4" />
-              </svg>
-              Create
-            </button>
-
-            <button className="vpIconBtn" aria-label="Notifications">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-              </svg>
-            </button>
-
-            <div className="vpUserAvatarNew">
-              <img
-                src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                alt="User"
-                className="vpAvatarImg"
-              />
-              <div className="vpOnlineIndicator"></div>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    
       {/* Main Layout Container (Flexbox) */}
       <div className="vpLayoutContainer">
         
-        {/* Left Sidebar - Now part of the flow */}
-        <aside className={`vpLeftSidebar ${isSidebarOpen ? 'vpSidebarOpen' : 'vpSidebarClosed'}`}>
-          <div className="vpSidebarContent">
-            {/* Navigation */}
-            <nav className="vpSidebarNav">
-              <a href="#" className="vpSidebarLink">
-                <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/></svg>
-                Home
-              </a>
-              <a href="#" className="vpSidebarLink vpActiveLink">
-                <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-2-5h4v-2H8v2zm-4-4h10v-2H4v2zm2-4h6V5H6v2z"/></svg>
-                Popular
-              </a>
-              <a href="#" className="vpSidebarLink">
-                <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/></svg>
-                Answers <span className="vpBetaTag">BETA</span>
-              </a>
-              <a href="#" className="vpSidebarLink">
-                <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/></svg>
-                Explore
-              </a>
-              <a href="#" className="vpSidebarLink">
-                <svg className="vpSidebarIcon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 20a10 10 0 110-20 10 10 0 0110 20zm-5.5-8.5l4.5-4.5 4.5 4.5L16 10l-6-6-6 6 1.5 1.5z"/></svg>
-                All
-              </a>
-              <a href="#" className="vpSidebarLink vpCreateCommunity">
-                <svg className="vpSidebarIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 4v16m8-8H4"/></svg>
-                Start a community
-              </a>
-            </nav>
-
-            <hr className="vpSidebarDivider" />
-
-            {/* Games Section */}
-            <div className="vpSidebarSection">
-              <div className="vpSidebarSectionTitle">GAMES ON REDDIT</div>
-              <div className="vpGameItem vpNewGame">
-                <div className="vpGameIcon">Pocket Grids</div>
-                <div>
-                  <div className="vpGameName">Daily mini crosswords</div>
-                  <div className="vpGamePlayers">80K monthly players</div>
-                </div>
-                <span className="vpNewBadge">NEW</span>
-              </div>
-              <div className="vpGameItem">
-                <div className="vpGameIcon">HC</div>
-                <div><div className="vpGameName">Hot and Cold</div></div>
-              </div>
-              <div className="vpGameItem">
-                <div className="vpGameIcon">FM</div>
-                <div><div className="vpGameName">Farm Merge Valley</div></div>
-              </div>
-              <div className="vpGameItem">
-                <div className="vpGameIcon">NG</div>
-                <div><div className="vpGameName">Ninigrams</div></div>
-              </div>
-              <div className="vpGameItem">
-                <div className="vpGameIcon">+</div>
-                <div><div className="vpGameName">Discover More Games</div></div>
-              </div>
-            </div>
-            
-            <hr className="vpSidebarDivider" />
-
-            <div className="vpSidebarSection">
-              <div className="vpSidebarSectionTitle">CUSTOM FEEDS</div>
-              <a href="#" className="vpSidebarLink">
-                <svg className="vpSidebarIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 4v16m8-8H4"/></svg>
-                Create Custom Feed
-              </a>
-            </div>
-
-             <hr className="vpSidebarDivider" />
-
-            <div className="vpSidebarSection">
-              <div className="vpSidebarSectionTitle">COMMUNITIES</div>
-              <a href="#" className="vpSidebarLink">
-                <svg className="vpSidebarIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                Manage Communities
-              </a>
-            </div>
-          </div>
-        </aside>
-
         {/* Main Content Area - Shifts when sidebar opens */}
         <div className="vpPageContentWrapper">
           
-          {/* Hamburger Button - Inside content wrapper so it moves with content */}
-          <div className="vpHamburgerContainer">
-            <button onClick={toggleSidebar} className="vpHamburgerBtnNew" aria-label="Open menu">
-              <svg className="vpHamburgerIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
-
           <div className="vpPageContent">
             <main className="vpMain">
               <div className="vpBanner" />
@@ -350,7 +192,10 @@ export default function RedditProfilePageMock() {
                 {/* Show "Showing all content" section only for Overview, Posts, and Comments tabs */}
                 {(activeTab === 'Overview' || activeTab === 'Posts' || activeTab === 'Comments') && (
                   <div className="vpContentHeader">
-                    <div className="vpShowContent">
+                    <div 
+                      className="vpShowContent"
+                      onClick={() => window.location.href = '/setting'}
+                    >
                       <span className="vpEyeIcon">👁️</span>
                       <span className="vpText">Showing all content</span>
                       <span className="vpShowArrow"> {'>'} </span>
@@ -450,33 +295,31 @@ export default function RedditProfilePageMock() {
                             </div>
 
                             {/* Time Filter Options - Only show when in "Back" mode */}
-{activeView === 'back' && (
-  <div className="time-options">
-    {timeOptions.map((time) => (
-      <div 
-        key={time.value}
-        className={`time-option ${selectedTime === time.value ? 'time-option-selected' : ''}`}
-        style={{ cursor: 'pointer' }}
-      >
-        {/* اضغط على النص */}
-        <span 
-          className="time-option-label"
-          onClick={() => handleTimeSelect(time.value)}
-        >
-          {time.label}
-        </span>
+                            {activeView === 'back' && (
+                              <div className="time-options">
+                                {timeOptions.map((time) => (
+                                  <div 
+                                    key={time.value}
+                                    className={`time-option ${selectedTime === time.value ? 'time-option-selected' : ''}`}
+                                    style={{ cursor: 'pointer' }}
+                                  >
+                                    {/* اضغط على النص */}
+                                    <span 
+                                      className="time-option-label"
+                                      onClick={() => handleTimeSelect(time.value)}
+                                    >
+                                      {time.label}
+                                    </span>
 
-        {/* اضغط على الدائرة */}
-        <span 
-          className="time-option-circle"
-          onClick={() => handleTimeSelect(time.value)}
-        ></span>
-      </div>
-    ))}
-  </div>
-)}
-
-
+                                    {/* اضغط على الدائرة */}
+                                    <span 
+                                      className="time-option-circle"
+                                      onClick={() => handleTimeSelect(time.value)}
+                                    ></span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                             
                             <div className="feed-options-header">View</div>
                             <div className="feed-option-item">

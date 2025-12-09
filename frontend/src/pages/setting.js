@@ -1025,6 +1025,18 @@ const Settings = () => {
     <div className="settings-container">
       <div className="settings-header">
         <h1>Settings</h1>
+        {/* Horizontal tabs added here */}
+        <div className="settings-horizontal-tabs">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              className={`settings-horizontal-tab ${activeTab === tab ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="settings-content">
         <div className="settings-sidebar">
