@@ -3,6 +3,14 @@ import Login from "./Login";
 
 const Trylogin = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [isResetOpen, setIsResetOpen] = useState(false);
+
+  const closeAll = () => {
+    setIsLoginOpen(false);
+    setIsSignupOpen(false);
+    setIsResetOpen(false);
+  };
 
   return (
     <>

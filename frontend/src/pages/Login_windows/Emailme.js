@@ -3,19 +3,16 @@ import "./Login.css";
 import {
   Logintitle,
   Loginparagraph,
-  Loginlink,
-  ContinueWith,
-  OR,
   InputText,
   Submit,
   CloseButton,
-  LoginMover,
   BackButton,
 } from "./components.js";
 
 const Emailme = ({ setOpen }) => {
   const [username, setUsername] = useState("");
   const disabled = username.trim() === "";
+
   return (
     <div className="login-container">
       <div className="login-overlay" onClick={() => setOpen(false)}>
@@ -25,11 +22,11 @@ const Emailme = ({ setOpen }) => {
           </div>
 
           <div className="my-window-back-button">
-            <BackButton target="/login" />
+            <BackButton onClose={() => setOpen(false)} />
           </div>
 
           <div className="logintile">
-            <Logintitle text="Email me a one-time link to login" />
+            <Logintitle text="Email me a one-time link to login " />
           </div>
 
           <div className="paragraphs">

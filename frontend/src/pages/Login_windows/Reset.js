@@ -1,23 +1,19 @@
 import React, { useState } from "react";
 import "./Login.css";
-import Login from "./Login.js";
 import {
   Logintitle,
   Loginparagraph,
   Loginlink,
-  ContinueWith,
-  OR,
   InputText,
   Submit,
   CloseButton,
-  LoginMover,
   BackButton,
 } from "./components.js";
 
 const Reset = ({ setOpen }) => {
   const [username, setUsername] = useState("");
   const disabled = username.trim() === "";
-  const [isLoginClose, setIsLoginClose] = useState(false);
+
   return (
     <div className="login-container">
       <div className="login-overlay" onClick={() => setOpen(false)}>
@@ -27,8 +23,7 @@ const Reset = ({ setOpen }) => {
           </div>
 
           <div className="my-window-back-button">
-            <BackButton target="/login" onClose={() => setIsLoginClose(true)} />
-            {isLoginClose && <Login setOpen={setIsLoginClose} />}
+            <BackButton onClose={() => setOpen(false)} />
           </div>
 
           <div className="logintile">
@@ -57,7 +52,7 @@ const Reset = ({ setOpen }) => {
             />
           </>
           <div className="submits">
-            <Submit text="Continue" disabled={disabled} />
+            <Submit text="Reset password" disabled={disabled} />
           </div>
         </div>
       </div>

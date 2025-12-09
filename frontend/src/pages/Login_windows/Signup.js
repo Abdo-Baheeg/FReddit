@@ -5,7 +5,6 @@ import {
   Loginparagraph,
   Loginlink,
   ContinueWithLink,
-  ContinueWithWindow,
   OR,
   InputText,
   Submit,
@@ -17,7 +16,9 @@ import Login from "./Login.js";
 const Signup = ({ setOpen }) => {
   const [username, setUsername] = useState("");
   const disabled = username.trim() === "";
+  // Modals State
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+
   return (
     <div className="login-container">
       <div className="login-overlay" onClick={() => setOpen(false)}>
@@ -32,11 +33,17 @@ const Signup = ({ setOpen }) => {
 
           <div className="paragraphs">
             <Loginparagraph text="By continuing, you agree to our " />
-            <Loginlink href="/terms" data="User Agreement" />
+            <Loginlink
+              href="https://redditinc.com/policies/user-agreement"
+              data="User Agreement"
+            />
             <Loginparagraph text=" and " />
             <br></br>
             <Loginparagraph text="acknowledge that you understand the " />
-            <Loginlink href="/privacy" data="Privacy Policy" />
+            <Loginlink
+              href="https://redditinc.com/policies/privacy-policy"
+              data="Privacy Policy"
+            />
             <Loginparagraph text=" ." />
           </div>
           <div className="continues">

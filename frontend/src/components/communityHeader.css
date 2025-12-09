@@ -1,0 +1,133 @@
+.subreddit-header {
+  border-radius: 8px;
+  overflow: visible;
+  margin-bottom: 18px;
+  background: white;
+}
+
+.subreddit-banner {
+  height: 160px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background-position: center;
+  background-size: cover;
+  position: relative;
+}
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(0, 0, 0, 0.05)
+  );
+}
+
+.subreddit-info-wrapper {
+  padding: 0 20px 18px;
+}
+.subreddit-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transform: translateY(-36px);
+}
+
+.avatar-wrap {
+  margin-left: 8px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.subreddit-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 999px;
+  border: 6px solid white; 
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  object-fit: cover;
+}
+
+.subreddit-text {
+  flex: 1;
+  min-width: 0;
+}
+.subreddit-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+.subreddit-subtitle {
+  margin: 4px 0;
+  color: #4b5563;
+  font-size: 14px;
+}
+.subreddit-meta {
+  color: #6b7280;
+  font-size: 13px;
+}
+.subreddit-meta .dot {
+  padding: 0 6px;
+  color: #d1d5db;
+}
+
+.subreddit-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.create-post-btn {
+  border: 1px solid #e5e7eb;
+  background: white;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.create-post-btn .plus {
+  margin-right: 6px;
+  font-weight: 700;
+}
+
+.join-btn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: #0064e6;
+  color: white;
+  font-weight: 600;
+}
+.join-btn.joined {
+  background: #eef2ff;
+  color: #0b5fff;
+  border: 1px solid #c7d2fe;
+}
+
+.more-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .subreddit-info {
+    flex-direction: column;
+    align-items: flex-start;
+    transform: translateY(-20px);
+  }
+  .subreddit-avatar {
+    width: 72px;
+    height: 72px;
+    border-width: 5px;
+  }
+  .subreddit-actions {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
+}
