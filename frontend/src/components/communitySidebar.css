@@ -1,0 +1,238 @@
+.cs-root {
+  width: 320px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial;
+}
+
+.cs-box {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05), 0 8px 16px rgba(20, 20, 20, 0.03);
+  border: 1px solid #e6e6e6;
+}
+
+.cs-stats-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.cs-small-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f2f2f2;
+  flex: 0 0 56px;
+}
+.cs-stats-headline .cs-community-name {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+.cs-community-sub {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.cs-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 6px;
+  margin-bottom: 12px;
+}
+.cs-stat-item {
+  text-align: left;
+}
+.cs-stat-num {
+  font-weight: 600;
+  font-size: 14px;
+}
+.cs-stat-label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.cs-members-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+.cs-members-count {
+  font-weight: 700;
+  font-size: 18px;
+}
+.cs-members-label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.cs-message-mods {
+  background: transparent;
+  border: 1px solid #e6e6e6;
+  padding: 6px 10px;
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.cs-user-flair {
+  margin-top: 12px;
+}
+.cs-user-top {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.cs-user-top img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.cs-flair-label {
+  font-size: 11px;
+  color: #6b7280;
+}
+.cs-flair-chip {
+  background: #f3f4f6;
+  padding: 6px 8px;
+  border-radius: 16px;
+  display: inline-block;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.cs-divider {
+  height: 1px;
+  background: #f1f1f1;
+  margin: 12px 0;
+  border-radius: 1px;
+}
+
+.cs-section-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.cs-section {
+  margin-bottom: 6px;
+}
+.cs-muted {
+  color: #9aa0a6;
+  font-size: 13px;
+}
+
+.cs-rule {
+  margin-bottom: 8px;
+}
+.cs-rule-toggle {
+  width: 100%;
+  text-align: left;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  background: #f8fafb;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.cs-rule-index {
+  background: #e6eef7;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+}
+.cs-rule-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 13px;
+}
+.cs-rule-chevron {
+  font-size: 12px;
+  color: #4b5563;
+}
+.cs-rule-desc {
+  padding: 8px;
+  background: #fff;
+  border-left: 3px solid #eef2ff;
+  margin-top: 6px;
+  border-radius: 4px;
+  color: #374151;
+  font-size: 13px;
+}
+
+.cs-promo-wrap img {
+  width: 100%;
+  border-radius: 6px;
+  margin-top: 8px;
+  object-fit: cover;
+}
+
+.cs-mod-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+}
+.cs-mod-item img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.cs-mod-name {
+  font-weight: 600;
+  font-size: 13px;
+}
+.cs-mod-flair {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.cs-button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e6e6e6;
+  background: #fff;
+  cursor: pointer;
+}
+
+.cs-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 999;
+}
+.cs-modal {
+  background: #fff;
+  padding: 16px;
+  width: 360px;
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+.cs-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.cs-modal-body {
+  max-height: 60vh;
+  overflow: auto;
+}
+.cs-close {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+}
