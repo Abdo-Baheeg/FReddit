@@ -11,7 +11,7 @@ import Chat from "./pages/Chat";
 import RedditProfilePage from "./pages/viewprofile.js";
 import Setting from "./pages/setting";
 import Navbar from "./components/Navbar";
-import Sidebar from "./components/sideBar";
+import Sidebar from "./components/SidebBar";
 
 function App() {
   return (
