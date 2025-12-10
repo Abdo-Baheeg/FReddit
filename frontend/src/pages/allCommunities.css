@@ -1,123 +1,123 @@
-.cp-root {
+.cc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
   padding: 16px;
-  max-width: 980px;
-  margin: 0 auto;
-  box-sizing: border-box;
-  color: #0f1724;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial;
 }
 
-/* Header bar with create button */
-.cp-header {
+.cc-card {
   display: flex;
+  align-items: flex-start;
   gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.cc-card:focus,
+.cc-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  outline: none;
 }
 
-.cp-title {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-}
-
-.cp-actions {
+.cc-avatar-wrap {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(135deg,#f3f3f3,#e9e9e9);
   display: flex;
-  gap: 8px;
   align-items: center;
+  justify-content: center;
 }
 
-/* Reuse button visual from modal but smaller */
-.cp-create-button {
-  background-color: #0ea5e9;
-  color: #fff;
-  border: none;
+.cc-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cc-avatar-fallback {
+  font-weight: 700;
+  font-size: 18px;
+  color: #555;
+}
+
+.cc-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cc-title {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cc-desc {
+  margin: 0;
+  font-size: 13px;
+  color: #4a4a4a;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cc-meta {
+  margin: 6px 0 0 0;
+  font-size: 12px;
+  color: #777;
+}
+
+.cc-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.cc-join-btn {
+  border: 1px solid #1876d2;
+  background: transparent;
+  color: #1876d2;
   padding: 8px 12px;
   border-radius: 8px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.cp-create-button:hover {
-  filter: brightness(0.98);
-}
-
-/* Communities list */
-.communities-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 12px;
-}
-
-/* Each community card / row */
-.community-item {
-  border: 1px solid #eef1f6;
-  border-radius: 10px;
-  padding: 12px 14px;
-  background: #ffffff;
-  box-shadow: 0 2px 6px rgba(11, 14, 20, 0.03);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* Top row: name + small meta */
-.community-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.community-name {
-  font-weight: 700;
-  font-size: 16px;
-  color: #0f1724;
-}
-
-.community-desc {
-  font-size: 13px;
-  color: #475569;
-}
-
-/* Rules summary */
-.community-rules summary {
-  cursor: pointer;
-  list-style: none;
   font-weight: 600;
-  color: #0f1724;
-  margin-top: 8px;
-  margin-bottom: 6px;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
 }
 
-.community-rules ol {
-  margin: 8px 0 0 20px;
-  padding: 0;
-  color: #374151;
-  font-size: 13px;
+.cc-join-btn.not-joined:hover {
+  background: rgba(24,118,210,0.08);
 }
 
-/* Empty state */
-.cp-empty {
+.cc-join-btn.joined {
+  background: #1876d2;
+  color: white;
+  border-color: transparent;
+}
+
+.cc-empty {
   padding: 24px;
-  border-radius: 8px;
   text-align: center;
-  color: #6b7280;
-  background: #f8fafc;
-  border: 1px dashed #e6eef6;
+  color: #666;
 }
 
-/* Small responsive adjustments */
-@media (max-width: 640px) {
-  .cp-root {
-    padding: 12px;
-  }
-
-  .cp-title {
-    font-size: 20px;
-  }
+/* Small responsive tweaks */
+@media (max-width: 420px) {
+  .cc-avatar-wrap { width: 48px; height: 48px; }
+  .cc-title { font-size: 14px; }
+  .cc-desc { font-size: 12px; }
 }
