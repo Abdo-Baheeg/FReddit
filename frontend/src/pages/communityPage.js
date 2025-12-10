@@ -1,114 +1,181 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import CommunityHeader from "../components/communityHeader.js"; 
-import CommunitySidebar from "../components/communitySidebar.js"; 
-import "./communityPage.css"; 
+import CommunityHeader from "../components/communityHeader";
+import CommunitySidebar from "../components/communitySidebar";
+import "./communityPage.css";
 
 export default function CommunityPage() {
-  const { communityId } = useParams(); 
+  const params = useParams();
+  const communityId = params.communityId ?? params.id ?? params.slug ?? null;
+
   const navigate = useNavigate();
   const fetchUrlBase = "/api";
 
+  const [currentUser, setCurrentUser] = useState(null);
   const [community, setCommunity] = useState(null);
-  const [posts, setPosts] = useState(null); // null = loading
-  const [loadingCommunity, setLoadingCommunity] = useState(false);
-  const [loadingPosts, setLoadingPosts] = useState(false);
-  const [error, setError] = useState(null);
+  const [posts, setPosts] = useState(null);
+  const [memberships, setMemberships] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-  const fetchCommunity = useCallback(
-    async (id) => {
-      if (!id) return;
-      setLoadingCommunity(true);
-      setError(null);
-      try {
-        const res = await fetch(`${fetchUrlBase}/communities/${id}`, {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
-        if (!res.ok) {
-          const txt = await res.text().catch(() => "");
-          throw new Error(txt || `Failed to load community (${res.status})`);
-        }
-        const data = await res.json();
-        setCommunity(data);
-      } catch (err) {
-        console.error("fetchCommunity:", err);
-        setError(err.message || "Failed to load community");
-      } finally {
-        setLoadingCommunity(false);
-      }
-    },
-    [fetchUrlBase, token]
-  );
+  const fetchJson = async (url, opts = {}) => {
+    const res = await fetch(url, opts);
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      const err = new Error(text || `Request failed (${res.status})`);
+      err.status = res.status;
+      throw err;
+    }
+    if (res.status === 204) return null;
+    return res.json().catch(() => null);
+  };
 
-  const fetchPosts = useCallback(
-    async (id) => {
-      if (!id) return;
-      setLoadingPosts(true);
-      setError(null);
-      try {
-        const res = await fetch(`${fetchUrlBase}/communities/${id}/posts`, {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
-        if (!res.ok) {
-          // treat 404 as no posts
-          if (res.status === 404) {
-            setPosts([]);
-            return;
-          }
-          const txt = await res.text().catch(() => "");
-          throw new Error(txt || `Failed to load posts (${res.status})`);
-        }
-        const data = await res.json();
-        const arr = Array.isArray(data) ? data : data?.posts ?? [];
-        setPosts(arr);
-      } catch (err) {
-        console.error("fetchPosts:", err);
-        setError(err.message || "Failed to load posts");
-        setPosts([]); // degrade gracefully
-      } finally {
-        setLoadingPosts(false);
+  const fetchCurrentUser = useCallback(async () => {
+    if (!token) {
+      setCurrentUser(null);
+      return;
+    }
+    try {
+      const data = await fetchJson(`${fetchUrlBase}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setCurrentUser(data || null);
+    } catch (err) {
+      console.warn("Failed to fetch current user:", err.message || err);
+      if (err.status === 401) {
+        localStorage.removeItem("token");
+        setCurrentUser(null);
       }
-    },
-    [fetchUrlBase, token]
-  );
+    }
+  }, [fetchUrlBase, token]);
+
+  const fetchCommunity = useCallback(async (id) => {
+    if (!id) return;
+    try {
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const data = await fetchJson(`${fetchUrlBase}/communities/${id}`, { headers });
+      setCommunity(data);
+    } catch (err) {
+      console.error("fetchCommunity:", err);
+      setError(err.message || "Failed to load community");
+      setCommunity(null);
+    }
+  }, [fetchUrlBase, token]);
+
+  const fetchPosts = useCallback(async (id) => {
+    if (!id) return;
+    try {
+      setPosts(null);
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const res = await fetch(`${fetchUrlBase}/communities/${id}/posts`, { headers });
+
+      if (!res.ok) {
+        if (res.status === 404) {
+          setPosts([]);
+          return;
+        }
+        const text = await res.text().catch(() => "");
+        throw new Error(text || `Failed to load posts (${res.status})`);
+      }
+
+      const data = await res.json().catch(() => []);
+      setPosts(Array.isArray(data) ? data : data?.posts ?? []);
+    } catch (err) {
+      console.error("fetchPosts:", err);
+      setPosts([]);
+    }
+  }, [fetchUrlBase, token]);
+
+  const fetchMemberships = useCallback(async () => {
+    if (!token) {
+      setMemberships([]);
+      return;
+    }
+    try {
+      const data = await fetchJson(`${fetchUrlBase}/memberships/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setMemberships(Array.isArray(data) ? data : data?.memberships ?? []);
+    } catch {
+      setMemberships([]);
+    }
+  }, [fetchUrlBase, token]);
 
   useEffect(() => {
-    if (!communityId) return;
-    fetchCommunity(communityId);
-    fetchPosts(communityId);
-  }, [communityId, fetchCommunity, fetchPosts]);
+    let cancelled = false;
 
- 
+    const loadAll = async () => {
+      if (!communityId) {
+        setLoading(false);
+        setError("Community id missing from route.");
+        setCommunity(null);
+        setPosts([]);
+        return;
+      }
+
+      setLoading(true);
+      setError("");
+
+      try {
+        await fetchCurrentUser();
+        if (cancelled) return;
+
+        await fetchCommunity(communityId);
+        if (cancelled) return;
+
+        await fetchPosts(communityId);
+        if (cancelled) return;
+
+        await fetchMemberships();
+      } catch (err) {
+        console.error("loadAll error:", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadAll();
+    return () => {
+      cancelled = true;
+    };
+  }, [communityId, fetchCurrentUser, fetchCommunity, fetchPosts, fetchMemberships]);
+
   const handleOpenCreatePage = () => {
+    if (!localStorage.getItem("token")) {
+      navigate("/login");
+      return;
+    }
     navigate("/create-post", { state: { community } });
   };
 
+  if (loading) return <div className="community-page-root">Loading community…</div>;
+  if (error) return <div className="community-page-root">Error: {error}</div>;
+  if (!community) return <div className="community-page-root">Community not found.</div>;
+
   return (
-    <div className="community-page-root">
-      {}
-      <CommunityHeader communityId={communityId} initialCommunity={community} fetchUrlBase={fetchUrlBase} />
+    <div className="community-page-root vpBody">
+      <CommunityHeader
+        communityId={communityId}
+        initialCommunity={community}
+        fetchUrlBase={fetchUrlBase}
+      />
 
-      <div className="community-page-body">
-        <main className="community-post-column" aria-live="polite">
-          <div className="page-controls">
-            <button className="create-post-primary" onClick={handleOpenCreatePage}>
-              + Create Post
-            </button>
-          </div>
+      <div className="community-page-body vpLayoutContainer">
+        <main className="community-post-column vpPageContentWrapper">
 
-          {loadingPosts || posts === null ? (
+          {posts === null ? (
             <div className="muted">Loading posts…</div>
           ) : posts.length === 0 ? (
-            <div className="empty-posts">
-              <h2>This community doesn't have any posts yet</h2>
+            <div className="empty-posts vpEmptyState">
+              <h2><b>This community doesn't have any posts yet</b></h2>
               <p>Make one and get this feed started.</p>
-              {/* link to your existing create-post page in the zip */}
-              <button className="create-post-btn" onClick={handleOpenCreatePage}>
+
+              <button className="vpCreatePostBtn" onClick={handleOpenCreatePage}>
                 Create Post
               </button>
-              {/* fallback anchor */}
+
               <div style={{ marginTop: 8 }}>
                 <Link to="/create-post" state={{ community }}>
                   Or open create post page
@@ -116,37 +183,26 @@ export default function CommunityPage() {
               </div>
             </div>
           ) : (
-            <div className="posts-list">
+            <div className="posts-list vpPostsList">
               {posts.map((p) => (
-                <article key={p._id || p.id} className="post-fallback-card">
-                  <header className="post-header">
-                    <h3 className="post-title">{p.title || "Untitled post"}</h3>
-                    <div className="post-meta">
-                      <span>by {p.author?.username || p.author || "unknown"}</span>
-                      <span> • </span>
-                      <span>{new Date(p.createdAt || p.created_at || Date.now()).toLocaleString()}</span>
-                    </div>
-                  </header>
+                <article key={p._id || p.id} className="vpPostCard">
+                  <div className="vpPostHeader">
+                    <span>r/{community.name}</span>
+                  </div>
 
-                  <section className="post-body">
-                    <p>{p.excerpt ?? (p.body && p.body.slice(0, 300)) ?? ""}</p>
-                  </section>
+                  <h3>{p.title}</h3>
 
-                  <footer className="post-actions">
-                    <Link to={`/c/${communityId}/posts/${p._id || p.id}`}>View</Link>
-                    {/* When you add your Post component, replace the fallback rendering above
-                        with: <Post post={p} /> (import Post at top). */}
-                  </footer>
+                  <p>{p.content}</p>
+
+                  <Link to={`/c/${communityId}/posts/${p._id}`}>View</Link>
                 </article>
               ))}
             </div>
           )}
-
-          {error && <div className="error">Error: {error}</div>}
         </main>
 
-        <aside className="community-sidebar-column">
-          <CommunitySidebar community={community} currentUser={null} />
+        <aside className="community-sidebar-column vpRightSidebar">
+          <CommunitySidebar community={community} currentUser={currentUser} />
         </aside>
       </div>
     </div>
