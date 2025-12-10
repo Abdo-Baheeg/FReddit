@@ -3,17 +3,12 @@ import { useNavigate } from "react-router-dom";
 import "./communityHeader.css";
 
 export function requireAuthOrRedirect(navigate) {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return false;
-    }
-    return true;
-  } catch (err) {
+  const token = localStorage.getItem("token");
+  if (!token) {
     navigate("/login");
     return false;
   }
+  return true;
 }
 
 export default function CommunityHeader({
@@ -24,7 +19,7 @@ export default function CommunityHeader({
   leaveEndpoint,
 }) {
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif" }}>
+    <header className="subreddit-header">
       <HeaderContent
         communityId={communityId}
         initialCommunity={initialCommunity}
@@ -32,7 +27,7 @@ export default function CommunityHeader({
         joinEndpoint={joinEndpoint}
         leaveEndpoint={leaveEndpoint}
       />
-    </div>
+    </header>
   );
 }
 
@@ -45,14 +40,60 @@ function HeaderContent({
 }) {
   const fallbackBanner = "/fallback-banner.png";
   const fallbackAvatar = "https://www.gravatar.com/avatar/?d=mp&s=200";
+
   const navigate = useNavigate();
 
-  // UI states
+  const normalize = (raw) => {
+    if (!raw) return null;
+
+    const pick = (...keys) => {
+      for (const k of keys) {
+        if (raw[k] !== undefined && raw[k] !== null) return raw[k];
+      }
+      return undefined;
+    };
+
+    let membersCount = pick(
+      "memberCount",
+      "membersCount",
+      "members_count",
+      "member_count",
+      "members"
+    );
+
+    if (Array.isArray(membersCount)) membersCount = membersCount.length;
+    membersCount = Number(membersCount || 0);
+
+    return {
+      _id: raw._id || raw.id || null,
+      name: raw.name || "community",
+      description: raw.description || "",
+      coverImageUrl: raw.bannerUrl || raw.coverImageUrl || fallbackBanner,
+      avatarUrl: raw.avatarUrl || fallbackAvatar,
+      membersCount,
+      postsCount: raw.postsCount ?? 0,
+      isMember: raw.isMember ?? false,
+      __raw: raw,
+    };
+  };
+
+  const buildEndpoint = (tplOrFn, def) => {
+    if (!tplOrFn) return (id) => `${fetchUrlBase}${def.replace(":id", id)}`;
+    if (typeof tplOrFn === "function") return (id) => tplOrFn(id);
+    return (id) => tplOrFn.replace(":id", id);
+  };
+
+  const joinUrlFor = buildEndpoint(joinEndpoint, "/communities/:id/join");
+  const leaveUrlFor = buildEndpoint(leaveEndpoint, "/communities/:id/leave");
+
+  const initialNormalized = normalize(initialCommunity);
+  const idToFetch = propCommunityId ?? initialNormalized?._id;
+
   const [community, setCommunity] = useState(
-    initialCommunity ?? {
-      _id: propCommunityId ?? "local-community",
-      name: "example",
-      description: "This is a sample community rendered without backend.",
+    initialNormalized || {
+      _id: idToFetch,
+      name: "loading",
+      description: "",
       coverImageUrl: fallbackBanner,
       avatarUrl: fallbackAvatar,
       membersCount: 0,
@@ -60,152 +101,81 @@ function HeaderContent({
       isMember: false,
     }
   );
-  const [loading, setLoading] = useState(!!(propCommunityId && !initialCommunity));
-  const [error, setError] = useState(null);
-  const [optimistic, setOptimistic] = useState(false); // to block double-clicks
 
-  const normalize = (raw) => {
-    if (!raw) return null;
-    return {
-      _id: raw._id || raw.id || raw.communityId,
-      name: raw.name || raw.slug || raw.title || "community",
-      description: raw.description || raw.bio || "",
-      coverImageUrl: raw.coverImageUrl || raw.banner || raw.cover || fallbackBanner,
-      avatarUrl: raw.avatarUrl || raw.image || raw.icon || fallbackAvatar,
-      membersCount:
-        typeof raw.membersCount === "number"
-          ? raw.membersCount
-          : Array.isArray(raw.members)
-          ? raw.members.length
-          : raw.members || 0,
-      postsCount: raw.postsCount ?? raw.postCount ?? raw.posts ?? 0,
-      isMember: !!raw.isMember || !!raw.currentUserIsMember || false,
-    };
-  };
+  const [loading, setLoading] = useState(!initialCommunity);
+  const [optimistic, setOptimistic] = useState(false);
 
-  // Build endpoint helpers (allow string templates or functions)
-  const buildEndpoint = (tplOrFn, defaultTpl) => {
-    if (!tplOrFn) return (id) => `${fetchUrlBase}${defaultTpl.replace(":id", id)}`;
-    if (typeof tplOrFn === "function") return (id) => tplOrFn(id);
-    return (id) => tplOrFn.replace(":id", id);
-  };
-
-  const fetchCommunityEndpoint = (id) => `${fetchUrlBase}/communities/${id}`;
-  const joinUrlFor = buildEndpoint(joinEndpoint, "/communities/:id/join");
-  const leaveUrlFor = buildEndpoint(leaveEndpoint, "/communities/:id/leave");
-
-  // Fetch community if we have an id but no initialCommunity
+  // Fetch community
   useEffect(() => {
+    if (!idToFetch || initialCommunity) return;
+
     let cancelled = false;
-    if (!propCommunityId || initialCommunity) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    setError(null);
 
     const token = localStorage.getItem("token");
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-    fetch(fetchCommunityEndpoint(propCommunityId), {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    })
+    setLoading(true);
+
+    fetch(`${fetchUrlBase}/communities/${idToFetch}`, { headers })
       .then(async (res) => {
-        if (!res.ok) {
-          const text = await res.text().catch(() => "");
-          throw new Error(text || `Failed to load community (${res.status})`);
-        }
+        if (!res.ok) throw new Error("Failed to load community");
         return res.json();
       })
       .then((raw) => {
         if (cancelled) return;
         const n = normalize(raw);
-        if (n) setCommunity((c) => ({ ...c, ...n }));
+        setCommunity((c) => ({ ...c, ...n }));
       })
-      .catch((err) => {
-        if (cancelled) return;
-        console.warn("CommunityHeader fetching community failed:", err);
-        setError(err.message || "Failed to load community");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+      .finally(() => !cancelled && setLoading(false));
 
-    return () => {
-      cancelled = true;
-    };
-  }, [propCommunityId, initialCommunity, fetchUrlBase]);
+    return () => (cancelled = true);
+  }, [idToFetch, initialCommunity, fetchUrlBase]);
 
-  const handleCreatePost = useCallback(() => {
+  const handleCreatePost = () => {
     if (!requireAuthOrRedirect(navigate)) return;
     navigate("/create-post", { state: { community } });
-  }, [navigate, community]);
+  };
 
-  const handleJoinToggle = useCallback(async () => {
+  const handleJoinToggle = async () => {
     if (optimistic) return;
-    if (!community || !community._id) return;
-
     if (!requireAuthOrRedirect(navigate)) return;
 
-    const id = community._id;
     const willJoin = !community.isMember;
+    const endpoint = willJoin ? joinUrlFor(community._id) : leaveUrlFor(community._id);
 
+    // optimistic UI
+    setOptimistic(true);
     setCommunity((c) => ({
       ...c,
       isMember: willJoin,
-      membersCount: Math.max(0, (c.membersCount || 0) + (willJoin ? 1 : -1)),
+      membersCount: c.membersCount + (willJoin ? 1 : -1),
     }));
-    setOptimistic(true);
 
-    const endpoint = willJoin ? joinUrlFor(id) : leaveUrlFor(id);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(endpoint, {
+      await fetch(endpoint, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ communityId: id }),
       });
-
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(text || `Server error ${res.status}`);
-      }
-
-      const body = await res.json().catch(() => null);
-      if (body) {
-        const n = normalize(body);
-        if (n) setCommunity((c) => ({ ...c, ...n }));
-      }
-    } catch (err) {
-      console.warn("Join/Leave request failed:", err);
+    } catch {
       setCommunity((c) => ({
         ...c,
         isMember: !willJoin,
-        membersCount: Math.max(0, (c.membersCount || 0) + (willJoin ? -1 : 1)),
+        membersCount: c.membersCount + (willJoin ? -1 : 1),
       }));
-
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(
-          new CustomEvent("notify", {
-            detail: {
-              type: "error",
-              message: err.message || "Failed to update membership",
-            },
-          })
-        );
-      }
     } finally {
       setOptimistic(false);
     }
-  }, [community, optimistic, joinUrlFor, leaveUrlFor, navigate]);
+  };
 
   return (
-    <header className="subreddit-header" aria-busy={loading}>
+    <>
       <div
         className="subreddit-banner"
-        style={{ backgroundImage: `url(${community.coverImageUrl || fallbackBanner})` }}
+        style={{ backgroundImage: `url(${community.coverImageUrl})` }}
       >
         <div className="banner-overlay" />
       </div>
@@ -213,40 +183,37 @@ function HeaderContent({
       <div className="subreddit-info-wrapper">
         <div className="subreddit-info">
           <img
-            src={community.avatarUrl || fallbackAvatar}
-            alt={`${community.name} avatar`}
+            src={community.avatarUrl}
             className="subreddit-avatar"
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = fallbackAvatar;
-            }}
+            alt="community avatar"
           />
 
           <div className="subreddit-text">
-            <h1>{community.name ? `r/${community.name}` : "r/community"}</h1>
-            <p>{community.description}</p>
+            <h1 className="subreddit-title">r/{community.name}</h1>
+            <p className="subreddit-subtitle">{community.description}</p>
+
             <div className="subreddit-meta">
-              <span>{Number(community.membersCount || 0).toLocaleString()} members</span>
+              {community.membersCount.toLocaleString()} members
               <span className="dot">•</span>
-              <span>{Number(community.postsCount || 0).toLocaleString()} posts</span>
+              {community.postsCount} posts
             </div>
-            {error && <div className="subreddit-error">Error: {error}</div>}
           </div>
 
           <div className="subreddit-actions">
-            <button onClick={handleCreatePost} disabled={loading}>
+            <button className="create" onClick={handleCreatePost}>
               + Create Post
             </button>
+
             <button
+              className={community.isMember ? "joined" : "join"}
               onClick={handleJoinToggle}
-              disabled={loading || optimistic}
-              aria-pressed={community.isMember}
+              disabled={optimistic}
             >
               {community.isMember ? "Joined" : "Join"}
             </button>
           </div>
         </div>
       </div>
-    </header>
+    </>
   );
 }
