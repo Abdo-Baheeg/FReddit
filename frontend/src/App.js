@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import { SocketProvider } from "./context/SocketContext";
@@ -10,6 +10,9 @@ import PostDetail from "./pages/PostDetail";
 import Chat from "./pages/Chat";
 import RedditProfilePage from "./pages/viewprofile.js";
 import Setting from "./pages/setting";
+import VerifyEmail from "./pages/VerifyEmail";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Header from "./components/Header/Header.js";
 import Sidebar from "./components/Sidebar";
 import Trylogin from "./pages/Login_windows/Try.js";
@@ -28,6 +31,9 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/create-post" element={<CreatePost />} />
               <Route path="/post/:id" element={<PostDetail />} />
               <Route path="/chat" element={<Chat />} />
