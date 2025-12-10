@@ -167,14 +167,25 @@ export const communityApi = {
   },
 
   // Create community
-  createCommunity: async (name, description) => {
+  createCommunity: async (communityData) => {
     const response = await axios.post(
       `${API_URL}/api/communities/`,
-      { name, description },
+      communityData,
       { headers: getAuthHeaders() }
     );
     return response.data;
   }
+
+  // Note: communityData should include:
+  // {
+  //   name: string (required),
+  //   description: string,
+  //   rules: array of strings,
+  //   isPublic: boolean,
+  //   ageVerified: boolean,
+  //   bannerUrl: string,
+  //   avatarUrl: string
+  // }
 };
 
 // Vote API endpoints (NEW - unified voting system)

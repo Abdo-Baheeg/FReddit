@@ -9,7 +9,20 @@ const authMiddleware = require('../middleware/auth');
 // @access  Private
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { 
+      name, 
+      description, 
+      rules = [], 
+      isPublic = true, 
+      ageVerified = false, 
+      bannerUrl = '', 
+      avatarUrl = '' 
+    } = req.body;
+    
+    // Validate required fields
+    if (!name || name.trim().length === 0) {
+      return res.status(400).json({ message: 'Community name is required' });
+    }
     
     // Check if community exists
     let community = await Community.findOne({ name });
@@ -19,9 +32,15 @@ router.post('/', authMiddleware, async (req, res) => {
     
     // Create new community
     community = new Community({
-      name,
-      description,
-      memberCount: 1
+      name: name.trim(),
+      description: description || '',
+      rules: Array.isArray(rules) ? rules : [],
+      isPublic,
+      ageVerified,
+      bannerUrl,
+      avatarUrl,
+      memberCount: 1,
+      moderators: [req.user._id]
     });
     await community.save();
     
@@ -45,6 +64,43 @@ router.get('/', async (req, res) => {
   try {
     const communities = await Community.find().sort({ createdAt: -1 });
     res.json(communities);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// @route   GET /api/communities/search
+// @desc    Search communities
+// @access  Public
+router.get('/search', async (req, res) => {
+  try {
+    const { q, page = 1, limit = 20 } = req.query;
+    const skip = (page - 1) * limit;
+
+    if (!q) {
+      return res.status(400).json({ message: 'Search query is required' });
+    }
+
+    const communities = await Community.find({
+      name: { $regex: q, $options: 'i' }
+    })
+      .sort({ memberCount: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const total = await Community.countDocuments({
+      name: { $regex: q, $options: 'i' }
+    });
+
+    res.json({
+      communities,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
