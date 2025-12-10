@@ -3,8 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import { SocketProvider } from "./context/SocketContext";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import CreatePost from "./pages/CreatePost";
 import PostDetail from "./pages/PostDetail";
 import CommunitiesPage from "./pages/allCommunities";
@@ -26,8 +24,7 @@ function App() {
           <div className="main-content">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+
               {/* <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} /> */}

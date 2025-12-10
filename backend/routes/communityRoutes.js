@@ -7,7 +7,7 @@ const authMiddleware = require('../middleware/auth');
 // @route   POST /api/communities
 // @desc    Create a new community
 // @access  Private
-router.post('/create', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   try {
     const { name, description } = req.body;
     
@@ -41,7 +41,7 @@ router.post('/create', authMiddleware, async (req, res) => {
 // @route   GET /api/communities
 // @desc    Get all communities
 // @access  Public
-router.get('/communities', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const communities = await Community.find().sort({ createdAt: -1 });
     res.json(communities);

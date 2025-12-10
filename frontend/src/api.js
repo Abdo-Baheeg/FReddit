@@ -148,7 +148,7 @@ export const commentApi = {
 export const communityApi = {
   // Get all communities
   getAllCommunities: async () => {
-    const response = await axios.get(`${API_URL}/api/communities/communities`);
+    const response = await axios.get(`${API_URL}/api/communities`);
     return response.data;
   },
 
@@ -169,7 +169,7 @@ export const communityApi = {
   // Create community
   createCommunity: async (name, description) => {
     const response = await axios.post(
-      `${API_URL}/api/communities/create`,
+      `${API_URL}/api/communities/`,
       { name, description },
       { headers: getAuthHeaders() }
     );

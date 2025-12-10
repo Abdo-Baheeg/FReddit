@@ -16,7 +16,7 @@ const Navbar = () => {
 
   return (
     <div className="vpBody">
-      {/* Top Bar (Fixed) */}
+      
       <header className="vpNewTopBar">
         <div className="vpTopBarContainer">
           <div className="vpLogoNew">
