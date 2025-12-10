@@ -1,355 +1,16 @@
-/* ==================== TOP BAR ==================== */
-.vpNewTopBar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 48px;
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  z-index: 1003;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.vpTopBarContainer {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 0 16px;
-  gap: 12px;
-}
-
-.vpLogoNew {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.vpLogoIcon {
-  width: 32px;
-  height: 32px;
-}
-
-.vpLogoTextNew {
-  font-size: 20px;
-  font-weight: bold;
-  color: #ff4500;
-}
-
-.vpSearchContainer {
-  flex: 1;
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-.vpSearchWrapper {
-  position: relative;
-}
-
-.vpSearchIcon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  color: #6b7280;
-  pointer-events: none;
-}
-
-.vpSearchInput {
-  width: 100%;
-  padding: 10px 16px 10px 44px;
-  background: #f3f4f6;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  font-size: 14px;
-  transition: all 0.2s;
-}
-
-.vpSearchInput:focus {
-  outline: none;
-  background: white;
-  border-color: #ff4500;
-  box-shadow: 0 0 0 4px rgba(255,69,0,0.15);
-}
-
-.vpRightIcons {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.vpIconBtn {
-  position: relative;
-  padding: 8px;
-  border-radius: 12px;
-  background: transparent;
-  cursor: pointer;
-  transition: background 0.2s;
-  border: none;
-}
-
-.vpIconBtn:hover {
-  background: #f3f4f6;
-}
-
-.vpAdLabel {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  background: #dbe4de;
-  color: white;
-  font-size: 8px;
-  font-weight: bold;
-  padding: 2px 4px;
-  border-radius: 4px;
-}
-
-.vpCreateBtnNew {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #fdfcfc;
-  color: rgb(3, 1, 1);
-  font-weight: 600;
-  font-size: 14px;
-  padding: 8px 16px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background 0.2s;
-  border: none;
-}
-
-.vpCreateBtnNew:hover {
-  background: #020201;
-}
-
-.vpUserAvatarNew {
-  position: relative;
-  cursor: pointer;
-}
-
-.vpAvatarImg {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 2.5px solid #13100f;
-  object-fit: cover;
-}
-
-.vpOnlineIndicator {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  width: 14px;
-  height: 14px;
-  background: #10b981;
-  border: 3px solid white;
-  border-radius: 50%;
-}
-
 /* ==================== LAYOUT STRUCTURE ==================== */
 .vpLayoutContainer {
   display: flex;
   flex-direction: row;
-  gap: 10px;               
+  gap: 1px;               
   width: 100%;
   min-height: 100vh;
   background-color: white;
-
-  margin-top: 40px; 
-  border: 1px ; 
+  /* REMOVED: margin-top: 40px; */
+  border: 1px; 
 }
 
 
-
-/* ==================== SIDEBAR (Modified to be part of flow) ==================== */
-.vpLeftSidebar {
-  position: sticky; /* Sticks to side, doesn't scroll away */
-  top: 48px;
-  height: calc(100vh - 48px);
-  background: white;
-  border-right: 1px solid #edeff1;
-  z-index: 1000;
-  flex-shrink: 0; /* Prevents sidebar from shrinking */
-  overflow-y: auto;
-  transition: width 0.3s ease, margin 0.3s ease;
-}
-
-/* Open State */
-.vpSidebarOpen {
-  width: 270px;
-  margin-left: 0;
-}
-
-/* Closed State - Hidden but keeps structure ready */
-.vpSidebarClosed {
-  width: 0;
-  margin-left: 0;
-  border: none;
-  overflow: hidden;
-}
-
-.vpSidebarContent {
-  padding: 16px;
-  width: 270px; /* Fixed width for inner content so it doesn't squish */
-}
-
-/* Sidebar Styling continued... */
-.vpSidebarNav {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 20px;
-}
-
-.vpSidebarNav a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  color: #1c1c1c;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: background 0.2s;
-}
-
-.vpSidebarNav a:hover {
-  background: #f6f7f8;
-}
-
-.vpActiveLink {
-  background: #f6f7f8 !important;
-  color: #000 !important;
-  font-weight: 600 !important;
-}
-
-.vpBetaTag {
-  background: #ff4500;
-  color: white;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-left: auto;
-}
-
-.vpCreateCommunity {
-  color: #1c1c1c !important;
-  font-weight: 500 !important;
-}
-
-.vpSidebarIcon {
-  width: 20px;
-  height: 20px;
-  color: #1c1c1c;
-}
-
-.vpSidebarDivider {
-  border: none;
-  border-top: 1px solid #edeff1;
-  margin: 16px 0;
-}
-
-.vpSidebarSectionTitle {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #878a8c;
-  margin-bottom: 8px;
-  letter-spacing: 0.5px;
-}
-
-.vpSidebarSection {
-  margin-top: 20px;
-}
-
-.vpGameItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px;
-  border-radius: 4px;
-  background: transparent;
-  border: none;
-  position: relative;
-  margin-bottom: 6px;
-  transition: background 0.2s;
-  cursor: pointer;
-}
-
-.vpGameItem:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.vpGameIcon {
-  width: 32px;
-  height: 32px;
-  background: #edeff1;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: #1c1c1c;
-  font-weight: 600;
-  text-align: center;
-  line-height: 1;
-  padding: 0;
-  flex-shrink: 0;
-  font-family: Arial, sans-serif;
-}
-
-.vpGameName {
-  font-weight: 500;
-  font-size: 14px;
-  color: #1c1c1c;
-  line-height: 1.2;
-}
-
-.vpGamePlayers {
-  font-size: 11px;
-  color: #878a8c;
-  margin-top: 2px;
-}
-
-.vpNewGame {
-  border: 1px solid #edeff1;
-  background: #f6f7f8;
-  padding: 12px;
-  margin-bottom: 12px;
-}
-
-.vpNewGame:hover {
-  background: #e8e9ea;
-}
-
-.vpNewGame .vpGameIcon {
-  background: linear-gradient(135deg, #ff4500, #ff6b35);
-  color: white;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.vpNewBadge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: #46d160;
-  color: white;
-  font-size: 9px;
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-}
 
 /* ==================== CONTENT WRAPPER ==================== */
 .vpPageContentWrapper {
@@ -357,11 +18,16 @@
   display: flex;
   flex-direction: column;
   min-width: 0; /* Prevents overflow issues in flex items */
+  position: relative; /* Added for absolute positioning */
 }
 
 /* ==================== HAMBURGER BUTTON ==================== */
 .vpHamburgerContainer {
-  padding: 12px 24px 0 24px;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1100; /* Higher than sidebar z-index */
+  padding: 0;
   display: flex;
   align-items: center;
 }
@@ -379,11 +45,13 @@
   cursor: pointer;
   transition: all 0.2s ease;
   color: #1c1c1c;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .vpHamburgerBtnNew:hover {
   background: #f6f7f8;
   border-color: #878a8c;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .vpHamburgerIcon {
@@ -398,10 +66,10 @@
   max-width: 1400px;
   padding: 24px;
   width: 100%;
+  margin-top: 40px; /* Added to create space for hamburger button */
 }
 
 .vpMain {
-
   min-height: 500px;
   max-width: 10000px; /* Limit width like reddit */
 }
@@ -455,7 +123,6 @@
   padding: 16px 24px 0; 
   border-bottom: 1px solid #edeff1; 
   margin-top: 16px;
-
 }
 
 .vpTab { 
@@ -1068,6 +735,12 @@
   .vpTabBtn {
     padding: 14px 12px;
     font-size: 13px;
+  }
+  
+  /* Adjust hamburger position for mobile */
+  .vpHamburgerContainer {
+    top: 8px;
+    left: 8px;
   }
 }
 

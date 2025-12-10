@@ -14,18 +14,18 @@ import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Header from "./components/Header/Header.js";
-import Sidebar from "./components/Sidebar";
 import Trylogin from "./pages/Login_windows/Try.js";
+import Navbar from "./components/Navbar";
+import Sidebar from "./components/SidebBar";
 
 function App() {
   return (
     <SocketProvider>
       <Router>
         <div className="App">
-          <Header />
+          <Navbar />
           <Sidebar />
           <Trylogin />
-
           <div className="main-content">
             <Routes>
               <Route path="/" element={<Home />} />
@@ -40,7 +40,6 @@ function App() {
               <Route path="/chat/:conversationId" element={<Chat />} />
               <Route path="/viewprofile" element={<RedditProfilePage />} />
               <Route path="/setting" element={<Setting />} />
-
               <Route path="*" element={<h2>404: Page Not Found</h2>} />
             </Routes>
           </div>
