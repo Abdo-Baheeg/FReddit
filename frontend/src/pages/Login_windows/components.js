@@ -78,7 +78,13 @@ const OR = () => {
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}> *</span>;
 
-const InputText = ({ label, type = "text", required, onChange, onFocus: parentOnFocus }) => {
+const InputText = ({
+  label,
+  type = "text",
+  required,
+  onChange,
+  onFocus: parentOnFocus,
+}) => {
   const [value, setValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
@@ -125,18 +131,36 @@ const InputText = ({ label, type = "text", required, onChange, onFocus: parentOn
 const Submit = ({ text, disabled, onClick, error }) => {
   return (
     <button
-      className={`login-submit ${disabled ? "disabled" : "active"} ${error ? "error" : ""}`}
+      className={`login-submit ${disabled ? "disabled" : "active"} ${
+        error ? "error" : ""
+      }`}
       disabled={disabled}
       onClick={onClick}
     >
-      <span className="submit-text">{error ? "Invalid email or password" : text}</span>
+      <span className="submit-text">{error ? error : text}</span>
     </button>
   );
 };
 
 const CloseButton = ({ onClose }) => {
+  const handleClick = (e) => {
+    try {
+      onClose && onClose(e);
+    } catch (err) {
+      // ensure onClose errors don't prevent global close
+      console.error("CloseButton onClose handler error", err);
+    }
+
+    // notify all auth windows to close
+    try {
+      window.dispatchEvent(new CustomEvent("closeAllAuthWindows"));
+    } catch (err) {
+      console.error("Failed to dispatch closeAllAuthWindows event", err);
+    }
+  };
+
   return (
-    <button className="close-btn" onClick={onClose}>
+    <button className="close-btn" onClick={handleClick}>
       ×
     </button>
   );

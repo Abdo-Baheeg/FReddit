@@ -260,9 +260,9 @@
 }
 
 .back-btn {
-  position: absolute;
-  top: 8px;
-  right: 48px; /* علشان يكون قبل زرار الـ X */
+  position: relative;
+  top: 0;
+  right: auto;
 
   width: 28px;
   height: 28px;
@@ -281,17 +281,31 @@
 
   cursor: pointer;
   transition: 0.2s;
-
-  /* في الطبيعي مش ظاهر كدائرة */
 }
 
 .back-btn:hover {
   background: #f0f0f0; /* نفس لون هوفر زرار الخروج */
-  border: 1px solid #d0d0d0;
 }
 
 .back-btn:active {
   transform: scale(0.9);
+}
+
+/* Submit wrapper button styling moved from Login.css so component styles are centralized */
+.submits button {
+  position: relative;
+  width: 400px; /* same width as inputs above */
+  height: 56px; /* input-like height */
+  background: #eef2f5f6; /* same inner input color */
+  border-radius: 100px; /* fully rounded */
+  border: 2px solid transparent; /* no visible border by default */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  margin-top: 10px; /* spacing above/below */
 }
 
 /* ============================= */

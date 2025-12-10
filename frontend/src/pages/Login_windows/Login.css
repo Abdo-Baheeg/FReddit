@@ -37,11 +37,29 @@
   position: absolute;
   top: 14px;
   right: 14px;
+  display: flex;
+  align-items: center;
 }
+
+/* ========== Back Button ========== */
 .my-window-back-button {
   position: absolute;
   top: 14px;
-  left: 95px;
+  left: 14px; /* symmetrical to X button on the right */
+  display: flex;
+  align-items: center;
+}
+
+/* Ensure the back button inside the back-button container uses the container's positioning
+   This overrides the generic .back-btn 'right' offset so the button appears at the
+   same location/size as in Reset and SignupP2 windows. */
+.my-window-back-button .back-btn {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: auto;
+  width: 28px;
+  height: 28px;
 }
 
 /* ========== Title ========== */
@@ -161,19 +179,8 @@
 }
 
 .submits button {
-  position: relative;
-  width: 400px; /* نفس عرض input اللي فوقه */
-  height: 56px; /* ارتفاع مشابه للـ input */
-  background: #eef2f5f6; /* نفس لون الـ input */
-  border-radius: 100px; /* Fully rounded */
-  border: 2px solid transparent; /* بدون إطار */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.2s ease;
-  margin-top: 10px; /* مسافة فوقه أو تحته حسب الحاجة */
+  /* moved to components.css; keep a minimal fallback here to avoid empty rule errors */
+  display: block;
 }
 /* ========== Animation ========== */
 @keyframes fadeInScale {

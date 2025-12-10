@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Login.css";
 import {
   Logintitle,
@@ -12,12 +12,35 @@ import {
   LoginMover,
 } from "./components.js";
 import Login from "./Login.js";
+import SignupP2 from "./SignupP2.js";
 
 const Signup = ({ setOpen }) => {
   const [username, setUsername] = useState("");
   const disabled = username.trim() === "";
+  const [error, setError] = useState("");
   // Modals State
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSignupP2Open, setIsSignupP2Open] = useState(false);
+
+  const handleSignupSuccess = () => {
+    // close P2 if open, close this signup modal, and ensure any login modal state is closed
+    setIsSignupP2Open(false);
+    setOpen(false);
+    setIsLoginOpen(false);
+    setError("");
+  };
+
+  // listen for global close events (e.g., X clicked in other windows)
+  useEffect(() => {
+    const handler = () => {
+      setIsSignupP2Open(false);
+      setOpen(false);
+      setIsLoginOpen(false);
+      setError("");
+    };
+    window.addEventListener("closeAllAuthWindows", handler);
+    return () => window.removeEventListener("closeAllAuthWindows", handler);
+  }, [setOpen]);
 
   return (
     <div className="login-container">
@@ -71,6 +94,7 @@ const Signup = ({ setOpen }) => {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              onFocus={() => setError("")}
             />
           </div>
 
@@ -81,7 +105,19 @@ const Signup = ({ setOpen }) => {
           </div>
 
           <div className="submits">
-            <Submit text="Continue" disabled={disabled} />
+            <Submit
+              text="Continue"
+              disabled={disabled}
+              onClick={() => setIsSignupP2Open(true)}
+              error={error}
+            />
+            {isSignupP2Open && (
+              <SignupP2
+                setOpen={setIsSignupP2Open}
+                email={username}
+                onSignupSuccess={handleSignupSuccess}
+              />
+            )}
           </div>
         </div>
       </div>

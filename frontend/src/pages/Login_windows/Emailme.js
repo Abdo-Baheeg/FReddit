@@ -17,14 +17,9 @@ const Emailme = ({ setOpen }) => {
     <div className="login-container">
       <div className="login-overlay" onClick={() => setOpen(false)}>
         <div className="login-notclose" onClick={(e) => e.stopPropagation()}>
-          <div className="my-window-close-button">
-            <CloseButton onClose={() => setOpen(false)} />
-          </div>
-
           <div className="my-window-back-button">
             <BackButton onClose={() => setOpen(false)} />
           </div>
-
           <div className="logintile">
             <Logintitle text="Email me a one-time link to login " />
           </div>
