@@ -15,6 +15,7 @@ import {
   CloseButton,
   LoginMover,
 } from "./components.js";
+import { userApi } from "../../api";
 
 const Login = ({ setOpen }) => {
   const [username, setUsername] = useState("");
@@ -26,6 +27,36 @@ const Login = ({ setOpen }) => {
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isResetOpen, setIsResetOpen] = useState(false);
   const [isEmailmeOpen, setIsEmailmeOpen] = useState(false);
+
+  // Login state
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = async () => {
+    if (disabled) return;
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await userApi.login(username, password);
+
+      // Store token in localStorage
+      if (response.token) {
+        localStorage.setItem("token", response.token);
+      }
+
+      // Close the modal on successful login
+      setOpen(false);
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Login failed. Please try again."
+      );
+      console.error("Login error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="All_login">
@@ -64,7 +95,7 @@ const Login = ({ setOpen }) => {
               <ContinueWithLink
                 text="Continue with Google"
                 icon="/icons/login/google.svg"
-                link="https://accounts.google.com/v3/signin/accountchooser?as=-UqAZMzlOURYuIt0e02VRTSt7FsWyfeEYipnkoqW1Bw&client_id=705819728788-b2c1kcs7tst3b7ghv7at0hkqmtc68ckl.apps.googleusercontent.com&display=popup&gis_params=ChZodHRwczovL3d3dy5yZWRkaXQuY29tEg1naXNfdHJhbnNmb3JtGAcqKy1VcUFaTXpsT1VSWXVJdDBlMDJWUlRTdDdGc1d5ZmVFWWlwbmtvcVcxQncySDcwNTgxOTcyODc4OC1iMmMxa2NzN3RzdDNiN2dodjdhdDBoa3FtdGM2OGNrbC5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbTgBQkBkNjU0NjJjMWM1MGI0YWE1NDFmMTUxNjZkMjU2MDZlZGRkZDkwMTE1M2Q2OGJhOWFiOTQxNmE5Mjk3ODBlNjRjUkFhdXRoLWZsb3ctc3NvLWJ1dHRvbnMtZ29vZ2xlLTUyNWY4MWYzLTg4MzgtNDMxNS05NzhiLThmMjllMTRiYjIyMw&gsiwebsdk=gis_attributes&origin=https%3A%2F%2Fwww.reddit.com&prompt=select_account&redirect_uri=gis_transform&response_mode=form_post&response_type=id_token&scope=openid+email+profile&state=auth-flow-sso-buttons-google-525f81f3-8838-4315-978b-8f29e14bb223&dsh=-UqAZMzlOURYuIt0e02VRTSt7FsWyfeEYipnkoqW1Bw&o2v=1&service=lso&flowName=GeneralOAuthFlow&opparams=%253Fgis_params%253DChZodHRwczovL3d3dy5yZWRkaXQuY29tEg1naXNfdHJhbnNmb3JtGAcqKy1VcUFaTXpsT1VSWXVJdDBlMDJWUlRTdDdGc1d5ZmVFWWlwbmtvcVcxQncySDcwNTgxOTcyODc4OC1iMmMxa2NzN3RzdDNiN2dodjdhdDBoa3FtdGM2OGNrbC5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbTgBQkBkNjU0NjJjMWM1MGI0YWE1NDFmMTUxNjZkMjU2MDZlZGRkZDkwMTE1M2Q2OGJhOWFiOTQxNmE5Mjk3ODBlNjRjUkFhdXRoLWZsb3ctc3NvLWJ1dHRvbnMtZ29vZ2xlLTUyNWY4MWYzLTg4MzgtNDMxNS05NzhiLThmMjllMTRiYjIyMw%2526response_mode%253Dform_post&continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAOtNLEp2S9h2uBrKseTbCBvX42QqA5eXO7mgwxPoNcd6Cgpx8d3yAmsFFijIKQtVPCCs0U_oXBnkVnqWT85VZGJ99ksiIDJHD814Xr8FeBoox-_in0hJI9fY7oa2S1R3Ne-3vNCM5uT2Eb_KfQwc0N_9CEogtlOzptbgDcz0IVWwlaGaINY_OUE6JUrx8sKNdslqCRodOYm6nBdXlKMTJX2TUALa8UaW-28p0i4Phl48fIKGyG-O4a3nN31F3JakkZjKPEzHguDbuYkisIEO6-rpzFsoDQWZSWT5kZ20MAyIIdSIpQ8yNEtFPn6lpCuAivt3x1X74VhFo3H38wi4Nl8P9OrdGM8FWRbhncRUQXPfBRfZlP4QFlIAEkGBUmZh1jsR4A9OnwPfnVkT-S-j6EzXpg6q2NKLGKoXuw9p2TfyTfnTvB5QJJ2Q_hyxFy8ulhQBmRId_HoV_d2OhtbDj467rLcJ1VOWs5xRixoX4ddmXXvnWU%26flowName%3DGeneralOAuthFlow%26as%3D-UqAZMzlOURYuIt0e02VRTSt7FsWyfeEYipnkoqW1Bw%26client_id%3D705819728788-b2c1kcs7tst3b7ghv7at0hkqmtc68ckl.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fconsent%23&app_domain=https%3A%2F%2Fwww.reddit.com"
+                link="https://accounts.google.com/v3/signin/accountchooer?as=-UqAZMzlOURYuIt0e02VRTSt7FsWyfeEYipnkoqW1Bw&client_id=705819728788-b2c1kcs7tst3b7ghv7at0hkqmtc68ckl.apps.googleusercontent.com&display=popup&gis_params=ChZodHRwczovL3d3dy5yZWRkaXQuY29tEg1naXNfdHJhbnNmb3JtGAcqKy1VcUFaTXpsT1VSWXVJdDBlMDJWUlRTdDdGc1d5ZmVFWWlwbmtvcVcxQncySDcwNTgxOTcyODc4OC1iMmMxa2NzN3RzdDNiN2dodjdhdDBoa3FtdGM2OGNrbC5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbTgBQkBkNjU0NjJjMWM1MGI0YWE1NDFmMTUxNjZkMjU2MDZlZGRkZDkwMTE1M2Q2OGJhOWFiOTQxNmE5Mjk3ODBlNjRjUkFhdXRoLWZsb3ctc3NvLWJ1dHRvbnMtZ29vZ2xlLTUyNWY4MWYzLTg4MzgtNDMxNS05NzhiLThmMjllMTRiYjIyMw&gsiwebsdk=gis_attributes&origin=https%3A%2F%2Fwww.reddit.com&prompt=select_account&redirect_uri=gis_transform&response_mode=form_post&response_type=id_token&scope=openid+email+profile&state=auth-flow-sso-buttons-google-525f81f3-8838-4315-978b-8f29e14bb223&dsh=-UqAZMzlOURYuIt0e02VRTSt7FsWyfeEYipnkoqW1Bw&o2v=1&service=lso&flowName=GeneralOAuthFlow&opparams=%253Fgis_params%253DChZodHRwczovL3d3dy5yZWRkaXQuY29tEg1naXNfdHJhbnNmb3JtGAcqKy1VcUFaTXpsT1VSWXVJdDBlMDJWUlRTdDdGc1d5ZmVFWWlwbmtvcVcxQncySDcwNTgxOTcyODc4OC1iMmMxa2NzN3RzdDNiN2dodjdhdDBoa3FtdGM2OGNrbC5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbTgBQkBkNjU0NjJjMWM1MGI0YWE1NDFmMTUxNjZkMjU2MDZlZGRkZDkwMTE1M2Q2OGJhOWFiOTQxNmE5Mjk3ODBlNjRjUkFhdXRoLWZsb3ctc3NvLWJ1dHRvbnMtZ29vZ2xlLTUyNWY4MWYzLTg4MzgtNDMxNS05NzhiLThmMjllMTRiYjIyMw%2526response_mode%253Dform_post&continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAOtNLEp2S9h2uBrKseTbCBvX42QqA5eXO7mgwxPoNcd6Cgpx8d3yAmsFFijIKQtVPCCs0U_oXBnkVnqWT85VZGJ99ksiIDJHD814Xr8FeBoox-_in0hJI9fY7oa2S1R3Ne-3vNCM5uT2Eb_KfQwc0N_9CEogtlOzptbgDcz0IVWwlaGaINY_OUE6JUrx8sKNdslqCRodOYm6nBdXlKMTJX2TUALa8UaW-28p0i4Phl48fIKGyG-O4a3nN31F3JakkZjKPEzHguDbuYkisIEO6-rpzFsoDQWZSWT5kZ20MAyIIdSIpQ8yNEtFPn6lpCuAivt3x1X74VhFo3H38wi4Nl8P9OrdGM8FWRbhncRUQXPfBRfZlP4QFlIAEkGBUmZh1jsR4A9OnwPfnVkT-S-j6EzXpg6q2NKLGKoXuw9p2TfyTfnTvB5QJJ2Q_hyxFy8ulhQBmRId_HoV_d2OhtbDj467rLcJ1VOWs5xRixoX4ddmXXvnWU%26flowName%3DGeneralOAuthFlow%26as%3D-UqAZMzlOURYuIt0e02VRTSt7FsWyfeEYipnkoqW1Bw%26client_id%3D705819728788-b2c1kcs7tst3b7ghv7at0hkqmtc68ckl.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fconsent%23&app_domain=https%3A%2F%2Fwww.reddit.com"
               />
               <ContinueWithLink
                 text="Continue with Apple"
@@ -89,6 +120,7 @@ const Login = ({ setOpen }) => {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                onFocus={() => setError("")}
               />
 
               <InputText
@@ -97,6 +129,7 @@ const Login = ({ setOpen }) => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setError("")}
               />
             </div>
 
@@ -114,7 +147,12 @@ const Login = ({ setOpen }) => {
               {isSignupOpen && <Signup setOpen={setIsSignupOpen} />}
             </div>
             <div className="submits">
-              <Submit text="Log In" disabled={disabled} />
+              <Submit
+                text={isLoading ? "Logging In..." : "Log In"}
+                disabled={disabled || isLoading}
+                onClick={handleLogin}
+                error={error}
+              />
             </div>
           </div>
         </div>

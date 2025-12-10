@@ -78,12 +78,13 @@ const OR = () => {
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}> *</span>;
 
-const InputText = ({ label, type = "text", required, onChange }) => {
+const InputText = ({ label, type = "text", required, onChange, onFocus: parentOnFocus }) => {
   const [value, setValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocus = () => {
     setIsFocused(true);
+    parentOnFocus && parentOnFocus();
   };
 
   const handleBlur = () => {
@@ -121,13 +122,14 @@ const InputText = ({ label, type = "text", required, onChange }) => {
   );
 };
 
-const Submit = ({ text, disabled }) => {
+const Submit = ({ text, disabled, onClick, error }) => {
   return (
     <button
-      className={`login-submit ${disabled ? "disabled" : "active"}`}
+      className={`login-submit ${disabled ? "disabled" : "active"} ${error ? "error" : ""}`}
       disabled={disabled}
+      onClick={onClick}
     >
-      <span className="submit-text">{text}</span>
+      <span className="submit-text">{error ? "Invalid email or password" : text}</span>
     </button>
   );
 };

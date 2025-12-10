@@ -19,24 +19,73 @@ body {
   min-height: 100vh;
 }
 
-/* Main Container */
+/* Main Container - REMOVED TOP PADDING */
 .settings-container {
-  padding: 40px 60px;
+  padding: 0 60px 40px; /* Removed top padding, kept right, bottom, left */
   min-height: 100vh;
   background-color: white;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Header */
+/* Header with tabs inline - UPDATED TO REMOVE MARGIN */
 .settings-header {
-  margin-bottom: 30px;
+  margin-bottom: 0;
+  border-bottom: none; /* Remove border bottom */
+  padding-bottom: 0;
+  padding-top: 20px; /* Added some top padding instead */
 }
 
 .settings-header h1 {
   font-size: 32px;
   font-weight: 600;
   color: #000;
+  margin-bottom: 10px; /* Reduced margin to bring tabs closer */
+}
+
+/* Horizontal tabs under the header - UPDATED TO REMOVE SCROLLING AND GAP */
+.settings-horizontal-tabs {
+  display: flex;
+  gap: 0;
+  overflow-x: visible; /* Changed from auto to visible to prevent scrolling */
+  padding-bottom: 0;
+  margin-bottom: 30px; /* Keep space below tabs */
+  border-bottom: none; /* Remove the separator line */
+  flex-wrap: nowrap; /* Ensure tabs stay in a single line */
+  width: 100%; /* Ensure full width */
+}
+
+.settings-horizontal-tab {
+  padding: 10px 20px 12px; /* Adjusted padding */
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.2s;
+  white-space: nowrap;
+  position: relative;
+  border-bottom: 2px solid transparent;
+  margin-bottom: 0; /* Removed negative margin */
+  flex-shrink: 0; /* Prevent tabs from shrinking */
+}
+
+.settings-horizontal-tab:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.settings-horizontal-tab.active {
+  color: #000;
+  font-weight: 600;
+  border-bottom: 2px solid #000;
+  background-color: transparent;
+}
+
+.settings-horizontal-tab.active:hover {
+  background-color: transparent;
 }
 
 /* Settings Layout */
@@ -45,8 +94,9 @@ body {
   gap: 40px;
 }
 
-/* Sidebar */
+/* Sidebar - Hidden on desktop, shown on mobile */
 .settings-sidebar {
+  display: none;
   width: 220px;
   flex-shrink: 0;
 }
@@ -224,25 +274,25 @@ input:checked + .toggle-slider:before {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  white-space: nowrap; /* Added to prevent wrapping */
+  white-space: nowrap;
 }
 
 .privacy-label {
   font-size: 15px;
   color: #000;
   font-weight: 500;
-  white-space: nowrap; /* Added to prevent text wrapping */
+  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Optional: adds "..." if text overflows */
-  flex-shrink: 1; /* Allows it to shrink if needed */
-  min-width: 0; /* Important for text-overflow to work with flexbox */
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .privacy-arrow {
   font-size: 15px;
   color: #999;
   font-weight: 300;
-  flex-shrink: 0; /* Prevents arrow from shrinking */
+  flex-shrink: 0;
 }
 
 /* Notifications tab specific styles */
@@ -292,7 +342,21 @@ input:checked + .toggle-slider:before {
 /* Responsive */
 @media (max-width: 768px) {
   .settings-container {
-    padding: 20px;
+    padding: 0 20px 20px; /* Removed top padding for mobile too */
+  }
+  
+  .settings-header {
+    border-bottom: none;
+    margin-bottom: 20px;
+    padding-top: 15px; /* Added some top padding for mobile */
+  }
+  
+  .settings-header h1 {
+    margin-bottom: 15px; /* Reduced for mobile */
+  }
+  
+  .settings-horizontal-tabs {
+    display: none;
   }
   
   .settings-content {
@@ -300,12 +364,13 @@ input:checked + .toggle-slider:before {
   }
   
   .settings-sidebar {
+    display: block;
     width: 100%;
   }
   
   .settings-tabs {
     flex-direction: row;
-    overflow-x: auto;
+    overflow-x: auto; /* Keep scrolling for mobile */
     padding-bottom: 10px;
   }
   
@@ -339,6 +404,20 @@ input:checked + .toggle-slider:before {
   }
   
   .notifications-toggle-group {
+    justify-content: flex-start;
+  }
+}
+
+/* Prevent horizontal scrolling on desktop and ensure tabs fit */
+@media (min-width: 769px) {
+  .settings-horizontal-tabs {
+    overflow-x: hidden; /* Ensure no scrolling on desktop */
+  }
+  
+  /* Make sure all tabs fit without scrolling */
+  .settings-horizontal-tabs-container {
+    width: 100%;
+    display: flex;
     justify-content: flex-start;
   }
 }
