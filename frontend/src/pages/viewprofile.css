@@ -10,8 +10,6 @@
   border: 1px; 
 }
 
-
-
 /* ==================== CONTENT WRAPPER ==================== */
 .vpPageContentWrapper {
   flex-grow: 1;
@@ -19,45 +17,6 @@
   flex-direction: column;
   min-width: 0; /* Prevents overflow issues in flex items */
   position: relative; /* Added for absolute positioning */
-}
-
-/* ==================== HAMBURGER BUTTON ==================== */
-.vpHamburgerContainer {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  z-index: 1100; /* Higher than sidebar z-index */
-  padding: 0;
-  display: flex;
-  align-items: center;
-}
-
-.vpHamburgerBtnNew {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: white;
-  border: 1px solid #d3d3d3;
-  padding: 0;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #1c1c1c;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.vpHamburgerBtnNew:hover {
-  background: #f6f7f8;
-  border-color: #878a8c;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.vpHamburgerIcon {
-  width: 20px;
-  height: 20px;
-  color: #1c1c1c;
 }
 
 /* ==================== MAIN PAGE CONTENT ==================== */
@@ -346,6 +305,10 @@
 .vpRightSidebar { 
   width: 312px; 
   flex-shrink: 0;
+  
+  /* Move it further right */
+  margin-left: auto;
+  margin-right: 20px; /* Add some space from the right edge */
 }
 
 .vpRightCard { 
@@ -355,8 +318,6 @@
   padding: 16px;
   position: sticky;
   top: 80px;
-
-  /* NEW */
   max-height: calc(100vh - 100px); 
   overflow-y: auto;
 }

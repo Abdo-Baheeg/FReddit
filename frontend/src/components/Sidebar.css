@@ -16,28 +16,27 @@
 /* Open State */
 .sidebar-open {
   transform: translateX(0);
-  width: 270px;
+  width: 240px; /* Fixed width from image */
 }
 
 /* Closed State */
 .sidebar-closed {
   transform: translateX(-100%);
-  width: 270px;
+  width: 240px; /* Fixed width from image */
 }
 
 /* Sidebar Content */
 .sidebar-content {
-  padding: 16px;
-  width: 270px;
+  padding: 16px 0;
+  width: 240px;
   height: 100%;
   overflow-y: auto;
 }
 
-/* Hamburger Button */
+/* Hamburger Button Container */
 .sidebar-hamburger-container {
   position: fixed;
   top: 60px; /* Below navbar */
-  left: 12px;
   z-index: 1000;
   padding: 0;
   display: flex;
@@ -45,8 +44,14 @@
   transition: left 0.3s ease;
 }
 
-.sidebar-open ~ .sidebar-hamburger-container {
-  left: 282px; /* Move with sidebar */
+/* When sidebar is OPEN, position button at right edge of sidebar */
+.hamburger-with-sidebar-open {
+  left: 252px; /* 240px (sidebar width) + 12px (offset) */
+}
+
+/* When sidebar is CLOSED, position button at most left of page */
+.hamburger-with-sidebar-closed {
+  left: 12px; /* Most left position with small margin */
 }
 
 .sidebar-hamburger-btn {
@@ -81,51 +86,92 @@
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   margin-bottom: 20px;
+  padding: 0 16px;
 }
 
 .sidebar-nav a {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 12px;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border-radius: 4px;
   color: #1c1c1c;
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
+  position: relative;
+  border: 1px solid transparent;
 }
 
 .sidebar-nav a:hover {
   background: #f6f7f8;
 }
 
+/* Active link styling - تغمق الخلفية وإضافة البار البرتقالي */
 .sidebar-active-link {
-  background: #f6f7f8 !important;
-  color: #000 !important;
-  font-weight: 600 !important;
-}
-
-.sidebar-beta-tag {
-  background: #ff4500;
-  color: white;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-left: auto;
-}
-
-.sidebar-create-community {
+  background: #f0f0f0 !important; /* خلفية داكنة */
   color: #1c1c1c !important;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
+  border-left: 3px solid #ff4500;
+  padding-left: 9px; /* Adjust for border */
+  
+  /* إزالة التأثيرات الأخرى */
+  border-top: 1px solid transparent;
+  border-right: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  box-shadow: none;
+  transform: none;
 }
 
+/* Active link hover - keep same background when hovering */
+.sidebar-active-link:hover {
+  background: #e8e8e8 !important; /* خلفية أغمق قليلاً عند hover */
+}
+
+/* Active icon color - keep orange for active icon */
+.sidebar-active-link .sidebar-icon {
+  color: #ff4500 !important; /* Orange for active icon */
+}
+
+/* Icon colors and styles */
 .sidebar-icon {
   width: 20px;
   height: 20px;
+  color: #878a8c;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+/* All icons have same base color */
+.sidebar-nav a .sidebar-icon {
+  color: #878a8c;
+}
+
+/* Hover effect for all icons */
+.sidebar-nav a:hover .sidebar-icon {
   color: #1c1c1c;
+}
+
+/* البار البرتقالي للرابط النشط فقط */
+.sidebar-nav a::before {
+  content: '';
+  position: absolute;
+  left: -16px; /* خارج حدود الـ padding */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background-color: #ff4500;
+  border-radius: 0 2px 2px 0;
+  transition: height 0.2s ease;
+}
+
+/* عندما يكون الرابط نشطاً، يظهر البار البرتقالي */
+.sidebar-active-link::before {
+  height: 24px; /* ارتفاع البار البرتقالي */
 }
 
 /* Sidebar Divider */
@@ -138,6 +184,7 @@
 /* Sidebar Sections */
 .sidebar-section {
   margin-top: 20px;
+  padding: 0 16px;
 }
 
 .sidebar-section-title {
@@ -145,7 +192,7 @@
   font-weight: 700;
   text-transform: uppercase;
   color: #878a8c;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   letter-spacing: 0.5px;
 }
 
@@ -154,12 +201,12 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px;
+  padding: 8px;
   border-radius: 4px;
   background: transparent;
   border: none;
   position: relative;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   transition: background 0.2s;
   cursor: pointer;
   width: 100%;
@@ -196,7 +243,7 @@
 }
 
 .sidebar-game-players {
-  font-size: 11px;
+  font-size: 12px;
   color: #878a8c;
   margin-top: 2px;
 }
@@ -204,21 +251,12 @@
 .sidebar-new-game {
   border: 1px solid #edeff1;
   background: #f6f7f8;
-  padding: 12px;
-  margin-bottom: 12px;
+  padding: 10px;
+  margin-bottom: 8px;
 }
 
 .sidebar-new-game:hover {
   background: #e8e9ea;
-}
-
-.sidebar-new-game .sidebar-game-icon {
-  background: linear-gradient(135deg, #ff4500, #ff6b35);
-  color: white;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
 }
 
 .sidebar-new-badge {
@@ -227,11 +265,50 @@
   right: 8px;
   background: #46d160;
   color: white;
-  font-size: 9px;
-  padding: 2px 6px;
+  font-size: 10px;
+  padding: 2px 8px;
   border-radius: 10px;
   font-weight: 600;
   letter-spacing: 0.3px;
+}
+
+/* Custom Feeds Section */
+.sidebar-section a.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  color: #1c1c1c;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s;
+  margin-bottom: 2px;
+  position: relative;
+}
+
+.sidebar-section a.sidebar-link:hover {
+  background: #f6f7f8;
+}
+
+/* البار البرتقالي للروابط في الأقسام الأخرى */
+.sidebar-section a.sidebar-link::before {
+  content: '';
+  position: absolute;
+  left: -16px; /* خارج حدود الـ padding */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background-color: #ff4500;
+  border-radius: 0 2px 2px 0;
+  transition: height 0.2s ease;
+}
+
+/* عندما يكون الرابط في القسم نشطاً */
+.sidebar-section a.sidebar-link.sidebar-active-link::before {
+  height: 24px; /* ارتفاع البار البرتقالي */
 }
 
 /* Responsive Design */
@@ -245,12 +322,13 @@
 
   .sidebar-hamburger-container {
     top: 12px;
-    left: 12px;
     z-index: 1000;
   }
 
-  .sidebar-open ~ .sidebar-hamburger-container {
-    left: 12px;
+  /* On mobile, always position hamburger at left */
+  .hamburger-with-sidebar-open,
+  .hamburger-with-sidebar-closed {
+    left: 12px !important;
   }
 
   /* Overlay for mobile */
