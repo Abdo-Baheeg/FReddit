@@ -1,52 +1,53 @@
+
 .subreddit-header {
-  border-radius: 8px;
-  overflow: visible;
+  background: #fff;
   margin-bottom: 18px;
-  background: white;
+  position: relative;
+  box-sizing: border-box;
 }
 
 .subreddit-banner {
-  height: 160px;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  width: 100%;
+  max-width: 1135px;      
+  height: 132px;          
+  margin: 12px auto 0;    
+  border-radius: 12px;
   background-position: center;
   background-size: cover;
+  overflow: hidden;
   position: relative;
+  box-shadow: none;
 }
+
 .banner-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0),
-    rgba(0, 0, 0, 0.05)
-  );
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(0,0,0,0.04));
 }
 
 .subreddit-info-wrapper {
-  padding: 0 20px 18px;
+  width: 100%;
+  max-width: 1100px;      
+  margin: 0 auto;
+  padding: 0 18px 18px;
+  box-sizing: border-box;
 }
+
 .subreddit-info {
   display: flex;
   align-items: center;
-  gap: 16px;
-  transform: translateY(-36px);
+  gap: 20px;
+  transform: translateY(-46px); 
+  width: 100%;
 }
 
-.avatar-wrap {
-  margin-left: 8px;
-  margin-right: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 .subreddit-avatar {
-  width: 88px;
-  height: 88px;
+  width: 110px;
+  height: 110px;
   border-radius: 999px;
-  border: 6px solid white; 
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border: 6px solid white;
   object-fit: cover;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.08);
 }
 
 .subreddit-text {
@@ -55,79 +56,102 @@
 }
 .subreddit-title {
   margin: 0;
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 34px;
+  font-weight: 800;
+  color: #0f172a;
 }
 .subreddit-subtitle {
-  margin: 4px 0;
+  margin: 6px 0 0;
   color: #4b5563;
-  font-size: 14px;
+  font-size: 15px;
 }
 .subreddit-meta {
+  margin-top: 8px;
   color: #6b7280;
-  font-size: 13px;
+  font-size: 14px;
 }
-.subreddit-meta .dot {
-  padding: 0 6px;
-  color: #d1d5db;
-}
+.subreddit-meta .dot { padding: 0 8px; color: #e6e6e6; }
 
 .subreddit-actions {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
-}
-.create-post-btn {
-  border: 1px solid #e5e7eb;
-  background: white;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.create-post-btn .plus {
-  margin-right: 6px;
-  font-weight: 700;
+  margin-left: 12px;
 }
 
-.join-btn {
-  padding: 8px 14px;
+
+.subreddit-actions button {
+  padding: 12px 28px;
+  font-size: 16px;
   border-radius: 999px;
-  border: none;
+  font-weight: 700;
   cursor: pointer;
-  background: #0064e6;
-  color: white;
-  font-weight: 600;
+  transition: transform .14s ease, box-shadow .14s ease, background-color .14s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
-.join-btn.joined {
-  background: #eef2ff;
-  color: #0b5fff;
-  border: 1px solid #c7d2fe;
+
+.subreddit-actions .create {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #111827;
+  box-shadow: none;
+}
+.subreddit-actions .create:hover {
+  transform: translateY(-2px);
+  background: #f7f7f7;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+}
+
+.subreddit-actions .join {
+  background: #0a58ff; /* slightly deeper */
+  color: #fff;
+  border: none;
+  box-shadow: 0 6px 18px rgba(10,88,255,0.14);
+}
+.subreddit-actions .join:hover {
+  transform: translateY(-2px);
+  background: #084fd6;
+  box-shadow: 0 10px 24px rgba(10,88,255,0.18);
+}
+
+.subreddit-actions .joined {
+  background: #fff;
+  color: #0a58ff;
+  border: 1px solid #dbe9ff;
+  box-shadow: none;
+}
+.subreddit-actions .joined:hover {
+  background: #f2f8ff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(10,88,255,0.06);
 }
 
 .more-btn {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 999px;
   border: 1px solid #e5e7eb;
-  background: white;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+}
+.more-btn:hover { transform: translateY(-2px); }
+
+@media (max-width: 1024px) {
+  .subreddit-info-wrapper { max-width: 900px; padding: 0 12px 18px; }
+  .subreddit-avatar { width: 92px; height: 92px; border-width: 5px; }
+  .subreddit-title { font-size: 28px; }
+  .subreddit-actions button { padding: 10px 20px; font-size: 15px; }
 }
 
 @media (max-width: 640px) {
-  .subreddit-info {
-    flex-direction: column;
-    align-items: flex-start;
-    transform: translateY(-20px);
-  }
-  .subreddit-avatar {
-    width: 72px;
-    height: 72px;
-    border-width: 5px;
-  }
-  .subreddit-actions {
-    width: 100%;
-    justify-content: flex-start;
-    margin-top: 8px;
-  }
+  .subreddit-banner { height: 110px; max-width: 100%; margin: 6px auto 0; border-radius: 10px; }
+  .subreddit-info { transform: translateY(-28px); flex-direction: column; align-items: flex-start; gap: 12px; }
+  .subreddit-actions { width: 100%; justify-content: flex-start; gap: 8px; margin-left: 0; }
+  .subreddit-actions button { padding: 10px 14px; font-size: 14px; }
+  .subreddit-title { font-size: 20px; }
 }
