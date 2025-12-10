@@ -1,63 +1,103 @@
+
 .community-page-root {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: #ffffff;
+  min-height: 100vh;
+  padding: 0 0 48px;
+  box-sizing: border-box;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: #111827;
 }
 
-.community-page-body {
-  display: flex;
-  gap: 24px;
-  max-width: 1200px;
-  margin: 24px auto;
+.community-page-body.vpLayoutContainer {
+  width: 100%;
+  max-width: 1180px;       
+  margin: 0 auto;         
+  display: grid;
+  grid-template-columns: 1fr 320px; 
+  gap: 28px;
+  align-items: start;
+  box-sizing: border-box;
   padding: 0 16px;
 }
 
-.community-post-column {
-  flex: 1 1 680px;
-  min-width: 300px;
+.community-post-column.vpPageContentWrapper {
+  width: 100%;
+  min-width: 0;
+  align-self: start;
 }
 
-.community-sidebar-column {
-  width: 320px;
-  flex: 0 0 320px;
-}
-
-.page-controls {
+.community-sidebar-column.vpRightSidebar {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 12px;
+  justify-content: center;
+  align-items: flex-start;
 }
 
-.create-post-primary,
-.create-post-btn {
-  background: #0061d5;
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-}
-
-.create-post-btn {
-  display: inline-block;
-  margin-top: 12px;
-}
-
-.post-fallback-card {
-  border: 1px solid #e6e9ee;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 12px;
-  background: white;
-}
-
-.post-title {
-  margin: 0 0 6px 0;
-}
-.post-meta {
-  color: #6b7280;
-  font-size: 13px;
-}
-.empty-posts {
+.empty-posts.vpEmptyState {
+  padding: 48px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  padding: 80px 0;
-  color: #4a5568;
+  gap: 12px;
+}
+
+.vpCreatePostBtn.create {
+  padding: 12px 26px;
+  font-size: 16px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.posts-list.vpPostsList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.post-fallback-card.vpPostCard {
+  background: white;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 4px 12px rgba(15,23,42,0.03);
+}
+
+.post-title.vpPostTitle {
+  font-size: 20px;
+  margin: 10px 0;
+  font-weight: 700;
+}
+.post-body.vpPostContent p {
+  margin: 0;
+  color: #374151;
+}
+
+.sticky-sidebar .cs-box {
+  position: sticky;
+  top: 112px; 
+}
+
+@media (max-width: 1024px) {
+  .community-page-body.vpLayoutContainer {
+    grid-template-columns: 1fr;
+    max-width: 900px;
+    padding: 0 12px;
+  }
+
+  .community-sidebar-column.vpRightSidebar {
+    margin-top: 20px;
+  }
+
+  .sticky-sidebar .cs-box { position: static; top: auto; }
+}
+
+@media (max-width: 640px) {
+  .community-page-body.vpLayoutContainer {
+    padding: 0 8px;
+  }
+  .post-title.vpPostTitle { font-size: 18px; }
 }
