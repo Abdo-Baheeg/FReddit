@@ -1,37 +1,38 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import "./communitySidebar.css";
 import PropTypes from "prop-types";
 
-let api;
-try {
-  api = require("./api").default;
-} catch {
-  api = require("axios").create({
-    baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000",
-    headers: { "Content-Type": "application/json" },
-  });
-}
-
 export default function CommunitySidebar({ community, currentUser }) {
   const [openRules, setOpenRules] = useState({});
-  const [modsLoading, setModsLoading] = useState(false);
-  const [resolvedModerators, setResolvedModerators] = useState([]);
 
   if (!community) return null;
 
+  const communityId = community._id || community.id || community.communityId || community.community_id || null;
+
   const membersCount = useMemo(() => {
-    if (Array.isArray(community.members)) return community.members.length;
-    return community.membersCount ?? 0;
+    if (!community) return 0;
+    const pickFirst = (...keys) => {
+      for (const k of keys) {
+        if (community[k] !== undefined && community[k] !== null) return community[k];
+      }
+      return undefined;
+    };
+    let val = pickFirst("memberCount", "membersCount", "members_count", "member_count", "members");
+    if (Array.isArray(val)) return val.length;
+    if (typeof val === "object" && val !== null) {
+      if (typeof val.count === "number") return val.count;
+      return 0;
+    }
+    const n = Number(val);
+    if (!Number.isFinite(n)) return 0;
+    return Math.max(0, Math.floor(n));
   }, [community]);
 
-  const communityAvatar =
-    community.avatarUrl || community.avatar_url || "/default-community.png";
+  const communityAvatar = community.avatarUrl || community.avatar_url || "/default-community.png";
 
-  const moderators = Array.isArray(community.moderators)
-    ? community.moderators
-    : [];
+  const moderators = Array.isArray(community.moderators) ? community.moderators : [];
 
-  const displayModerators = resolvedModerators.slice(0, 6);
+  const displayModerators = moderators.slice(0, 6);
 
   const formatCompactNumber = (n) => {
     if (n == null) return "—";
@@ -59,38 +60,10 @@ export default function CommunitySidebar({ community, currentUser }) {
     }
   };
 
-  const toggleRule = (idx) =>
-    setOpenRules((prev) => ({ ...prev, [idx]: !prev[idx] }));
-
-  useEffect(() => {
-    const fetchModerators = async () => {
-      if (moderators.length === 0) {
-        setResolvedModerators([]);
-        return;
-      }
-
-      const communityId = community._id || community.id;
-      setModsLoading(true);
-
-      try {
-        const res = await api.get(`/api/communities/${communityId}/moderators`);
-        setResolvedModerators(res.data || []);
-      } catch {
-        setResolvedModerators(
-          moderators.map((m) =>
-            typeof m === "string" ? { username: m } : m
-          )
-        );
-      } finally {
-        setModsLoading(false);
-      }
-    };
-
-    fetchModerators();
-  }, [community._id, JSON.stringify(moderators)]);
+  const toggleRule = (idx) => setOpenRules((prev) => ({ ...prev, [idx]: !prev[idx] }));
 
   return (
-    <aside className="cs-root">
+    <aside className="cs-root" aria-label={`Sidebar for community ${community.name || communityId}`}>
       <div className="cs-box">
         <div className="cs-stats-card">
           <div className="cs-stats-header">
@@ -103,47 +76,27 @@ export default function CommunitySidebar({ community, currentUser }) {
 
             <div className="cs-stats-headline">
               <div className="cs-community-name">r/{community.name}</div>
-              <div className="cs-community-sub">{community.description}</div>
+              {community.description && <div className="cs-community-sub">{community.description}</div>}
             </div>
           </div>
 
           <div className="cs-stats-grid">
             <div className="cs-stat-item">
-              <div className="cs-stat-num">{formatCreated(community.createdAt)}</div>
+              <div className="cs-stat-num">{formatCreated(community.createdAt || community.created_at)}</div>
               <div className="cs-stat-label">Created</div>
             </div>
 
             <div className="cs-stat-item">
-              <div className="cs-stat-num">
-                {community.isPublic ? "Public" : "Private"}
-              </div>
+              <div className="cs-stat-num">{community.isPublic ? "Public" : "Private"}</div>
               <div className="cs-stat-label">Community type</div>
-            </div>
-
-            <div className="cs-stat-item">
-              <div className="cs-stat-num">
-                {formatCompactNumber(community.weeklyVisitors)}
-              </div>
-              <div className="cs-stat-label">Weekly visitors</div>
-            </div>
-
-            <div className="cs-stat-item">
-              <div className="cs-stat-num">
-                {formatCompactNumber(community.weeklyContributions)}
-              </div>
-              <div className="cs-stat-label">Weekly contributions</div>
             </div>
           </div>
 
           <div className="cs-members-line">
             <div>
-              <div className="cs-members-count">
-                {formatCompactNumber(membersCount)}
-              </div>
+              <div className="cs-members-count">{formatCompactNumber(membersCount)}</div>
               <div className="cs-members-label">Members</div>
             </div>
-
-            {}
           </div>
         </div>
 
@@ -158,9 +111,7 @@ export default function CommunitySidebar({ community, currentUser }) {
             <div>
               <div className="cs-flair-label">USER FLAIR</div>
               <div className="cs-flair-chip">
-                {currentUser?.flair ||
-                  currentUser?.username ||
-                  "Available"}
+                {currentUser?.flair || currentUser?.username || "Available"}
               </div>
             </div>
           </div>
@@ -170,21 +121,16 @@ export default function CommunitySidebar({ community, currentUser }) {
 
         {/* RULES */}
         <div className="cs-section">
-          <div className="cs-section-title">
-            R/{String(community.name).toUpperCase()} RULES
-          </div>
+          <div className="cs-section-title">R/{String(community.name).toUpperCase()} RULES</div>
 
           {Array.isArray(community.rules) && community.rules.length ? (
             community.rules.map((rule, idx) => {
-              const title = rule.title || rule;
-              const desc = rule.description || rule;
+              const title = typeof rule === "string" ? rule : rule.title ?? String(rule);
+              const desc = typeof rule === "string" ? rule : rule.description ?? "";
               const open = !!openRules[idx];
               return (
                 <div className="cs-rule" key={idx}>
-                  <button
-                    className="cs-rule-toggle"
-                    onClick={() => toggleRule(idx)}
-                  >
+                  <button className="cs-rule-toggle" onClick={() => toggleRule(idx)}>
                     <span className="cs-rule-index">{idx + 1}</span>
                     <span className="cs-rule-title">{title}</span>
                     <span className="cs-rule-chevron">{open ? "▾" : "▸"}</span>
@@ -205,35 +151,24 @@ export default function CommunitySidebar({ community, currentUser }) {
         <div className="cs-section">
           <div className="cs-section-title">MODERATORS</div>
 
-          {modsLoading ? (
-            <div className="cs-muted">Loading moderators…</div>
-          ) : displayModerators.length === 0 ? (
+          {displayModerators.length === 0 ? (
             <div className="cs-muted">No moderators listed.</div>
           ) : (
             displayModerators.map((m, i) => {
-              const username = m.username || m.name || "u/unknown";
-              const avatar =
-                m.avatar_url || m.avatar || "/default-avatar.png";
+              const username = (m && (m.username || m.name)) || (typeof m === "string" ? `u/${m}` : "u/unknown");
+              const avatar = (m && (m.avatar_url || m.avatar)) || "/default-avatar.png";
 
               return (
                 <div className="cs-mod-item" key={i}>
-                  <img
-                    src={avatar}
-                    alt={username}
-                    onError={(e) =>
-                      (e.currentTarget.src = "/default-avatar.png")
-                    }
-                  />
+                  <img src={avatar} alt={username} onError={(e) => (e.currentTarget.src = "/default-avatar.png")} />
                   <div className="cs-mod-meta">
                     <div className="cs-mod-name">{username}</div>
-                    {m.flair && <div className="cs-mod-flair">{m.flair}</div>}
+                    {m?.flair && <div className="cs-mod-flair">{m.flair}</div>}
                   </div>
                 </div>
               );
             })
           )}
-
-          {}
         </div>
       </div>
     </aside>
