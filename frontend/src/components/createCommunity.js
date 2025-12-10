@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import api from "../api"; 
+import { userApi } from "../api";
+import { communityApi } from "../api";
 import "./createCommunity.css";
 
 export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
@@ -141,6 +142,7 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
       return;
     }
 
+    const user = await userApi.getCurrentUser();
     if (typeof user !== "undefined" && !user) {
       setError("You must be logged in to create a community.");
       return;
@@ -153,11 +155,11 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
 
       let res;
       if (isFormData) {
-        res = await api.post("/communities/create", body, {
+        res = await communityApi.post("/communities/create", body, {
           headers: { "Accept": "application/json" },
         });
       } else {
-        res = await api.post("/communities/create", body);
+        res = await communityApi.createCommunity(name.trim(), description.trim(), isPublic, ageVerified, rulesText);
       }
 
       const created = res?.data?.community ?? res?.data ?? null;

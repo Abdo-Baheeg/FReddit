@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
-import CreateCommunityModal from "./CreateCommunityModal";
-import api from "../services/apiClient";
+import CreateCommunityModal from "../components/createCommunity";
+import { communityApi } from "../api";
 import "./allCommunities.css";
 
 export default function CommunitiesPage() {
@@ -14,7 +14,7 @@ export default function CommunitiesPage() {
     setError(null);
     try {
       // axios supports AbortController `signal` (axios v1+)
-      const res = await api.get("/communities", { signal });
+      const res = await communityApi.getAllCommunities();
       const data = res?.data?.data ?? res?.data ?? [];
       setCommunities(Array.isArray(data) ? data : []);
     } catch (err) {
