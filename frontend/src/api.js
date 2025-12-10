@@ -37,6 +37,38 @@ export const userApi = {
       headers: getAuthHeaders()
     });
     return response.data;
+  },
+
+  // Resend email verification
+  resendVerification: async () => {
+    const response = await axios.post(
+      `${API_URL}/api/users/resend-verification`,
+      {},
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Verify email with token
+  verifyEmail: async (token) => {
+    const response = await axios.get(`${API_URL}/api/users/verify-email/${token}`);
+    return response.data;
+  },
+
+  // Request password reset
+  forgotPassword: async (email) => {
+    const response = await axios.post(`${API_URL}/api/users/forgot-password`, {
+      email
+    });
+    return response.data;
+  },
+
+  // Reset password with token
+  resetPassword: async (token, password) => {
+    const response = await axios.post(`${API_URL}/api/users/reset-password/${token}`, {
+      password
+    });
+    return response.data;
   }
 };
 

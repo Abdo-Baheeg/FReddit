@@ -1,0 +1,1024 @@
+{
+	"info": {
+		"_postman_id": "a7b8c9d0-e1f2-3456-7890-abcdef123456",
+		"name": "FReddit - Email Verification & Password Reset",
+		"description": "Collection for testing email verification and password reset endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User (with Email Verification)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save token and user info to environment",
+									"if (pm.response.code === 201) {",
+									"    const jsonData = pm.response.json();",
+									"    pm.environment.set('authToken', jsonData.token);",
+									"    pm.environment.set('userId', jsonData.user.id);",
+									"    pm.environment.set('userEmail', jsonData.user.email);",
+									"    pm.environment.set('isEmailVerified', jsonData.user.isEmailVerified);",
+									"    ",
+									"    pm.test('Registration successful', function() {",
+									"        pm.expect(jsonData.message).to.include('verification');",
+									"    });",
+									"    ",
+									"    pm.test('Email not verified initially', function() {",
+									"        pm.expect(jsonData.user.isEmailVerified).to.be.false;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser_{{$randomInt}}\",\n    \"email\": \"test_{{$randomInt}}@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						},
+						"description": "Register a new user. Email verification email is sent automatically."
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const jsonData = pm.response.json();",
+									"    pm.environment.set('authToken', jsonData.token);",
+									"    pm.environment.set('userId', jsonData.user.id);",
+									"    pm.environment.set('isEmailVerified', jsonData.user.isEmailVerified);",
+									"    ",
+									"    pm.test('Login successful', function() {",
+									"        pm.expect(jsonData.token).to.exist;",
+									"    });",
+									"    ",
+									"    pm.test('Returns email verification status', function() {",
+									"        pm.expect(jsonData.user).to.have.property('isEmailVerified');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{userEmail}}\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						},
+						"description": "Login returns email verification status in user object"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Email Verification",
+			"item": [
+				{
+					"name": "Resend Verification Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Success message returned', function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('sent');",
+									"});",
+									"",
+									"// Test rate limiting (uncomment to test)",
+									"// pm.test('Rate limited after 3 requests', function() {",
+									"//     pm.expect(pm.response.code).to.be.oneOf([200, 429]);",
+									"// });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/resend-verification",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"resend-verification"
+							]
+						},
+						"description": "Resend verification email to current user. Rate limited to 3 requests per hour."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const jsonData = pm.response.json();",
+									"    ",
+									"    pm.test('Email verified successfully', function() {",
+									"        pm.expect(jsonData.message).to.include('verified');",
+									"    });",
+									"    ",
+									"    pm.test('User email is now verified', function() {",
+									"        pm.expect(jsonData.user.isEmailVerified).to.be.true;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/verify-email/{{verificationToken}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"verify-email",
+								"{{verificationToken}}"
+							]
+						},
+						"description": "Verify email with token. Get token from email or backend logs.\n\nTo test:\n1. Register a user\n2. Copy the verification token from the email or backend console\n3. Set it as `verificationToken` environment variable\n4. Run this request"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Email - Invalid Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('Error message returned', function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('Invalid');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/verify-email/invalid_token_12345",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"verify-email",
+								"invalid_token_12345"
+							]
+						},
+						"description": "Test with invalid token - should return 400 error"
+					},
+					"response": []
+				},
+				{
+					"name": "Resend Verification - Already Verified",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('Already verified message', function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('already verified');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/resend-verification",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"resend-verification"
+							]
+						},
+						"description": "Test resending verification email when already verified - should return 400"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Password Reset",
+			"item": [
+				{
+					"name": "Forgot Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Generic success message returned', function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('If an account exists');",
+									"});",
+									"",
+									"// Note: Same response for existing and non-existing emails (security)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{userEmail}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/forgot-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"forgot-password"
+							]
+						},
+						"description": "Request password reset email. Rate limited to 5 requests per hour.\n\nReturns same message whether user exists or not (security best practice)."
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password - Non-existent Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200 (security)', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Same generic message', function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('If an account exists');",
+									"});",
+									"",
+									"// Important: Prevents user enumeration"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"nonexistent_{{$randomInt}}@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/forgot-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"forgot-password"
+							]
+						},
+						"description": "Test with non-existent email - should return same generic message (prevents user enumeration)"
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const jsonData = pm.response.json();",
+									"    ",
+									"    pm.test('Password reset successful', function() {",
+									"        pm.expect(jsonData.message).to.include('successful');",
+									"    });",
+									"    ",
+									"    // Can now login with new password",
+									"    pm.environment.set('newPassword', 'newpassword123');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/reset-password/{{resetToken}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"reset-password",
+								"{{resetToken}}"
+							]
+						},
+						"description": "Reset password with token. Get token from email or backend logs.\n\nTo test:\n1. Request password reset via forgot-password\n2. Copy the reset token from the email or backend console\n3. Set it as `resetToken` environment variable\n4. Run this request with new password"
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password - Invalid Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function() {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('Invalid token error', function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('Invalid');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/reset-password/invalid_token_12345",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"reset-password",
+								"invalid_token_12345"
+							]
+						},
+						"description": "Test with invalid token - should return 400 error"
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password - Short Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400 or 500', function() {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 500]);",
+									"});",
+									"",
+									"pm.test('Validation error returned', function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/reset-password/{{resetToken}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"reset-password",
+								"{{resetToken}}"
+							]
+						},
+						"description": "Test password validation - password must be at least 6 characters"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rate Limiting Tests",
+			"item": [
+				{
+					"name": "Test Email Verification Rate Limit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Run this request 4 times in sequence",
+									"const iteration = pm.environment.get('iteration') || 1;",
+									"",
+									"if (iteration <= 3) {",
+									"    pm.test('Request ' + iteration + ' - Should succeed', function() {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"} else {",
+									"    pm.test('Request ' + iteration + ' - Should be rate limited', function() {",
+									"        pm.response.to.have.status(429);",
+									"    });",
+									"    ",
+									"    if (pm.response.code === 429) {",
+									"        const jsonData = pm.response.json();",
+									"        pm.test('Rate limit message returned', function() {",
+									"            pm.expect(jsonData.message).to.include('Too many');",
+									"        });",
+									"        pm.test('Retry-After header exists', function() {",
+									"            pm.expect(jsonData.retryAfter).to.exist;",
+									"        });",
+									"    }",
+									"}",
+									"",
+									"pm.environment.set('iteration', iteration + 1);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Reset iteration counter on first run",
+									"if (!pm.environment.get('iteration')) {",
+									"    pm.environment.set('iteration', 1);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/resend-verification",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"resend-verification"
+							]
+						},
+						"description": "Run this request 4 times to test rate limiting.\n\nExpected:\n- Requests 1-3: Success (200)\n- Request 4: Rate limited (429)\n\nReset by restarting server or waiting 1 hour."
+					},
+					"response": []
+				},
+				{
+					"name": "Test Password Reset Rate Limit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const iteration = pm.environment.get('pwIteraton') || 1;",
+									"",
+									"if (iteration <= 5) {",
+									"    pm.test('Request ' + iteration + ' - Should succeed', function() {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"} else {",
+									"    pm.test('Request ' + iteration + ' - Should be rate limited', function() {",
+									"        pm.response.to.have.status(429);",
+									"    });",
+									"}",
+									"",
+									"pm.environment.set('pwIteraton', iteration + 1);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (!pm.environment.get('pwIteraton')) {",
+									"    pm.environment.set('pwIteraton', 1);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{userEmail}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/forgot-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"forgot-password"
+							]
+						},
+						"description": "Run this request 6 times to test rate limiting.\n\nExpected:\n- Requests 1-5: Success (200)\n- Request 6: Rate limited (429)\n\nReset by restarting server or waiting 1 hour."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Integration Test Workflow",
+			"item": [
+				{
+					"name": "1. Register New User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"pm.environment.set('authToken', jsonData.token);",
+									"pm.environment.set('testEmail', jsonData.user.email);",
+									"",
+									"pm.test('Registration successful', function() {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"console.log('✓ User registered. Check backend logs for verification token.');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testflow_{{$timestamp}}\",\n    \"email\": \"testflow_{{$timestamp}}@example.com\",\n    \"password\": \"testpass123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Request Password Reset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Password reset requested', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"console.log('✓ Password reset requested. Check backend logs for reset token.');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{testEmail}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/forgot-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Set Tokens Manually",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"console.log('⚠ MANUAL STEP REQUIRED:');",
+									"console.log('1. Copy verification token from backend logs');",
+									"console.log('2. Set as environment variable: verificationToken');",
+									"console.log('3. Copy reset token from backend logs');",
+									"console.log('4. Set as environment variable: resetToken');",
+									"console.log('5. Continue with next requests');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"health"
+							]
+						},
+						"description": "This is a placeholder. After running this:\n1. Check backend console logs\n2. Copy the verification token\n3. Copy the reset token\n4. Set them in environment variables"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Verify Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Email verified', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"console.log('✓ Email verified successfully.');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/verify-email/{{verificationToken}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"verify-email",
+								"{{verificationToken}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Reset Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Password reset', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.environment.set('newPassword', 'newpass456');",
+									"console.log('✓ Password reset successfully.');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"newpass456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/reset-password/{{resetToken}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"reset-password",
+								"{{resetToken}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. Login with New Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Login with new password successful', function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"pm.test('Email is verified', function() {",
+									"    pm.expect(jsonData.user.isEmailVerified).to.be.true;",
+									"});",
+									"",
+									"console.log('✓ Complete workflow successful!');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{testEmail}}\",\n    \"password\": \"{{newPassword}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Complete workflow testing all email features in sequence"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		}
+	]
+}
