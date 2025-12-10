@@ -12,6 +12,7 @@ import Setting from "./pages/setting";
 import Trylogin from "./pages/Login_windows/Try.js";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/SidebBar";
+import CommunityPage from "./pages/communityPage";
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
               {/* <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} /> */}
-              <Route path="/communities" element={<CommunitiesPage />} />
+              <Route path="/communities" element={<allCommunities />} />
               <Route path="/create-post" element={<CreatePost />} />
               <Route path="/post/:id" element={<PostDetail />} />
               <Route path="/chat" element={<Chat />} />
@@ -36,6 +37,8 @@ function App() {
               <Route path="/viewprofile" element={<RedditProfilePage />} />
               <Route path="/setting" element={<Setting />} />
               <Route path="*" element={<h2>404: Page Not Found</h2>} />
+              <Route path="/community/:id" element={<CommunityPage />} />
+
             </Routes>
           </div>
         </div>
