@@ -5,7 +5,7 @@ import { SocketProvider } from "./context/SocketContext";
 import Home from "./pages/Home";
 import CreatePost from "./pages/CreatePost";
 import PostDetail from "./pages/PostDetail";
-import CommunitiesPage from "./pages/allCommunities";
+import allCommunities from "./pages/allCommunities";
 import Chat from "./pages/Chat";
 import RedditProfilePage from "./pages/viewprofile.js";
 import Setting from "./pages/setting";
