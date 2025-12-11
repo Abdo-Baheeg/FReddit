@@ -381,8 +381,25 @@
   color: #1a1a1a;
   font-size: 14px;
   font-weight: 500;
+ 
 }
 
+.vpDotDropItem {
+  border: none;
+  background-color: transparent; /* Fixed spelling */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  color: inherit;
+}
+
+vpDotDropdownItem
 .vpDotDropdownItem:hover {
   background: #f3f4f6;
 }

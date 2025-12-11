@@ -190,12 +190,14 @@ const Navbar = () => {
                 
                 {showDotMenu && (
                   <div className="vpDotDropdown">
-                    <Link to="/login" className="vpDotDropdownItem" style={{ textDecoration: "none", color: "inherit" }}>
+                    <button onClick={() => setIsLoginOpen(true)}
+                     className="vpDotDropItem" 
+                     style={{ textDecoration: "none", color: "inherit"  }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
                       </svg>
                       <span>Log in / Sign up</span>
-                    </Link>
+                    </button>
                     
                     <div className="vpDotDropdownItem">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

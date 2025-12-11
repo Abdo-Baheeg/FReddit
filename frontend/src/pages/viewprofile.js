@@ -245,7 +245,9 @@ export default function RedditProfilePageMock() {
                 {/* Show buttons container only for Overview and Posts tabs */}
                 {(activeTab === 'Overview' || activeTab === 'Posts') && (
                   <div className="vpButtonsContainer">
-                    <button className="vpCreatePostBtn">
+                    <button onClick={() => window.location.href = '/createpost'}
+                    className="vpCreatePostBtn">
+                      
                       <span>+</span> Create Post
                     </button>
                     
@@ -353,6 +355,8 @@ export default function RedditProfilePageMock() {
                           </div>
                           <h2><b>You don't have any posts yet</b></h2>
                           <p>Once you post to a community, it'll show up here.</p>
+                           <button onClick={() => window.location.href = '/setting'}
+                       className="vpUpdateSettingsBtn">Update Settings</button>
                         </div>
                       ) : (
                         <div className="vpPostsList">
@@ -387,10 +391,14 @@ export default function RedditProfilePageMock() {
                               width={120}
                               height={120}
                             />
+
                           </div>
                           <h2><b>You don't have any posts yet</b></h2>
                           <p>Once you post to a community, it'll show up here.</p>
+                           <button onClick={() => window.location.href = '/setting'}
+                       className="vpUpdateSettingsBtn">Update Settings</button>
                         </div>
+                        
                       ) : (
                         <div className="vpPostsList">
                           {posts.map(post => (
@@ -424,7 +432,8 @@ export default function RedditProfilePageMock() {
                         />
                       </div>
                       <h2><b>You don't have any Comments yet</b></h2>
-                      <button className="vpUpdateSettingsBtn">Update Settings</button>
+                      <button onClick={() => window.location.href = '/setting'}
+                       className="vpUpdateSettingsBtn">Update Settings</button>
                     </div>
                   )}
 
