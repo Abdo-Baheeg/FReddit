@@ -7,6 +7,7 @@ import CreatePost from "./pages/CreatePost";
 import PostDetail from "./pages/PostDetail";
 import CommunitiesPage from "./pages/allCommunities";
 import Chat from "./pages/Chat";
+import RedditChatUI from "./pages/ChatUI.js";
 import RedditProfilePage from "./pages/viewprofile.js";
 import Setting from "./pages/setting";
 import Trylogin from "./pages/Login_windows/Try.js";
@@ -18,26 +19,35 @@ function App() {
     <SocketProvider>
       <Router>
         <div className="App">
-          <Navbar />
-          <Sidebar />
-          <Trylogin />
-          <div className="main-content">
-            <Routes>
-              <Route path="/" element={<Home />} />
-
-              {/* <Route path="/verify-email" element={<VerifyEmail />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} /> */}
-              <Route path="/communities" element={<CommunitiesPage />} />
-              <Route path="/create-post" element={<CreatePost />} />
-              <Route path="/post/:id" element={<PostDetail />} />
-              <Route path="/chat" element={<Chat />} />
-              <Route path="/chat/:conversationId" element={<Chat />} />
-              <Route path="/viewprofile" element={<RedditProfilePage />} />
-              <Route path="/setting" element={<Setting />} />
-              <Route path="*" element={<h2>404: Page Not Found</h2>} />
-            </Routes>
-          </div>
+          <Routes>
+            {/* Chat UI - Full screen without navbar/sidebar */}
+            <Route path="/chat-ui" element={<RedditChatUI />} />
+            
+            {/* Regular routes with navbar/sidebar */}
+            <Route path="/*" element={
+              <>
+                <Navbar />
+                <Sidebar />
+                <Trylogin />
+                <div className="main-content">
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    {/* <Route path="/verify-email" element={<VerifyEmail />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} /> */}
+                    <Route path="/communities" element={<CommunitiesPage />} />
+                    <Route path="/create-post" element={<CreatePost />} />
+                    <Route path="/post/:id" element={<PostDetail />} />
+                    <Route path="/chat" element={<Chat />} />
+                    <Route path="/chat/:conversationId" element={<Chat />} />
+                    <Route path="/viewprofile" element={<RedditProfilePage />} />
+                    <Route path="/setting" element={<Setting />} />
+                    <Route path="*" element={<h2>404: Page Not Found</h2>} />
+                  </Routes>
+                </div>
+              </>
+            } />
+          </Routes>
         </div>
       </Router>
     </SocketProvider>

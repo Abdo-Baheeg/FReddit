@@ -114,6 +114,32 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
+// @route   GET /api/users/search
+// @desc    Search users by username
+// @access  Private
+router.get('/search', authMiddleware, async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    if (!q || q.trim().length === 0) {
+      return res.status(400).json({ message: 'Search query is required' });
+    }
+
+    // Search users by username (case-insensitive, partial match)
+    const users = await User.find({
+      username: { $regex: q, $options: 'i' },
+      _id: { $ne: req.user._id } // Exclude current user
+    })
+      .select('username avatar_url')
+      .limit(20);
+
+    res.json(users);
+  } catch (error) {
+    console.error('User search error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // @route   POST /api/users/resend-verification
 // @desc    Resend email verification
 // @access  Private

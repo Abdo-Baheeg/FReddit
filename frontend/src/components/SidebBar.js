@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Sidebar.css';
+import MessageCircleCodeIcon from 'lucide-react';
 
 export default function Sidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -67,9 +68,6 @@ export default function Sidebar() {
           className="sidebar-hamburger-btn"
           aria-label={isSidebarOpen ? "Close menu" : "Open menu"}
         >
-          <svg className="sidebar-hamburger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
         </button>
       </div>
 
@@ -79,6 +77,7 @@ export default function Sidebar() {
         className={`sidebar-left ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}
       >
         <div className="sidebar-content">
+          <MessageCircleCodeIcon size={24} />
           {/* Main Navigation Links */}
           <nav className="sidebar-nav">
             <a 

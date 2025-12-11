@@ -1,0 +1,14 @@
+.chat-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #ffffff;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .chat-main-content {
+    width: 100%;
+  }
+}
