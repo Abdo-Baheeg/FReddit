@@ -5,10 +5,6 @@ import PropTypes from "prop-types";
 export default function CommunitySidebar({ community, currentUser }) {
   const [openRules, setOpenRules] = useState({});
 
-  if (!community) return null;
-
-  const communityId = community._id || community.id || community.communityId || community.community_id || null;
-
   const membersCount = useMemo(() => {
     if (!community) return 0;
     const pickFirst = (...keys) => {
@@ -27,6 +23,10 @@ export default function CommunitySidebar({ community, currentUser }) {
     if (!Number.isFinite(n)) return 0;
     return Math.max(0, Math.floor(n));
   }, [community]);
+
+  if (!community) return null;
+
+  const communityId = community._id || community.id || community.communityId || community.community_id || null;
 
   const communityAvatar = community.avatarUrl || community.avatar_url || "/default-community.png";
 
