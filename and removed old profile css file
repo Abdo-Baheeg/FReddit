@@ -1,0 +1,57 @@
+[33m9f49505[m[33m ([m[1;36mHEAD[m[33m, [m[1;31morigin/main[m[33m)[m Merge branch 'main' of https://github.com/Abdo-Baheeg/FReddit
+[33ma1fed11[m Add AI Summary Modal component and related assets
+[33mb036fea[m community page
+[33mb926864[m Add files via upload
+[33m1be2a6c[m Create allCommunities.css
+[33m8aad062[m Create allCommunities.js
+[33m206fb37[m Update createCommunity.js
+[33me0d080c[m Create createCommunity.css
+[33m7262206[m Update createCommunity.js
+[33mdbbda49[m Create createCommunity.js
+[33m95b3ef8[m Merge branch 'main' of https://github.com/Abdo-Baheeg/FReddit
+[33mddd710f[m Login done
+[33m2219e15[m Merge branch 'main' of https://github.com/Abdo-Baheeg/FReddit
+[33md42a376[m Add community search API endpoint and update package.json scripts
+[33mc46bcbb[m Merge branch 'main' of https://github.com/Abdo-Baheeg/FReddit
+[33m2b3568c[m Login&Ekhwatha more updates on it
+[33m1d5b23d[m resolved merge conflicts
+[33m6f16743[m Merge branch 'main' of https://github.com/Abdo-Baheeg/FReddit
+[33m5262bdb[m Refactor PostDetail, Register, and Profile components; implement Sidebar and Settings pages
+[33m668e968[m Delete backend/.env.example
+[33mbc21ffe[m Delete backend/.env
+[33m26cc303[m Update redis.js
+[33m9c55568[m message
+[33medbddea[m We added alot today still need the rest of windows and make imporvements on UI and finally use api
+[33md1dfc6c[m message
+[33me4102e7[m message
+[33m2b3b9b7[m message
+[33mead4b4a[m Merge remote changes
+[33m8fb616f[m Add Redis caching for feed services and implement feed routes
+[33m7e13fd1[m Add new page
+[33m6504b1b[m Refactor voting system and implement membership management features
+[33m5a3cebd[m Merge branch 'main' of https://github.com/Abdo-Baheeg/FReddit
+[33mc3f3e8e[m FReddit API v2 with Vote and Membership models
+[33m424e744[m done p1
+[33m2b6bff6[m Login&ekhwatha finished ui still need to work right and some updates on its ui to be identical to Reddit
+[33mbc8b02a[m Added setting page
+[33m7ac5342[m Merge remote-tracking branch 'origin/main' and added new changes
+[33m818d9b1[m Added setting page
+[33mc288ff5[m Merge branch 'main' of https://github.com/Abdo-Baheeg/FReddit
+[33m833a548[m feat: integrate Cloudinary for image uploads and add configuration to environment
+[33me68eeb8[m Resolved merge conflict in App.js
+[33m7b8280c[m Added new pages and updated design
+[33m8cef3a1[m fix: update Gemini model version for post summary generation
+[33mf7c62c1[m feat: integrate Google GenAI for post summary generation
+[33m9000412[m refactor: use environment variable for API_URL in api.js
+[33m10f969c[m added backend API_URL
+[33m021d5ba[m Added viewprofile page + CSS
+[33m1c24cb6[m add viewprofile page
+[33m88266e2[m implementing the api functions for frontend, and the ui of ai summary
+[33m0509966[m chat feature
+[33mc2edbcf[m Merge branch 'main' of https://github.com/Abdo-Baheeg/FReddit
+[33mae44948[m adding chat feature, and other stuff
+[33mbcd337e[m Add environment variables for backend configuration
+[33m14b8767[m add gemini api key
+[33m4ef5ea1[m implemented db models, some api routes
+[33m40fbe73[m ...
+[33m3f097a0[m initial commit
