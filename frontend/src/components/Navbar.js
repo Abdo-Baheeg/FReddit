@@ -104,17 +104,7 @@ const Navbar = () => {
   };
 
 
-  const handleViewProfile = () => {
-    setShowUserMenu(false);
-    // Navigate to external URL
-    window.location.href = 'http://localhost:3001/viewprofile#';
-  };
 
-  const handleSettings = () => {
-    setShowUserMenu(false);
-    // Navigate to external URL
-    window.location.href = 'http://localhost:3001/setting#';
-  };
 
   const totalUnread = Object.values(unreadCounts).reduce(
     (sum, count) => sum + (Number(count) || 0),
@@ -362,13 +352,15 @@ const Navbar = () => {
                     </div>
                     <div className="vpUserDropdownInfo">
                       <div className="vpUserDropdownName">
+
                         <button 
                     className="vpUserDropdownItem" 
-                    onClick={handleViewProfile}
+                    onClick={()=> navigate('/viewprofile')}
                     style={{ background: 'none', border: 'none', width: '100%', textAlign: 'right' }}
                   >
                     <span>View Profile</span>
                   </button>
+                  
                       </div>
 
                     </div>
@@ -455,7 +447,7 @@ const Navbar = () => {
                   <div className="vpUserDropdownDivider"></div>
                   <button 
                     className="vpUserDropdownItem" 
-                    onClick={handleSettings}
+                    onClick={()=> navigate('/setting')}
                     style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left' }}
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
