@@ -39,3 +39,4 @@ coverage/
 .temp/
 frontend/package-lock.json
 .gitignore
+backend/.env.example
