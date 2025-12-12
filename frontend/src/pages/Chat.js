@@ -42,14 +42,12 @@ const Chat = () => {
     loadConversations();
   }, [setConversations]);
 
-  // Select conversation from URL or first one
+  // Select conversation automatically
   useEffect(() => {
     if (conversations.length > 0) {
       if (conversationId) {
         const conv = conversations.find(c => c._id === conversationId);
-        if (conv) {
-          setSelectedConversation(conv);
-        }
+        if (conv) setSelectedConversation(conv);
       } else {
         setSelectedConversation(conversations[0]);
         navigate(`/chat/${conversations[0]._id}`);
@@ -57,16 +55,13 @@ const Chat = () => {
     }
   }, [conversations, conversationId, navigate]);
 
-  // Load messages when conversation is selected
+  // Load messages for selected convo
   useEffect(() => {
     const loadMessages = async () => {
       if (selectedConversation) {
         try {
           const msgs = await chatApi.getMessages(selectedConversation._id);
-          setMessages(prev => ({
-            ...prev,
-            [selectedConversation._id]: msgs
-          }));
+          setMessages(prev => ({ ...prev, [selectedConversation._id]: msgs }));
           markAsRead(selectedConversation._id);
         } catch (error) {
           console.error('Failed to load messages:', error);
@@ -81,7 +76,7 @@ const Chat = () => {
     }
   }, [selectedConversation, messages, setMessages, markAsRead]);
 
-  // Scroll to bottom on new messages
+  // Auto scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, selectedConversation]);
@@ -106,9 +101,7 @@ const Chat = () => {
     if (selectedConversation) {
       setTyping(selectedConversation._id, true);
       
-      if (typingTimeout) {
-        clearTimeout(typingTimeout);
-      }
+      if (typingTimeout) clearTimeout(typingTimeout);
       
       const timeout = setTimeout(() => {
         setTyping(selectedConversation._id, false);
@@ -119,23 +112,17 @@ const Chat = () => {
   };
 
   const getConversationName = (conv) => {
-    if (conv.type === 'community') {
-      return conv.community?.name || 'Community Chat';
-    } else {
-      const currentUserId = localStorage.getItem('userId');
-      const otherUser = conv.participants.find(p => p._id !== currentUserId);
-      return otherUser?.username || 'Direct Message';
-    }
+    const currentUserId = localStorage.getItem('userId');
+    if (conv.type === 'community') return conv.community?.name || 'Community Chat';
+    const otherUser = conv.participants.find(p => p._id !== currentUserId);
+    return otherUser?.username || 'Direct Message';
   };
 
   const getConversationAvatar = (conv) => {
-    if (conv.type === 'community') {
-      return '👥';
-    } else {
-      const currentUserId = localStorage.getItem('userId');
-      const otherUser = conv.participants.find(p => p._id !== currentUserId);
-      return otherUser?.avatar_url || '👤';
-    }
+    const currentUserId = localStorage.getItem('userId');
+    if (conv.type === 'community') return '👥';
+    const otherUser = conv.participants.find(p => p._id !== currentUserId);
+    return otherUser?.avatar_url || '👤';
   };
 
   const formatTime = (date) => {
@@ -150,6 +137,7 @@ const Chat = () => {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
+
     return d.toLocaleDateString();
   };
 
@@ -172,10 +160,13 @@ const Chat = () => {
 
   return (
     <div className="chat-container">
+      
+      {/* Sidebar */}
       <div className="chat-sidebar">
         <div className="chat-sidebar-header">
           <h2>Messages</h2>
         </div>
+
         <div className="conversation-list">
           {conversations.length === 0 ? (
             <p className="no-conversations">No conversations yet</p>
@@ -189,6 +180,7 @@ const Chat = () => {
                 <div className="conversation-avatar">
                   {getConversationAvatar(conv)}
                 </div>
+
                 <div className="conversation-info">
                   <div className="conversation-name">
                     {getConversationName(conv)}
@@ -196,6 +188,7 @@ const Chat = () => {
                       <span className="unread-badge">{unreadCounts[conv._id]}</span>
                     )}
                   </div>
+
                   {conv.lastMessage && (
                     <div className="conversation-preview">
                       {conv.lastMessage.sender?.username}: {conv.lastMessage.content.substring(0, 30)}...
@@ -208,6 +201,7 @@ const Chat = () => {
         </div>
       </div>
 
+      {/* Main chat area */}
       <div className="chat-main">
         {selectedConversation ? (
           <>
@@ -221,24 +215,32 @@ const Chat = () => {
             </div>
 
             <div className="chat-messages">
+
+              {/* New Messages Divider */}
+              {unreadCounts[selectedConversation._id] > 0 && (
+                <div className="new-messages-divider">
+                  New Messages
+                </div>
+              )}
+
               {currentMessages.map((msg, index) => {
                 const isOwn = msg.sender._id === currentUserId;
                 const showAvatar = index === 0 || currentMessages[index - 1].sender._id !== msg.sender._id;
 
                 return (
-                  <div
-                    key={msg._id}
-                    className={`message ${isOwn ? 'message-own' : 'message-other'}`}
-                  >
+                  <div key={msg._id} className={`message ${isOwn ? "message-own" : "message-other"}`}>
+                    
                     {!isOwn && showAvatar && (
                       <div className="message-avatar">
-                        {msg.sender.avatar_url || '👤'}
+                        {msg.sender.avatar_url || "👤"}
                       </div>
                     )}
+
                     <div className="message-content">
                       {!isOwn && showAvatar && (
                         <div className="message-sender">{msg.sender.username}</div>
                       )}
+
                       <div className="message-bubble">
                         <p>{msg.content}</p>
                         <span className="message-time">{formatTime(msg.createdAt)}</span>
@@ -247,11 +249,18 @@ const Chat = () => {
                   </div>
                 );
               })}
+
+              {/* Typing Indicator (3 animated dots) */}
               {typingNames.length > 0 && (
                 <div className="typing-indicator">
-                  {typingNames.join(', ')} {typingNames.length === 1 ? 'is' : 'are'} typing...
+                  <div className="typing-dots">
+                    <div className="typing-dot"></div>
+                    <div className="typing-dot"></div>
+                    <div className="typing-dot"></div>
+                  </div>
                 </div>
               )}
+
               <div ref={messagesEndRef} />
             </div>
 
