@@ -106,17 +106,7 @@ const Navbar = () => {
   };
 
 
-  const handleViewProfile = () => {
-    setShowUserMenu(false);
-    // Navigate to external URL
-    window.location.href = 'http://localhost:3001/viewprofile#';
-  };
 
-  const handleSettings = () => {
-    setShowUserMenu(false);
-    // Navigate to external URL
-    window.location.href = 'http://localhost:3001/setting#';
-  };
 
   const totalUnread = Object.values(unreadCounts).reduce(
     (sum, count) => sum + (Number(count) || 0),
@@ -227,12 +217,14 @@ const Navbar = () => {
                 
                 {showDotMenu && (
                   <div className="vpDotDropdown">
-                    <Link to="/login" className="vpDotDropdownItem" style={{ textDecoration: "none", color: "inherit" }}>
+                    <button onClick={() => setIsLoginOpen(true)}
+                     className="vpDotDropItem" 
+                     style={{ textDecoration: "none", color: "inherit"  }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
                       </svg>
                       <span>Log in / Sign up</span>
-                    </Link>
+                    </button>
                     
                     <div className="vpDotDropdownItem">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -389,13 +381,15 @@ const Navbar = () => {
                     </div>
                     <div className="vpUserDropdownInfo">
                       <div className="vpUserDropdownName">
+
                         <button 
                     className="vpUserDropdownItem" 
-                    onClick={handleViewProfile}
+                    onClick={()=> navigate('/viewprofile')}
                     style={{ background: 'none', border: 'none', width: '100%', textAlign: 'right' }}
                   >
                     <span>View Profile</span>
                   </button>
+                  
                       </div>
 
                     </div>
@@ -482,7 +476,7 @@ const Navbar = () => {
                   <div className="vpUserDropdownDivider"></div>
                   <button 
                     className="vpUserDropdownItem" 
-                    onClick={navigate('/settings')}
+                    onClick={()=> navigate('/setting')}
                     style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left' }}
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
