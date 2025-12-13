@@ -1,0 +1,125 @@
+{
+  "info": {
+    "name": "FReddit Email Verification & Password Reset",
+    "description": "Email verification and password reset endpoints using Resend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Send Verification Email",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@example.com\",\n  \"userId\": \"507f1f77bcf86cd799439011\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/auth/send-verification",
+          "host": ["{{BASE_URL}}"],
+          "path": ["auth", "send-verification"]
+        },
+        "description": "Send an email verification link to a user"
+      },
+      "response": []
+    },
+    {
+      "name": "Send Password Reset Email",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@example.com\",\n  \"userId\": \"507f1f77bcf86cd799439011\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/auth/send-reset",
+          "host": ["{{BASE_URL}}"],
+          "path": ["auth", "send-reset"]
+        },
+        "description": "Send a password reset link to a user"
+      },
+      "response": []
+    },
+    {
+      "name": "Verify Email Token",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{BASE_URL}}/auth/verify-email?token={{EMAIL_TOKEN}}",
+          "host": ["{{BASE_URL}}"],
+          "path": ["auth", "verify-email"],
+          "query": [
+            {
+              "key": "token",
+              "value": "{{EMAIL_TOKEN}}",
+              "description": "JWT token from verification email"
+            }
+          ]
+        },
+        "description": "Verify an email using the token from the verification link"
+      },
+      "response": []
+    },
+    {
+      "name": "Reset Password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"token\": \"{{EMAIL_TOKEN}}\",\n  \"newPassword\": \"NewSecurePassword123!\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/auth/reset-password",
+          "host": ["{{BASE_URL}}"],
+          "path": ["auth", "reset-password"]
+        },
+        "description": "Reset user password using the token from reset email"
+      },
+      "response": []
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{BASE_URL}}/api/health",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api", "health"]
+        },
+        "description": "Check if the server is running"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:5050",
+      "type": "string"
+    },
+    {
+      "key": "EMAIL_TOKEN",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

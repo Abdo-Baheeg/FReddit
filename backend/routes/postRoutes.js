@@ -39,6 +39,52 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// @route   GET /api/posts/user/:userId
+// @desc    Get posts by user ID with pagination and sorting
+// @access  Public
+router.get('/user/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { page = 1, limit = 20, sort = 'new' } = req.query;
+
+    // Determine sort order
+    let sortQuery = {};
+    switch (sort) {
+      case 'new':
+        sortQuery = { createdAt: -1 };
+        break;
+      case 'top':
+        sortQuery = { score: -1, createdAt: -1 };
+        break;
+      case 'old':
+        sortQuery = { createdAt: 1 };
+        break;
+      default:
+        sortQuery = { createdAt: -1 };
+    }
+
+    const posts = await Post.find({ author: userId })
+      .populate('author', 'username imgURL karma')
+      .sort(sortQuery)
+      .limit(parseInt(limit))
+      .skip((parseInt(page) - 1) * parseInt(limit));
+
+    const totalPosts = await Post.countDocuments({ author: userId });
+
+    res.json({
+      posts,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(totalPosts / parseInt(limit)),
+        totalPosts,
+        hasMore: totalPosts > parseInt(page) * parseInt(limit)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // @route   POST /api/posts/create
 // @desc    Create a new post
 // @access  Private

@@ -69,6 +69,52 @@ export const userApi = {
       password
     });
     return response.data;
+  },
+
+  // Get user posts
+  getUserPosts: async (userId, page = 1, limit = 20, sort = 'new') => {
+    const response = await axios.get(`${API_URL}/api/users/${userId}/posts`, {
+      params: { page, limit, sort }
+    });
+    return response.data;
+  },
+
+  // Get user comments
+  getUserComments: async (userId, page = 1, limit = 20, sort = 'new') => {
+    const response = await axios.get(`${API_URL}/api/users/${userId}/comments`, {
+      params: { page, limit, sort }
+    });
+    return response.data;
+  },
+
+  // Get user upvoted items
+  getUserUpvoted: async (userId, page = 1, limit = 20, type = 'all') => {
+    const response = await axios.get(`${API_URL}/api/users/${userId}/upvoted`, {
+      params: { page, limit, type }
+    });
+    return response.data;
+  },
+
+  // Get user downvoted items
+  getUserDownvoted: async (userId, page = 1, limit = 20, type = 'all') => {
+    const response = await axios.get(`${API_URL}/api/users/${userId}/downvoted`, {
+      params: { page, limit, type }
+    });
+    return response.data;
+  },
+
+  // Get user overview (posts and comments combined)
+  getUserOverview: async (userId, page = 1, limit = 20, sort = 'new') => {
+    const response = await axios.get(`${API_URL}/api/users/${userId}/overview`, {
+      params: { page, limit, sort }
+    });
+    return response.data;
+  },
+
+  // Get user statistics
+  getUserStats: async (userId) => {
+    const response = await axios.get(`${API_URL}/api/users/${userId}/stats`);
+    return response.data;
   }
 };
 
@@ -83,6 +129,14 @@ export const postApi = {
   // Get post by ID
   getPostById: async (postId) => {
     const response = await axios.get(`${API_URL}/api/posts/${postId}`);
+    return response.data;
+  },
+
+  // get posts by user ID (with pagination)
+  getPostsByUserId: async (userId, page = 1, limit = 20, sort = 'new') => {
+    const response = await axios.get(`${API_URL}/api/posts/user/${userId}`, {
+      params: { page, limit, sort }
+    });
     return response.data;
   },
 

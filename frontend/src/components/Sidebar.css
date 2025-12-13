@@ -1,34 +1,34 @@
 /* ==================== SIDEBAR COMPONENT ==================== */
 .sidebar-left {
   position: fixed;
-  top: 48px; /* Below navbar */
+  top: 56px; /* Below navbar */
   left: 0;
-  height: calc(100vh - 48px);
-  background: white;
-  border-right: 1px solid #edeff1;
+  height: calc(100vh - 56px);
+  background: var(--reddit-nav-bg);
+  border-right: 1px solid var(--reddit-border);
   z-index: 900;
   flex-shrink: 0;
   overflow-y: auto;
-  transition: transform 0.3s ease, width 0.3s ease;
-  box-shadow: 1px 0 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
 }
 
 /* Open State */
 .sidebar-open {
   transform: translateX(0);
-  width: 240px; /* Fixed width from image */
+  width: 260px; /* Increased width for better spacing */
 }
 
 /* Closed State */
 .sidebar-closed {
   transform: translateX(-100%);
-  width: 240px; /* Fixed width from image */
+  width: 260px;
 }
 
 /* Sidebar Content */
 .sidebar-content {
-  padding: 16px 0;
-  width: 240px;
+  padding: var(--spacing-xl) 0;
+  width: 260px;
   height: 100%;
   overflow-y: auto;
 }
@@ -58,22 +58,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: white;
-  border: 1px solid #d3d3d3;
+  background: var(--reddit-card-bg);
+  border: 1px solid var(--reddit-border);
   padding: 0;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #1c1c1c;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: var(--reddit-text-primary);
+  box-shadow: var(--shadow-md);
 }
 
 .sidebar-hamburger-btn:hover {
-  background: #f6f7f8;
-  border-color: #878a8c;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: var(--hover-bg);
+  border-color: var(--reddit-border-dark);
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.05);
 }
 
 .sidebar-hamburger-icon {
@@ -86,18 +87,18 @@
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  margin-bottom: 20px;
-  padding: 0 16px;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-2xl);
+  padding: 0 var(--spacing-lg);
 }
 
 .sidebar-nav a {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  color: #1c1c1c;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  color: var(--reddit-text-primary);
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
@@ -107,18 +108,17 @@
 }
 
 .sidebar-nav a:hover {
-  background: #f6f7f8;
+  background: var(--hover-bg);
 }
 
-/* Active link styling - تغمق الخلفية وإضافة البار البرتقالي */
+/* Active link styling */
 .sidebar-active-link {
-  background: #f0f0f0 !important; /* خلفية داكنة */
-  color: #1c1c1c !important;
+  background: var(--active-bg) !important;
+  color: var(--reddit-text-primary) !important;
   font-weight: 600 !important;
-  border-left: 3px solid #ff4500;
-  padding-left: 9px; /* Adjust for border */
+  border-left: 4px solid var(--reddit-orange);
+  padding-left: calc(var(--spacing-lg) - 3px); /* Adjust for border */
   
-  /* إزالة التأثيرات الأخرى */
   border-top: 1px solid transparent;
   border-right: 1px solid transparent;
   border-bottom: 1px solid transparent;
@@ -126,9 +126,10 @@
   transform: none;
 }
 
-/* Active link hover - keep same background when hovering */
+/* Active link hover */
 .sidebar-active-link:hover {
-  background: #e8e8e8 !important; /* خلفية أغمق قليلاً عند hover */
+  background: var(--active-bg) !important;
+  opacity: 0.9;
 }
 
 /* Active icon color - keep orange for active icon */
@@ -138,16 +139,16 @@
 
 /* Icon colors and styles */
 .sidebar-icon {
-  width: 20px;
-  height: 20px;
-  color: #878a8c;
+  width: 22px;
+  height: 22px;
+  color: var(--reddit-text-secondary);
   flex-shrink: 0;
   transition: color 0.2s;
 }
 
 /* All icons have same base color */
 .sidebar-nav a .sidebar-icon {
-  color: #878a8c;
+  color: var(--reddit-text-secondary);
 }
 
 /* Hover effect for all icons */
@@ -249,14 +250,16 @@
 }
 
 .sidebar-new-game {
-  border: 1px solid #edeff1;
-  background: #f6f7f8;
-  padding: 10px;
-  margin-bottom: 8px;
+  border: 1px solid var(--reddit-border);
+  background: var(--hover-bg);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
 }
 
 .sidebar-new-game:hover {
-  background: #e8e9ea;
+  background: var(--active-bg);
 }
 
 .sidebar-new-badge {
@@ -276,39 +279,38 @@
 .sidebar-section a.sidebar-link {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  color: #1c1c1c;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  color: var(--reddit-text-primary);
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
-  transition: background 0.2s;
-  margin-bottom: 2px;
+  transition: all 0.2s ease;
+  margin-bottom: var(--spacing-xs);
   position: relative;
 }
 
 .sidebar-section a.sidebar-link:hover {
-  background: #f6f7f8;
+  background: var(--hover-bg);
 }
 
-/* البار البرتقالي للروابط في الأقسام الأخرى */
+/* Active link indicator */
 .sidebar-section a.sidebar-link::before {
   content: '';
   position: absolute;
-  left: -16px; /* خارج حدود الـ padding */
+  left: -16px;
   top: 50%;
   transform: translateY(-50%);
-  width: 3px;
+  width: 4px;
   height: 0;
-  background-color: #ff4500;
+  background-color: var(--reddit-orange);
   border-radius: 0 2px 2px 0;
   transition: height 0.2s ease;
 }
 
-/* عندما يكون الرابط في القسم نشطاً */
 .sidebar-section a.sidebar-link.sidebar-active-link::before {
-  height: 24px; /* ارتفاع البار البرتقالي */
+  height: 28px;
 }
 
 /* Responsive Design */
@@ -354,18 +356,19 @@
 
 /* Hide scrollbar but keep functionality */
 .sidebar-content::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .sidebar-content::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--reddit-bg);
 }
 
 .sidebar-content::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
+  background: var(--reddit-border-dark);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
 }
 
 .sidebar-content::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: var(--reddit-text-secondary);
 }

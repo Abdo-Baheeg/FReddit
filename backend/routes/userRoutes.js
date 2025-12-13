@@ -3,6 +3,9 @@ const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
 const User = require('../models/User');
+const Post = require('../models/Post');
+const Comment = require('../models/Comment');
+const Vote = require('../models/Vote');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middleware/auth');
 const { emailVerificationLimiter, passwordResetLimiter } = require('../middleware/rateLimiter');
@@ -274,6 +277,439 @@ router.post('/reset-password/:token', [
   } catch (error) {
     console.error('Reset password error:', error);
     res.status(500).json({ message: 'Failed to reset password', error: error.message });
+  }
+});
+
+// ==================== USER ACTIVITY ROUTES ====================
+
+// @route   GET /api/users/:userId/posts
+// @desc    Get all posts by a specific user
+// @access  Public
+router.get('/:userId/posts', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { page = 1, limit = 20, sort = 'new' } = req.query;
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Determine sort order
+    let sortQuery = {};
+    switch (sort) {
+      case 'new':
+        sortQuery = { createdAt: -1 };
+        break;
+      case 'top':
+        sortQuery = { score: -1, createdAt: -1 };
+        break;
+      case 'old':
+        sortQuery = { createdAt: 1 };
+        break;
+      default:
+        sortQuery = { createdAt: -1 };
+    }
+
+    // Get posts with pagination
+    const posts = await Post.find({ author: userId })
+      .populate('author', 'username imgURL karma')
+      .sort(sortQuery)
+      .limit(parseInt(limit))
+      .skip((parseInt(page) - 1) * parseInt(limit));
+
+    // Get total count for pagination
+    const totalPosts = await Post.countDocuments({ author: userId });
+
+    res.json({
+      posts,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(totalPosts / parseInt(limit)),
+        totalPosts,
+        hasMore: totalPosts > parseInt(page) * parseInt(limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get user posts error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// @route   GET /api/users/:userId/comments
+// @desc    Get all comments by a specific user
+// @access  Public
+router.get('/:userId/comments', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { page = 1, limit = 20, sort = 'new' } = req.query;
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Determine sort order
+    let sortQuery = {};
+    switch (sort) {
+      case 'new':
+        sortQuery = { createdAt: -1 };
+        break;
+      case 'top':
+        sortQuery = { score: -1, createdAt: -1 };
+        break;
+      case 'old':
+        sortQuery = { createdAt: 1 };
+        break;
+      default:
+        sortQuery = { createdAt: -1 };
+    }
+
+    // Get comments with pagination
+    const comments = await Comment.find({ author: userId })
+      .populate('author', 'username imgURL karma')
+      .populate('post', 'title')
+      .sort(sortQuery)
+      .limit(parseInt(limit))
+      .skip((parseInt(page) - 1) * parseInt(limit));
+
+    // Get total count for pagination
+    const totalComments = await Comment.countDocuments({ author: userId });
+
+    res.json({
+      comments,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(totalComments / parseInt(limit)),
+        totalComments,
+        hasMore: totalComments > parseInt(page) * parseInt(limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get user comments error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// @route   GET /api/users/:userId/upvoted
+// @desc    Get all posts and comments upvoted by a user
+// @access  Public (or Private if you want only user to see their own)
+router.get('/:userId/upvoted', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { page = 1, limit = 20, type = 'all' } = req.query; // type: 'all', 'posts', 'comments'
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Build query based on type filter
+    let voteQuery = { 
+      userId: userId, 
+      voteType: 1 // 1 = upvote
+    };
+
+    if (type === 'posts') {
+      voteQuery.targetType = 'Post';
+    } else if (type === 'comments') {
+      voteQuery.targetType = 'Comment';
+    }
+
+    // Get upvoted items
+    const votes = await Vote.find(voteQuery)
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .skip((parseInt(page) - 1) * parseInt(limit));
+
+    // Get total count
+    const totalVotes = await Vote.countDocuments(voteQuery);
+
+    // Separate post IDs and comment IDs
+    const postIds = votes.filter(v => v.targetType === 'Post').map(v => v.targetId);
+    const commentIds = votes.filter(v => v.targetType === 'Comment').map(v => v.targetId);
+
+    // Fetch actual posts and comments
+    const posts = await Post.find({ _id: { $in: postIds } })
+      .populate('author', 'username imgURL karma');
+    
+    const comments = await Comment.find({ _id: { $in: commentIds } })
+      .populate('author', 'username imgURL karma')
+      .populate('post', 'title');
+
+    // Create a map for quick lookup
+    const postsMap = posts.reduce((acc, post) => {
+      acc[post._id.toString()] = post;
+      return acc;
+    }, {});
+
+    const commentsMap = comments.reduce((acc, comment) => {
+      acc[comment._id.toString()] = comment;
+      return acc;
+    }, {});
+
+    // Build ordered results matching vote order
+    const upvotedItems = votes.map(vote => {
+      if (vote.targetType === 'Post') {
+        return {
+          type: 'post',
+          votedAt: vote.createdAt,
+          item: postsMap[vote.targetId.toString()] || null
+        };
+      } else {
+        return {
+          type: 'comment',
+          votedAt: vote.createdAt,
+          item: commentsMap[vote.targetId.toString()] || null
+        };
+      }
+    }).filter(item => item.item !== null); // Remove any deleted items
+
+    res.json({
+      upvotedItems,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(totalVotes / parseInt(limit)),
+        totalItems: totalVotes,
+        hasMore: totalVotes > parseInt(page) * parseInt(limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get user upvoted error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// @route   GET /api/users/:userId/downvoted
+// @desc    Get all posts and comments downvoted by a user
+// @access  Public (or Private if you want only user to see their own)
+router.get('/:userId/downvoted', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { page = 1, limit = 20, type = 'all' } = req.query; // type: 'all', 'posts', 'comments'
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Build query based on type filter
+    let voteQuery = { 
+      userId: userId, 
+      voteType: -1 // -1 = downvote
+    };
+
+    if (type === 'posts') {
+      voteQuery.targetType = 'Post';
+    } else if (type === 'comments') {
+      voteQuery.targetType = 'Comment';
+    }
+
+    // Get downvoted items
+    const votes = await Vote.find(voteQuery)
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .skip((parseInt(page) - 1) * parseInt(limit));
+
+    // Get total count
+    const totalVotes = await Vote.countDocuments(voteQuery);
+
+    // Separate post IDs and comment IDs
+    const postIds = votes.filter(v => v.targetType === 'Post').map(v => v.targetId);
+    const commentIds = votes.filter(v => v.targetType === 'Comment').map(v => v.targetId);
+
+    // Fetch actual posts and comments
+    const posts = await Post.find({ _id: { $in: postIds } })
+      .populate('author', 'username imgURL karma');
+    
+    const comments = await Comment.find({ _id: { $in: commentIds } })
+      .populate('author', 'username imgURL karma')
+      .populate('post', 'title');
+
+    // Create a map for quick lookup
+    const postsMap = posts.reduce((acc, post) => {
+      acc[post._id.toString()] = post;
+      return acc;
+    }, {});
+
+    const commentsMap = comments.reduce((acc, comment) => {
+      acc[comment._id.toString()] = comment;
+      return acc;
+    }, {});
+
+    // Build ordered results matching vote order
+    const downvotedItems = votes.map(vote => {
+      if (vote.targetType === 'Post') {
+        return {
+          type: 'post',
+          votedAt: vote.createdAt,
+          item: postsMap[vote.targetId.toString()] || null
+        };
+      } else {
+        return {
+          type: 'comment',
+          votedAt: vote.createdAt,
+          item: commentsMap[vote.targetId.toString()] || null
+        };
+      }
+    }).filter(item => item.item !== null); // Remove any deleted items
+
+    res.json({
+      downvotedItems,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(totalVotes / parseInt(limit)),
+        totalItems: totalVotes,
+        hasMore: totalVotes > parseInt(page) * parseInt(limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get user downvoted error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// @route   GET /api/users/:userId/overview
+// @desc    Get user overview (posts and comments combined)
+// @access  Public
+router.get('/:userId/overview', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { page = 1, limit = 20, sort = 'new' } = req.query;
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Get posts
+    const posts = await Post.find({ author: userId })
+      .populate('author', 'username imgURL karma')
+      .lean();
+
+    // Get comments
+    const comments = await Comment.find({ author: userId })
+      .populate('author', 'username imgURL karma')
+      .populate('post', 'title')
+      .lean();
+
+    // Combine and add type identifier
+    const allItems = [
+      ...posts.map(post => ({ ...post, type: 'post' })),
+      ...comments.map(comment => ({ ...comment, type: 'comment' }))
+    ];
+
+    // Sort based on query
+    allItems.sort((a, b) => {
+      if (sort === 'new') {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      } else if (sort === 'top') {
+        if (b.score !== a.score) {
+          return b.score - a.score;
+        }
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      } else if (sort === 'old') {
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      }
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
+    // Paginate
+    const startIdx = (parseInt(page) - 1) * parseInt(limit);
+    const endIdx = startIdx + parseInt(limit);
+    const paginatedItems = allItems.slice(startIdx, endIdx);
+
+    res.json({
+      items: paginatedItems,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(allItems.length / parseInt(limit)),
+        totalItems: allItems.length,
+        hasMore: allItems.length > endIdx
+      }
+    });
+  } catch (error) {
+    console.error('Get user overview error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// @route   GET /api/users/:userId/stats
+// @desc    Get user statistics
+// @access  Public
+router.get('/:userId/stats', async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Get counts
+    const postCount = await Post.countDocuments({ author: userId });
+    const commentCount = await Comment.countDocuments({ author: userId });
+    const upvotesGiven = await Vote.countDocuments({ userId, voteType: 1 });
+    const downvotesGiven = await Vote.countDocuments({ userId, voteType: -1 });
+
+    // Get upvotes/downvotes received on user's posts
+    const userPosts = await Post.find({ author: userId }).select('_id');
+    const postIds = userPosts.map(p => p._id);
+    
+    const upvotesReceivedOnPosts = await Vote.countDocuments({ 
+      targetId: { $in: postIds }, 
+      targetType: 'Post', 
+      voteType: 1 
+    });
+    
+    const downvotesReceivedOnPosts = await Vote.countDocuments({ 
+      targetId: { $in: postIds }, 
+      targetType: 'Post', 
+      voteType: -1 
+    });
+
+    // Get upvotes/downvotes received on user's comments
+    const userComments = await Comment.find({ author: userId }).select('_id');
+    const commentIds = userComments.map(c => c._id);
+    
+    const upvotesReceivedOnComments = await Vote.countDocuments({ 
+      targetId: { $in: commentIds }, 
+      targetType: 'Comment', 
+      voteType: 1 
+    });
+    
+    const downvotesReceivedOnComments = await Vote.countDocuments({ 
+      targetId: { $in: commentIds }, 
+      targetType: 'Comment', 
+      voteType: -1 
+    });
+
+    res.json({
+      user: {
+        id: user._id,
+        username: user.username,
+        karma: user.karma,
+        createdAt: user.createdAt
+      },
+      stats: {
+        posts: postCount,
+        comments: commentCount,
+        upvotesGiven,
+        downvotesGiven,
+        upvotesReceived: upvotesReceivedOnPosts + upvotesReceivedOnComments,
+        downvotesReceived: downvotesReceivedOnPosts + downvotesReceivedOnComments,
+        totalKarma: (upvotesReceivedOnPosts + upvotesReceivedOnComments) - (downvotesReceivedOnPosts + downvotesReceivedOnComments)
+      }
+    });
+  } catch (error) {
+    console.error('Get user stats error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
