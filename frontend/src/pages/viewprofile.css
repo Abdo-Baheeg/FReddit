@@ -351,15 +351,6 @@
   margin-left: 12px;
 }
 
-.vpShareBtn { 
-  font-size: 20px; 
-  cursor: pointer; 
-  background: none; 
-  border: none; 
-  color: #787c7e;
-  padding: 0;
-  line-height: 1;
-}
 
 .vpStatsGrid { 
   display: grid; 
@@ -378,6 +369,9 @@
   color: #787c7e; 
   font-size: 12px; 
   margin-top: 4px;
+  background-color: transparent;
+  border: none;
+  outline: none;
 }
 
 
@@ -459,7 +453,7 @@
 }
 
 .vpSectionBtn {
-  background-color: #1c1c1c;
+  background-color: #787c7e;
   color: white;
   border: none;
   border-radius: 20px;
@@ -477,7 +471,7 @@
 }
 
 .vpSectionBtnSmall {
-   background-color: #1c1c1c;
+  background-color: #787c7e;
   color: white;
   border: none;
   border-radius: 20px;
@@ -842,10 +836,10 @@
   border: 2px solid #000;
   border-radius: 50%;
   margin-left: 8px;
-  background-color: transparent; /* مش مختارة */
+  background-color: transparent; 
   transition: background-color 0.2s;
 }
 
 .time-option.time-option-selected .time-option-circle {
-  background-color: #000; /* مختارة */
+  background-color: #000; 
 }
