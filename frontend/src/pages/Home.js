@@ -171,8 +171,6 @@ const Home = () => {
           </Link>
         ))
       )}
-
-      {/* Load More Button */}
       {hasMore && !loading && (
         <button 
           onClick={loadMorePosts} 
