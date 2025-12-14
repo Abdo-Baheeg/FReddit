@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import './Sidebar.css';
+import { useNavigate } from 'react-router-dom';
+import { useCreateCommunity } from '../context/CreateCommunityContext';
 
 const Sidebar = () => {
   // State for the whole sidebar visibility
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { openCreateCommunityModal } = useCreateCommunity();
 
   // State to manage the open/close status of the collapsible sections
   const [openSections, setOpenSections] = useState({
@@ -13,6 +16,8 @@ const Sidebar = () => {
     communities: true,
     resources: true,
   });
+  const navigate = useNavigate();
+
 
   const toggleSection = (section) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -43,7 +48,7 @@ const Sidebar = () => {
       <div className="separator"></div>
 
       {/* --- SECTION: ACTIONS --- */}
-      <div className="menu-group">
+      <div className="menu-group" onClick={openCreateCommunityModal}>
         <MenuItem icon="add" label="Start a community" />
       </div>
 
