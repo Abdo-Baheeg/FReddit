@@ -22,6 +22,10 @@ export default function RedditProfilePageMock() {
     comments: false
   });
 
+  // NEW: State for background image
+  const [backgroundImage, setBackgroundImage] = useState(null);
+  const fileInputRef = useRef(null);
+
   const optionsRef = useRef(null);
   const buttonRef = useRef(null);
   const commentsOptionsRef = useRef(null);
@@ -64,6 +68,37 @@ export default function RedditProfilePageMock() {
 
     fetchUserData();
   }, [navigate]);
+
+  // NEW: Function to handle button click
+  const handleBackgroundButtonClick = () => {
+    // Trigger the hidden file input
+    fileInputRef.current.click();
+  };
+
+  // NEW: Function to handle file selection
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Check if it's an image file
+      if (!file.type.match('image.*')) {
+        alert('Please select an image file');
+        return;
+      }
+
+      // Create a URL for the selected image
+      const imageUrl = URL.createObjectURL(file);
+      setBackgroundImage(imageUrl);
+    }
+  };
+
+  // NEW: Function to remove background image
+  const removeBackgroundImage = () => {
+    setBackgroundImage(null);
+    // Clear the file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const toggleFeedOptions = () => {
     setShowOptions(prev => ({
@@ -148,6 +183,14 @@ export default function RedditProfilePageMock() {
 
   return (
     <div className="vpBody">
+      {/* Hidden file input for image selection */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        accept="image/*"
+        onChange={handleFileChange}
+      />
     
       {/* Main Layout Container (Flexbox) */}
       <div className="vpLayoutContainer">
@@ -245,7 +288,9 @@ export default function RedditProfilePageMock() {
                 {/* Show buttons container only for Overview and Posts tabs */}
                 {(activeTab === 'Overview' || activeTab === 'Posts') && (
                   <div className="vpButtonsContainer">
-                    <button className="vpCreatePostBtn">
+                    <button onClick={() => window.location.href = '/createpost'}
+                    className="vpCreatePostBtn">
+                      
                       <span>+</span> Create Post
                     </button>
                     
@@ -303,7 +348,6 @@ export default function RedditProfilePageMock() {
                                     className={`time-option ${selectedTime === time.value ? 'time-option-selected' : ''}`}
                                     style={{ cursor: 'pointer' }}
                                   >
-                                    {/* اضغط على النص */}
                                     <span 
                                       className="time-option-label"
                                       onClick={() => handleTimeSelect(time.value)}
@@ -311,7 +355,6 @@ export default function RedditProfilePageMock() {
                                       {time.label}
                                     </span>
 
-                                    {/* اضغط على الدائرة */}
                                     <span 
                                       className="time-option-circle"
                                       onClick={() => handleTimeSelect(time.value)}
@@ -345,14 +388,15 @@ export default function RedditProfilePageMock() {
                         <div className="vpEmptyState">
                           <div className="vpEmptyRobot">
                             <img
-                              src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                              alt="Thinking Snoo"
-                              width={120}
-                              height={120}
-                            />
-                          </div>
+                       src="/images/robot.png"
+                       width={162}
+                       height={162}
+                       />
+                      </div>
                           <h2><b>You don't have any posts yet</b></h2>
                           <p>Once you post to a community, it'll show up here.</p>
+                           <button onClick={() => window.location.href = '/setting'}
+                       className="vpUpdateSettingsBtn">Update Settings</button>
                         </div>
                       ) : (
                         <div className="vpPostsList">
@@ -381,16 +425,18 @@ export default function RedditProfilePageMock() {
                       {posts.length === 0 ? (
                         <div className="vpEmptyState">
                           <div className="vpEmptyRobot">
-                            <img
-                              src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                              alt="Thinking Snoo"
-                              width={120}
-                              height={120}
-                            />
-                          </div>
+                      <img
+                       src="/images/robot.png"
+                       width={162}
+                       height={162}
+                       />
+                      </div>
                           <h2><b>You don't have any posts yet</b></h2>
                           <p>Once you post to a community, it'll show up here.</p>
+                           <button onClick={() => window.location.href = '/setting'}
+                       className="vpUpdateSettingsBtn">Update Settings</button>
                         </div>
+                        
                       ) : (
                         <div className="vpPostsList">
                           {posts.map(post => (
@@ -417,14 +463,14 @@ export default function RedditProfilePageMock() {
                     <div className="vpEmptyState">
                       <div className="vpEmptyRobot">
                         <img
-                          src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                          alt="Thinking Snoo"
-                          width={120}
-                          height={120}
-                        />
+                       src="/images/robot.png"
+                       width={162}
+                       height={162}
+                       />
                       </div>
                       <h2><b>You don't have any Comments yet</b></h2>
-                      <button className="vpUpdateSettingsBtn">Update Settings</button>
+                      <button onClick={() => window.location.href = '/setting'}
+                       className="vpUpdateSettingsBtn">Update Settings</button>
                     </div>
                   )}
 
@@ -432,11 +478,10 @@ export default function RedditProfilePageMock() {
                     <div className="vpEmptyState">
                       <div className="vpEmptyRobot">
                         <img
-                          src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                          alt="Thinking Snoo"
-                          width={120}
-                          height={120}
-                        />
+                       src="/images/robot.png"
+                       width={162}
+                       height={162}
+                       />
                       </div>
                       <h2><b>Looks like you haven't saved anything yet</b></h2>
                     </div>
@@ -445,12 +490,11 @@ export default function RedditProfilePageMock() {
                   {activeTab === 'History' && (
                     <div className="vpEmptyState">
                       <div className="vpEmptyRobot">
-                        <img
-                          src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                          alt="Thinking Snoo"
-                          width={120}
-                          height={120}
-                        />
+                         <img
+                       src="/images/robot.png"
+                       width={162}
+                       height={162}
+                       />
                       </div>
                       <h2><b>Looks like you haven't visited any posts yet</b></h2>
                     </div>
@@ -460,11 +504,10 @@ export default function RedditProfilePageMock() {
                     <div className="vpEmptyState">
                       <div className="vpEmptyRobot">
                         <img
-                          src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                          alt="Thinking Snoo"
-                          width={120}
-                          height={120}
-                        />
+                       src="/images/robot.png"
+                       width={162}
+                       height={162}
+                       />
                       </div>
                       <h2><b>You haven't hidden any posts</b></h2>
                     </div>
@@ -473,12 +516,11 @@ export default function RedditProfilePageMock() {
                   {activeTab === 'Upvoted' && (
                     <div className="vpEmptyState">
                       <div className="vpEmptyRobot">
-                        <img
-                          src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                          alt="Thinking Snoo"
-                          width={120}
-                          height={120}
-                        />
+                      <img
+                       src="/images/robot.png"
+                       width={162}
+                       height={162}
+                       />
                       </div>
                       <h2><b>You haven't upvoted anything yet</b></h2>
                     </div>
@@ -487,12 +529,11 @@ export default function RedditProfilePageMock() {
                   {activeTab === 'Downvoted' && (
                     <div className="vpEmptyState">
                       <div className="vpEmptyRobot">
-                        <img
-                          src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                          alt="Thinking Snoo"
-                          width={120}
-                          height={120}
-                        />
+                       <img
+                       src="/images/robot.png"
+                       width={162}
+                       height={162}
+                       />
                       </div>
                       <h2><b>You haven't downvoted anything yet</b></h2>
                     </div>
@@ -502,42 +543,144 @@ export default function RedditProfilePageMock() {
 
               </div>
             </main>
-
+{/****************************************Right sidebar******************************************************/}
             <aside className="vpRightSidebar">
               <div className="vpRightCard">
-                <div className="Vpback">
-                 <button className="vpBackBtn">🖼️</button>
+                <div className="Vpback" style={{
+                  position: 'relative',
+                  backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none',
+                  backgroundColor: backgroundImage ? 'transparent' : 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  height: '100px',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  
+                  ...(!backgroundImage && {
+                    backgroundImage: 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)',
+                    boxShadow: 'inset 0 0 10px rgba(0,0,0,0.3)'
+                  })
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    zIndex: 10,
+                    display: 'flex',
+                    gap: '5px'
+                  }}>
+                    <button 
+                      onClick={handleBackgroundButtonClick}
+                      style={{
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '50%',
+                        backgroundColor: backgroundImage ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.3)',
+                        border: backgroundImage ? '2px solid white' : '2px solid rgba(255,255,255,0.5)',
+                        color: backgroundImage ? 'white' : 'white',
+                        fontSize: '18px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                        transition: 'all 0.3s ease',
+                        padding: 0,
+                        backdropFilter: 'blur(2px)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = backgroundImage ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.4)';
+                        e.target.style.transform = 'scale(1.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = backgroundImage ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.3)';
+                        e.target.style.transform = 'scale(1)';
+                      }}
+                      title={backgroundImage ? "Change background" : "Add background"}
+                    >
+                      {backgroundImage ? '✏️' : '🖼️'}
+                    </button>
+                    
+                    {backgroundImage && (
+                      <button 
+                        onClick={removeBackgroundImage}
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '50%',
+                          backgroundColor: 'rgba(220, 53, 69, 0.7)',
+                          border: '2px solid white',
+                          color: 'white',
+                          fontSize: '16px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                          transition: 'all 0.3s ease',
+                          padding: 0,
+                          backdropFilter: 'blur(2px)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.backgroundColor = 'rgba(220, 53, 69, 0.9)';
+                          e.target.style.transform = 'scale(1.1)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.backgroundColor = 'rgba(220, 53, 69, 0.7)';
+                          e.target.style.transform = 'scale(1)';
+                        }}
+                        title="Remove background"
+                      >
+                        ❌
+                      </button>
+                    )}
+                  </div>
+
+                  {!backgroundImage && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '12px',
+                      textAlign: 'center',
+                      fontWeight: '500',
+                      textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                      pointerEvents: 'none'
+                    }}>
+                      Click the icon to add background
+                    </div>
+                  )}
                 </div>
 
                 <div className="vpRightHeader">
-                  <div className="vpRightUsername">{user.username}</div>
+
+                  <div className="vpRightUsername">{user.username}
+
+                     <div className="vpSectionHeaderRow">
+                    <button className="vpSectionBtnSmall" 
+                onClick={() => {navigator.clipboard.writeText(window.location.href); alert("Link Copied!");}}>
+                   Share
+                    </button>
+                  </div>
+                  </div>
+                  
                 </div>
 
-                <div className="vpProfileSection">
-                  <div className="vpStatsRow">
-                    <div className="vpStat">
-                      <div className="vpStatValue">{user.karma || 0}</div>
-                      <div className="vpStatLabel">Karma</div>
-                    </div>
-                    <div className="vpStat">
-                      <div className="vpStatValue">{posts.length}</div>
-                      <div className="vpStatLabel">Posts</div>
-                    </div>
-                    <div className="vpStat">
-                      <div className="vpStatValue">{memberships.length}</div>
-                      <div className="vpStatLabel">Communities</div>
-                    </div>
-                  </div>
-                  <div className="vpSectionHeaderRow">
-                    <button className="vpSectionBtnSmall">Share</button>
-                  </div>
-                </div> 
+            
 
                 <div className="vpStatsGrid">
-                  <div><div className="vpStatValue">0</div><div className="vpStatLabel">Followers</div></div>
                   <div><div className="vpStatValue">1</div><div className="vpStatLabel">Karma</div></div>
                   <div><div className="vpStatValue">0</div><div className="vpStatLabel">Contributions</div></div>
                   <div><div className="vpStatValue">1 m</div><div className="vpStatLabel">Reddit Age</div></div>
+
+                  <div>
+                    <div className="vpStatValue">0</div> 
+                  <button onClick={() => window.location.href = '/setting'}
+                  className="vpStatLabel">Actived in >
+                  </button>
+                  </div>
                    <div><div className="vpStatValue">0</div><div className="vpStatLabel">Gold earned</div></div>
                 </div>
 
@@ -555,7 +698,9 @@ export default function RedditProfilePageMock() {
                   <div className="vpAchievementsCount">
                     4 unlocked 
                     <a href="#" className="vpViewAll">
-                      <button className="vpSectionBtn">View All</button>
+                      <button onClick={() => window.location.href = '/achievement'}
+                      className="vpSectionBtn">View All
+                      </button>
                     </a>
                   </div>
                 </div>
@@ -566,7 +711,8 @@ export default function RedditProfilePageMock() {
                 <div className="vpProfileSection">
                   <div className="vpSectionHeaderRow">
                     <h4>Profile</h4>
-                    <button className="vpSectionBtnSmall">Update</button>
+                    <button onClick={() => window.location.href = '/setting'}
+                    className="vpSectionBtnSmall">Update</button>
                   </div>
                   <span className="vpSectionSubtitle">Customize your profile</span>
                 </div>
@@ -575,7 +721,8 @@ export default function RedditProfilePageMock() {
                 <div className="vpProfileSection">
                   <div className="vpSectionHeaderRow">
                     <h4>Curate your profile</h4>
-                    <button className="vpSectionBtnSmall">Update</button>
+                    <button onClick={() => window.location.href = '/setting'}
+                     className="vpSectionBtnSmall">Update</button>
                   </div>
                   <span className="vpSectionSubtitle">Manage what people see when they visit your profile</span>
                 </div>
@@ -584,7 +731,8 @@ export default function RedditProfilePageMock() {
                 <div className="vpProfileSection">
                   <div className="vpSectionHeaderRow">
                     <h4>Avatar</h4>
-                    <button className="vpSectionBtnSmall">Update</button>
+                    <button onClick={() => window.location.href = '/setting'}
+                    className="vpSectionBtnSmall">Update</button>
                   </div>
                   <span className="vpSectionSubtitle">Style your avatar</span>
                 </div>
@@ -592,22 +740,20 @@ export default function RedditProfilePageMock() {
                 <div className="vpProfileSection">
                   <div className="vpSectionHeaderRow">
                     <h4>Mod Tools</h4>
-                    <button className="vpSectionBtnSmall">Update</button>
+                    <button onClick={() => window.location.href = '/setting'}
+                    className="vpSectionBtnSmall">Update</button>
                   </div>
                   <span className="vpSectionSubtitle">Style your avatar</span>
                 </div>   
+
 
                 <div className="vpSocialLinks">
                   <div className="vpSectionHeaderRow">
                     <h4><b>SOCIAL LINKS</b></h4>
                   </div>
-                </div>
-
-                <div className="vpProfileSection">
-                  <div className="vpSectionHeaderRow">  
-                    <button className="vpSectionBtnSmall">+ Add Social Link </button>
-                  </div>
-                </div> 
+                  <button onClick={() => window.location.href = '/setting'}
+                   className="vpSectionBtnSmall">+ Add Social Link </button>
+                </div>   
 
               </div>
             </aside>
