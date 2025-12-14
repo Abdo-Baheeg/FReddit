@@ -1,6 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./communityHeader.css";
+
+import { communityApi, membershipApi } from "../api";
 
 export function requireAuthOrRedirect(navigate) {
   const token = localStorage.getItem("token");
@@ -14,84 +16,52 @@ export function requireAuthOrRedirect(navigate) {
 export default function CommunityHeader({
   communityId,
   initialCommunity = null,
-  fetchUrlBase = "/api",
-  joinEndpoint,
-  leaveEndpoint,
 }) {
   return (
     <header className="subreddit-header">
       <HeaderContent
         communityId={communityId}
         initialCommunity={initialCommunity}
-        fetchUrlBase={fetchUrlBase}
-        joinEndpoint={joinEndpoint}
-        leaveEndpoint={leaveEndpoint}
       />
     </header>
   );
 }
 
-function HeaderContent({
-  communityId: propCommunityId,
-  initialCommunity,
-  fetchUrlBase,
-  joinEndpoint,
-  leaveEndpoint,
-}) {
+function HeaderContent({ communityId, initialCommunity }) {
   const fallbackBanner = "/fallback-banner.png";
   const fallbackAvatar = "https://www.gravatar.com/avatar/?d=mp&s=200";
-
   const navigate = useNavigate();
 
   const normalize = (raw) => {
     if (!raw) return null;
 
-    const pick = (...keys) => {
-      for (const k of keys) {
-        if (raw[k] !== undefined && raw[k] !== null) return raw[k];
-      }
-      return undefined;
-    };
-
-    let membersCount = pick(
-      "memberCount",
-      "membersCount",
-      "members_count",
-      "member_count",
-      "members"
-    );
+    let membersCount =
+      raw.memberCount ??
+      raw.membersCount ??
+      raw.members_count ??
+      raw.member_count ??
+      raw.members ??
+      0;
 
     if (Array.isArray(membersCount)) membersCount = membersCount.length;
-    membersCount = Number(membersCount || 0);
 
     return {
-      _id: raw._id || raw.id || null,
+      _id: raw._id || raw.id,
       name: raw.name || "community",
       description: raw.description || "",
       coverImageUrl: raw.bannerUrl || raw.coverImageUrl || fallbackBanner,
       avatarUrl: raw.avatarUrl || fallbackAvatar,
-      membersCount,
+      membersCount: Number(membersCount),
       postsCount: raw.postsCount ?? 0,
-      isMember: raw.isMember ?? false,
-      __raw: raw,
+      isMember: false, // resolved separately
     };
   };
 
-  const buildEndpoint = (tplOrFn, def) => {
-    if (!tplOrFn) return (id) => `${fetchUrlBase}${def.replace(":id", id)}`;
-    if (typeof tplOrFn === "function") return (id) => tplOrFn(id);
-    return (id) => tplOrFn.replace(":id", id);
-  };
-
-  const joinUrlFor = buildEndpoint(joinEndpoint, "/communities/:id/join");
-  const leaveUrlFor = buildEndpoint(leaveEndpoint, "/communities/:id/leave");
-
   const initialNormalized = normalize(initialCommunity);
-  const idToFetch = propCommunityId ?? initialNormalized?._id;
 
   const [community, setCommunity] = useState(
     initialNormalized || {
-      _id: idToFetch,
+      _id: communityId,
       name: "loading",
       description: "",
       coverImageUrl: fallbackBanner,
@@ -105,45 +75,53 @@ function HeaderContent({
   const [loading, setLoading] = useState(!initialCommunity);
   const [optimistic, setOptimistic] = useState(false);
 
-  // Fetch community
+  // ✅ Fetch community (API layer)
   useEffect(() => {
-    if (!idToFetch || initialCommunity) return;
+    if (!communityId || initialCommunity) return;
 
     let cancelled = false;
-
-    const token = localStorage.getItem("token");
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
     setLoading(true);
 
-    fetch(`${fetchUrlBase}/communities/${idToFetch}`, { headers })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Failed to load community");
-        return res.json();
-      })
-      .then((raw) => {
+    communityApi
+      .getCommunityById(communityId)
+      .then((data) => {
         if (cancelled) return;
-        const n = normalize(raw);
-        setCommunity((c) => ({ ...c, ...n }));
+        setCommunity((c) => ({ ...c, ...normalize(data) }));
       })
       .finally(() => !cancelled && setLoading(false));
 
-    return () => (cancelled = true);
-  }, [idToFetch, initialCommunity, fetchUrlBase]);
+    return () => {
+      cancelled = true;
+    };
+  }, [communityId, initialCommunity]);
+
+  // ✅ Resolve membership using API layer
+  useEffect(() => {
+    if (!community._id) return;
+
+    membershipApi
+      .checkMembership(community._id)
+      .then((res) => {
+        setCommunity((c) => ({
+          ...c,
+          isMember: !!res?.isMember,
+        }));
+      })
+      .catch(() => {});
+  }, [community._id]);
 
   const handleCreatePost = () => {
     if (!requireAuthOrRedirect(navigate)) return;
     navigate("/create-post", { state: { community } });
   };
 
+  // ✅ Join / Leave using API layer
   const handleJoinToggle = async () => {
     if (optimistic) return;
     if (!requireAuthOrRedirect(navigate)) return;
 
     const willJoin = !community.isMember;
-    const endpoint = willJoin ? joinUrlFor(community._id) : leaveUrlFor(community._id);
 
-    // optimistic UI
     setOptimistic(true);
     setCommunity((c) => ({
       ...c,
@@ -152,15 +130,13 @@ function HeaderContent({
     }));
 
     try {
-      const token = localStorage.getItem("token");
-      await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      if (willJoin) {
+        await membershipApi.join(community._id);
+      } else {
+        await membershipApi.leave(community._id);
+      }
     } catch {
+      // rollback on failure
       setCommunity((c) => ({
         ...c,
         isMember: !willJoin,
@@ -170,6 +146,8 @@ function HeaderContent({
       setOptimistic(false);
     }
   };
+
+  if (loading) return null;
 
   return (
     <>
