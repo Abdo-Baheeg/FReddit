@@ -3,15 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import CommunityHeader from "../components/communityHeader";
 import CommunitySidebar from "../components/communitySidebar";
 import PostCard from "../components/PostCard";
-import { communityApi } from "../api";
 import "./communityPage.css";
 
-import {
-  userApi,
-  communityApi,
-  membershipApi,
-  communityPostsApi
-} from "../api";
+// ✅ CENTRAL API ONLY
+import { userApi, communityApi } from "../api";
 
 export default function CommunityPage() {
   const { communityId, id, slug } = useParams();
@@ -25,84 +20,6 @@ export default function CommunityPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
-  const fetchJson = async (url, opts = {}) => {
-    const res = await fetch(url, opts);
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      const err = new Error(text || `Request failed (${res.status})`);
-      err.status = res.status;
-      throw err;
-    }
-    if (res.status === 204) return null;
-    return res.json().catch(() => null);
-  };
-
-  const fetchCurrentUser = useCallback(async () => {
-    if (!token) {
-      setCurrentUser(null);
-      return;
-    }
-    try {
-      const data = await fetchJson(`${fetchUrlBase}/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setCurrentUser(data || null);
-    } catch (err) {
-      console.warn("Failed to fetch current user:", err.message || err);
-      if (err.status === 401) {
-        localStorage.removeItem("token");
-        setCurrentUser(null);
-      }
-    }
-  }, [fetchUrlBase, token]);
-
-  const fetchCommunity = useCallback(async (id) => {
-    if (!id) return;
-    try {
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      const data = await fetchJson(`${fetchUrlBase}/communities/${id}`, { headers });
-      setCommunity(data);
-    } catch (err) {
-      console.error("fetchCommunity:", err);
-      setError(err.message || "Failed to load community");
-      setCommunity(null);
-    }
-  }, [fetchUrlBase, token]);
-
-  const fetchPosts = useCallback(async (id, page = 1, sort = 'new') => {
-    if (!id) return;
-    try {
-      setPosts(null);
-      const response = await communityApi.getCommunityPosts(id, page, 20, sort);
-      setPosts(response.posts || []);
-    } catch (err) {
-      console.error("fetchPosts:", err);
-      // If community not found or has no posts endpoint yet, fallback to empty
-      if (err.response?.status === 404) {
-        setPosts([]);
-      } else {
-        setPosts([]);
-      }
-    }
-  }, []);
-
-  const fetchMemberships = useCallback(async () => {
-    if (!token) {
-      setMemberships([]);
-      return;
-    }
-    try {
-      const data = await fetchJson(`${fetchUrlBase}/memberships/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setMemberships(Array.isArray(data) ? data : data?.memberships ?? []);
-    } catch {
-      setMemberships([]);
-    }
-  }, [fetchUrlBase, token]);
-
   useEffect(() => {
     if (!resolvedCommunityId) {
       setError("Community id missing.");
@@ -112,33 +29,39 @@ export default function CommunityPage() {
 
     let cancelled = false;
 
-    async function load() {
+    async function loadPage() {
       setLoading(true);
       setError("");
 
       try {
-        const [user, communityData, postsData] = await Promise.all([
+        const [user, communityData, communityPosts] = await Promise.all([
           userApi.getCurrentUser().catch(() => null),
           communityApi.getCommunityById(resolvedCommunityId),
-          communityPostsApi.getPostsByCommunity(resolvedCommunityId)
+          communityApi.getCommunityPosts(resolvedCommunityId)
         ]);
 
         if (cancelled) return;
 
         setCurrentUser(user);
         setCommunity(communityData);
-        setPosts(Array.isArray(postsData) ? postsData : postsData?.posts ?? []);
+
+        // normalize posts response
+        const postsArray = Array.isArray(communityPosts)
+          ? communityPosts
+          : communityPosts?.posts ?? [];
+
+        setPosts(postsArray);
       } catch (err) {
         if (!cancelled) {
           console.error(err);
-          setError("Failed to load community.");
+          setError("Failed to load community page.");
         }
       } finally {
         if (!cancelled) setLoading(false);
       }
     }
 
-    load();
+    loadPage();
     return () => {
       cancelled = true;
     };
@@ -152,9 +75,14 @@ export default function CommunityPage() {
     navigate("/create-post", { state: { community } });
   };
 
-  if (loading) return <div className="community-page-root">Loading community…</div>;
-  if (error) return <div className="community-page-root">Error: {error}</div>;
-  if (!community) return <div className="community-page-root">Community not found.</div>;
+  if (loading)
+    return <div className="community-page-root">Loading community…</div>;
+
+  if (error)
+    return <div className="community-page-root">Error: {error}</div>;
+
+  if (!community)
+    return <div className="community-page-root">Community not found.</div>;
 
   return (
     <div className="community-page-root vpBody">
@@ -165,7 +93,6 @@ export default function CommunityPage() {
 
       <div className="community-page-body vpLayoutContainer">
         <main className="community-post-column vpPageContentWrapper">
-
           {posts.length === 0 ? (
             <div className="empty-posts vpEmptyState">
               <h2><b>This community doesn't have any posts yet</b></h2>
@@ -183,7 +110,10 @@ export default function CommunityPage() {
         </main>
 
         <aside className="community-sidebar-column vpRightSidebar">
-          <CommunitySidebar community={community} currentUser={currentUser} />
+          <CommunitySidebar
+            community={community}
+            currentUser={currentUser}
+          />
         </aside>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./communityHeader.css";
 
+// ✅ USE ONLY THE CENTRAL API FILE
 import { communityApi, membershipApi } from "../api";
 
 export function requireAuthOrRedirect(navigate) {
