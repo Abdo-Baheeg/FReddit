@@ -15,6 +15,16 @@ export default function AllCommunities() {
   const [joinedMap, setJoinedMap] = useState(new Map());
   const [actionLoading, setActionLoading] = useState(new Map());
 
+ 
+
+  const getToken = () => {
+    try {
+      return localStorage.getItem("token") || null;
+    } catch {
+      return null;
+    }
+  };
+
   useEffect(() => {
     let mounted = true;
 

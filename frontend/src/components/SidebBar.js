@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import './Sidebar.css';
+import { useNavigate } from 'react-router-dom';
+import { useCreateCommunity } from '../context/CreateCommunityContext';
 
 const Sidebar = () => {
   // State for the whole sidebar visibility
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { openCreateCommunityModal } = useCreateCommunity();
 
   // State to manage the open/close status of the collapsible sections
   const [openSections, setOpenSections] = useState({
@@ -13,6 +16,8 @@ const Sidebar = () => {
     communities: true,
     resources: true,
   });
+  const navigate = useNavigate();
+
 
   const toggleSection = (section) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -20,6 +25,13 @@ const Sidebar = () => {
 
   const handleSidebarToggle = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  // --- NEW: Generic handler for menu clicks ---
+  const handleItemClick = (label) => {
+    console.log(`Navigating to: ${label}`);
+    // You can replace this with navigation logic, e.g., navigate('/home')
+    alert(`You clicked on: ${label}`); 
   };
 
   return (
@@ -34,17 +46,20 @@ const Sidebar = () => {
 
       {/* --- SECTION: MAIN NAV --- */}
       <div className="menu-group first-group">
-        <MenuItem icon="home" label="Home" />
-        <MenuItem icon="popular" label="Popular" />
-        <MenuItem icon="explore" label="Explore" />
-        <MenuItem icon="all" label="All" />
+        <MenuItem icon="home" label="Home" onClick={() => handleItemClick('Home')} />
+        <MenuItem icon="popular" label="Popular" onClick={() => handleItemClick('Popular')} />
+        <MenuItem icon="explore" label="Explore" onClick={() => handleItemClick('Explore')} />
+        <MenuItem icon="all" label="All" onClick={() => handleItemClick('All')} />
       </div>
 
       <div className="separator"></div>
 
       {/* --- SECTION: ACTIONS --- */}
-      <div className="menu-group">
+
+      <div className="menu-group" onClick={openCreateCommunityModal}>
         <MenuItem icon="add" label="Start a community" />
+
+     
       </div>
 
       <div className="separator"></div>
@@ -55,7 +70,7 @@ const Sidebar = () => {
         isOpen={openSections.games} 
         onToggle={() => toggleSection('games')}
       >
-        <div className="game-promo">
+        <div className="game-promo" onClick={() => handleItemClick('Jump Cat Game')}>
             <div className="new-tag">NEW</div>
             <div className="promo-content">
             <img 
@@ -76,18 +91,21 @@ const Sidebar = () => {
             gameIcon="HC" 
             gameColor="#000" 
             label="Hot and Cold" 
+            onClick={() => handleItemClick('Hot and Cold')}
         />
         <MenuItem 
             gameIcon="PG" 
             gameColor="#FFD635" 
             label="Pocket Grids" 
+            onClick={() => handleItemClick('Pocket Grids')}
         />
         <MenuItem 
             gameIcon="SF" 
             gameColor="#FF4500" 
             label="Stonefall" 
+            onClick={() => handleItemClick('Stonefall')}
         />
-        <MenuItem icon="controller" label="Discover More Games" />
+        <MenuItem icon="controller" label="Discover More Games" onClick={() => handleItemClick('Discover More Games')} />
       </Collapsible>
 
       <div className="separator"></div>
@@ -98,7 +116,7 @@ const Sidebar = () => {
         isOpen={openSections.customFeeds} 
         onToggle={() => toggleSection('customFeeds')}
       >
-        <MenuItem icon="add" label="Create Custom Feed" />
+        <MenuItem icon="add" label="Create Custom Feed" onClick={() => handleItemClick('Create Custom Feed')} />
       </Collapsible>
 
       <div className="separator"></div>
@@ -113,16 +131,19 @@ const Sidebar = () => {
             imgSrc="https://styles.redditmedia.com/t5_5l62s/styles/communityIcon_s936154673.png" 
             label="r/AlexandriaEgy" 
             isRound={true}
+            onClick={() => handleItemClick('r/AlexandriaEgy')}
         />
         <MenuItem 
             imgSrc="https://upload.wikimedia.org/wikipedia/commons/f/fa/Flag_of_Egypt.svg" 
             label="r/ExEgypt" 
             isRound={true}
+            onClick={() => handleItemClick('r/ExEgypt')}
         />
         <MenuItem 
             imgSrc="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" 
             label="r/Egypt" 
             isRound={true}
+            onClick={() => handleItemClick('r/Egypt')}
         />
       </Collapsible>
 
@@ -138,11 +159,13 @@ const Sidebar = () => {
             imgSrc="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" 
             label="r/Cairo" 
             isRound={true}
+            onClick={() => handleItemClick('r/Cairo')}
         />
         <MenuItem 
             imgSrc="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" 
             label="r/PersonalFinance" 
             isRound={true}
+            onClick={() => handleItemClick('r/PersonalFinance')}
         />
       </Collapsible>
 
@@ -154,38 +177,38 @@ const Sidebar = () => {
         isOpen={openSections.resources} 
         onToggle={() => toggleSection('resources')}
       >
-        <MenuItem icon="reddit" label="About Reddit" />
-        <MenuItem icon="advertise" label="Advertise" />
-        <MenuItem icon="dev" label="Developer Platform" />
-        <div className="menu-item">
+        <MenuItem icon="reddit" label="About Reddit" onClick={() => handleItemClick('About Reddit')} />
+        <MenuItem icon="advertise" label="Advertise" onClick={() => handleItemClick('Advertise')} />
+        <MenuItem icon="dev" label="Developer Platform" onClick={() => handleItemClick('Developer Platform')} />
+        <div className="menu-item" onClick={() => handleItemClick('Reddit Pro')} style={{cursor: 'pointer'}}>
             <span className="icon">{getSvg('pro')}</span>
             <span className="label-text">Reddit Pro</span>
             <span className="beta-tag">BETA</span>
         </div>
-        <MenuItem icon="help" label="Help" />
-        <MenuItem icon="blog" label="Blog" />
-        <MenuItem icon="careers" label="Careers" active={true} />
-        <MenuItem icon="press" label="Press" />
+        <MenuItem icon="help" label="Help" onClick={() => handleItemClick('Help')} />
+        <MenuItem icon="blog" label="Blog" onClick={() => handleItemClick('Blog')} />
+        <MenuItem icon="careers" label="Careers" active={true} onClick={() => handleItemClick('Careers')} />
+        <MenuItem icon="press" label="Press" onClick={() => handleItemClick('Press')} />
       </Collapsible>
 
       <div className="separator"></div>
 
       {/* --- FOOTER LINKS (BEST OF) --- */}
       <div className="menu-group footer-links">
-        <MenuItem icon="communities_footer" label="Communities" isFooter={true} />
-        <MenuItem icon="best_of" label="Best of Reddit" isFooter={true} />
-        <MenuItem icon="translate" label="Best of Reddit in Port..." isFooter={true} />
-        <MenuItem icon="translate" label="Best of Reddit in Ger..." isFooter={true} />
+        <MenuItem icon="communities_footer" label="Communities" isFooter={true} onClick={() => handleItemClick('Footer: Communities')} />
+        <MenuItem icon="best_of" label="Best of Reddit" isFooter={true} onClick={() => handleItemClick('Footer: Best of Reddit')} />
+        <MenuItem icon="translate" label="Best of Reddit in Port..." isFooter={true} onClick={() => handleItemClick('Footer: Portuguese')} />
+        <MenuItem icon="translate" label="Best of Reddit in Ger..." isFooter={true} onClick={() => handleItemClick('Footer: German')} />
       </div>
 
       <div className="separator"></div>
 
       {/* --- FOOTER LINKS (LEGAL) --- */}
       <div className="menu-group footer-links">
-        <MenuItem icon="rules" label="Reddit Rules" isFooter={true} />
-        <MenuItem icon="rules" label="Privacy Policy" isFooter={true} />
-        <MenuItem icon="rules" label="User Agreement" isFooter={true} />
-        <MenuItem icon="access" label="Accessibility" isFooter={true} />
+        <MenuItem icon="rules" label="Reddit Rules" isFooter={true} onClick={() => handleItemClick('Rules')} />
+        <MenuItem icon="rules" label="Privacy Policy" isFooter={true} onClick={() => handleItemClick('Privacy')} />
+        <MenuItem icon="rules" label="User Agreement" isFooter={true} onClick={() => handleItemClick('User Agreement')} />
+        <MenuItem icon="access" label="Accessibility" isFooter={true} onClick={() => handleItemClick('Accessibility')} />
       </div>
 
       <div className="copyright">
@@ -200,7 +223,7 @@ const Sidebar = () => {
 
 const Collapsible = ({ title, isOpen, onToggle, children }) => (
     <div className={`collapsible-section ${isOpen ? 'expanded' : ''}`}>
-      <div className="section-header" onClick={onToggle}>
+      <div className="section-header" onClick={onToggle} style={{cursor: 'pointer'}}>
         <span>{title}</span>
         <ArrowIcon />
       </div>
@@ -208,9 +231,14 @@ const Collapsible = ({ title, isOpen, onToggle, children }) => (
     </div>
 );
 
-const MenuItem = ({ label, icon, imgSrc, isRound, gameIcon, gameColor, active, isFooter }) => {
+// --- UPDATE: Added onClick prop and style cursor pointer ---
+const MenuItem = ({ label, icon, imgSrc, isRound, gameIcon, gameColor, active, isFooter, onClick }) => {
   return (
-    <div className={`menu-item ${active ? 'active' : ''} ${isFooter ? 'footer-item' : ''}`}>
+    <div 
+        className={`menu-item ${active ? 'active' : ''} ${isFooter ? 'footer-item' : ''}`}
+        onClick={onClick}
+        style={{ cursor: 'pointer' }}
+    >
       {/* SVG Icon */}
       {icon && <span className="icon">{getSvg(icon)}</span>}
       

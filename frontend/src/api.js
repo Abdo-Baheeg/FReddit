@@ -228,6 +228,38 @@ export const communityApi = {
       { headers: getAuthHeaders() }
     );
     return response.data;
+  },
+
+  // Get community posts
+  getCommunityPosts: async (communityId, page = 1, limit = 20, sort = 'new') => {
+    const response = await axios.get(
+      `${API_URL}/api/communities/${communityId}/posts`,
+      {
+        params: { page, limit, sort },
+        headers: getAuthHeaders()
+      }
+    );
+    return response.data;
+  },
+
+  // Join community
+  joinCommunity: async (communityId) => {
+    const response = await axios.post(
+      `${API_URL}/api/communities/${communityId}/join`,
+      {},
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Leave community
+  leaveCommunity: async (communityId) => {
+    const response = await axios.post(
+      `${API_URL}/api/communities/${communityId}/leave`,
+      {},
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
   }
 
   // Note: communityData should include:

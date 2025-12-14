@@ -2,20 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import { useTheme } from '../context/ThemeContext';
+import { useCreateCommunity } from '../context/CreateCommunityContext';
 import './Navbar.css';
 import Login from '../pages/Login_windows/Login';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
+  const { openCreateCommunityModal } = useCreateCommunity();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showAppModal, setShowAppModal] = useState(false);
   
   const [showDotMenu, setShowDotMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showCreateMenu, setShowCreateMenu] = useState(false);
   const dotMenuRef = useRef(null);
   const userMenuRef = useRef(null);
+  const createMenuRef = useRef(null);
 
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -61,17 +65,18 @@ const Navbar = () => {
         setShowAppModal(false);
         setShowDotMenu(false);
         setShowUserMenu(false);
+        setShowCreateMenu(false);
       }
     };
     
-    if (showAppModal || showDotMenu || showUserMenu) {
+    if (showAppModal || showDotMenu || showUserMenu || showCreateMenu) {
       window.addEventListener('keydown', handleEsc);
     }
     
     return () => {
       window.removeEventListener('keydown', handleEsc);
     };
-  }, [showAppModal, showDotMenu, showUserMenu]);
+  }, [showAppModal, showDotMenu, showUserMenu, showCreateMenu]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -80,6 +85,9 @@ const Navbar = () => {
       }
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setShowUserMenu(false);
+      }
+      if (createMenuRef.current && !createMenuRef.current.contains(event.target)) {
+        setShowCreateMenu(false);
       }
     };
 
@@ -331,16 +339,51 @@ const Navbar = () => {
               </svg>
             </button>
 
-            <button 
-              className="vpCreateBtnNew" 
-              aria-label="Create"
-              onClick={() => navigate('/createpost')} // Added navigation handler
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 4v16m8-8H4" />
-              </svg>
-              Create
-            </button>
+            <div className="vpCreateMenuContainer" ref={createMenuRef}>
+              <button 
+                className="vpCreateBtnNew" 
+                aria-label="Create"
+                onClick={() => setShowCreateMenu(!showCreateMenu)}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 4v16m8-8H4" />
+                </svg>
+                Create
+              </button>
+              
+              {showCreateMenu && (
+                <div className="vpCreateDropdown">
+                  <button 
+                    className="vpCreateDropdownItem"
+                    onClick={() => {
+                      navigate('/createpost');
+                      setShowCreateMenu(false);
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                      <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+                    </svg>
+                    <span>Create Post</span>
+                  </button>
+                  
+                  <button 
+                    className="vpCreateDropdownItem"
+                    onClick={() => {
+                      openCreateCommunityModal();
+                      setShowCreateMenu(false);
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                    </svg>
+                    <span>Create Community</span>
+                  </button>
+                </div>
+              )}
+            </div>
 
             <button 
               className="vpIconBtn" 
