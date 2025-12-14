@@ -13,7 +13,7 @@ export default function AllCommunities() {
 
   const [actionLoading, setActionLoading] = useState(new Map());
 
-  const API_BASE = "http://localhost:5050";
+ 
 
   const getToken = () => {
     try {
