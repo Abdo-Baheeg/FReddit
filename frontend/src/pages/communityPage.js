@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import CommunityHeader from "../components/communityHeader";
 import CommunitySidebar from "../components/communitySidebar";
+import { communityApi } from "../api";
 import "./communityPage.css";
 
 export default function CommunityPage() {
@@ -64,29 +65,22 @@ export default function CommunityPage() {
     }
   }, [fetchUrlBase, token]);
 
-  const fetchPosts = useCallback(async (id) => {
+  const fetchPosts = useCallback(async (id, page = 1, sort = 'new') => {
     if (!id) return;
     try {
       setPosts(null);
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      const res = await fetch(`${fetchUrlBase}/communities/${id}/posts`, { headers });
-
-      if (!res.ok) {
-        if (res.status === 404) {
-          setPosts([]);
-          return;
-        }
-        const text = await res.text().catch(() => "");
-        throw new Error(text || `Failed to load posts (${res.status})`);
-      }
-
-      const data = await res.json().catch(() => []);
-      setPosts(Array.isArray(data) ? data : data?.posts ?? []);
+      const response = await communityApi.getCommunityPosts(id, page, 20, sort);
+      setPosts(response.posts || []);
     } catch (err) {
       console.error("fetchPosts:", err);
-      setPosts([]);
+      // If community not found or has no posts endpoint yet, fallback to empty
+      if (err.response?.status === 404) {
+        setPosts([]);
+      } else {
+        setPosts([]);
+      }
     }
-  }, [fetchUrlBase, token]);
+  }, []);
 
   const fetchMemberships = useCallback(async () => {
     if (!token) {

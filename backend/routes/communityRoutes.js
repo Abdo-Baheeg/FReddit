@@ -187,4 +187,59 @@ router.post('/:id/leave', authMiddleware, async (req, res) => {
   }
 });
 
+// @route   GET /api/communities/:id/posts
+// @desc    Get all posts from a community
+// @access  Public
+router.get('/:id/posts', async (req, res) => {
+  try {
+    const Post = require('../models/Post');
+    const { page = 1, limit = 20, sort = 'new' } = req.query;
+    const skip = (page - 1) * limit;
+
+    // Verify community exists
+    const community = await Community.findById(req.params.id);
+    if (!community) {
+      return res.status(404).json({ message: 'Community not found' });
+    }
+
+    // Determine sort order
+    let sortOption = {};
+    switch (sort) {
+      case 'hot':
+      case 'top':
+        sortOption = { score: -1, createdAt: -1 };
+        break;
+      case 'new':
+      default:
+        sortOption = { createdAt: -1 };
+        break;
+    }
+
+    // Get posts
+    const posts = await Post.find({ community: req.params.id })
+      .populate('author', 'username')
+      .populate('community', 'name')
+      .sort(sortOption)
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    // Get total count
+    const total = await Post.countDocuments({ community: req.params.id });
+
+    res.json({
+      posts,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit),
+        hasMore: skip + posts.length < total
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching community posts:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 module.exports = router;
