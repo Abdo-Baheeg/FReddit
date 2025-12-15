@@ -15,11 +15,6 @@
     --reddit-hover: #e8e8e8;
 }
 
-/* --- Layout and Structure --- */
-.post-list {
-    /* Assuming this is a container for the form */
-}
-
 .form-container {
     background-color: white; /* Example background */
     padding: var(--spacing-xl);
@@ -123,11 +118,6 @@
     color: var(--reddit-text-meta);
     text-align: right;
     margin-top: var(--spacing-xs);
-}
-
-/* --- Tags Placeholder --- */
-.tags-input-group {
-    /* Group style, already handled by .form-group */
 }
 
 
