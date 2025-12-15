@@ -334,7 +334,7 @@ const Navbar = () => {
             <button 
               className="vpCreateBtnNew" 
               aria-label="Create"
-              onClick={() => navigate('/createpost')} // Added navigation handler
+              onClick={() => navigate('/create-post')} // Added navigation handler
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 4v16m8-8H4" />

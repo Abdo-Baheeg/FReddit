@@ -1,0 +1,249 @@
+/* Define custom properties (optional, adjust to your actual global variables) */
+:root {
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
+    --spacing-lg: 16px;
+    --spacing-xl: 24px;
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --reddit-border: #ccc;
+    --reddit-bg-secondary: #f6f7f8;
+    --reddit-text-primary: #1c1c1c;
+    --reddit-text-meta: #7c7c7c;
+    --reddit-blue: #0079d3;
+    --reddit-hover: #e8e8e8;
+}
+
+/* --- Layout and Structure --- */
+.post-list {
+    /* Assuming this is a container for the form */
+}
+
+.form-container {
+    background-color: white; /* Example background */
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.create-post-header {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--reddit-border);
+}
+
+/* --- Form Groups and Inputs --- */
+.form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-label {
+    display: block; 
+    margin-bottom: var(--spacing-xs);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--reddit-text-primary);
+}
+
+.form-input {
+    font-size: 14px;
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--reddit-border);
+    border-radius: var(--border-radius-md);
+    box-sizing: border-box; /* Crucial for padding/border inside width */
+}
+
+/* --- Community Selector --- */
+.community-selector {
+    margin-bottom: var(--spacing-lg);
+}
+
+.select-community-placeholder,
+.add-tags-placeholder {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--reddit-border);
+    border-radius: var(--border-radius-md);
+    background-color: var(--reddit-bg-secondary);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.placeholder-text {
+    color: var(--reddit-text-meta);
+}
+
+/* --- Post Type Tabs --- */
+.feed-tabs { 
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    gap: 0;
+}
+
+.feed-tab {
+    flex: 1;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--reddit-border);
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--reddit-text-primary);
+}
+
+.feed-tab:not(:last-child) {
+    border-right: none;
+}
+
+.feed-tab:first-child {
+    border-top-left-radius: var(--border-radius-md);
+    border-bottom-left-radius: var(--border-radius-md);
+}
+
+.feed-tab:last-child {
+    border-top-right-radius: var(--border-radius-md);
+    border-bottom-right-radius: var(--border-radius-md);
+}
+
+.feed-tab.active {
+    background-color: var(--reddit-bg-secondary);
+    border-color: var(--reddit-border); /* Ensures active border is visible */
+    z-index: 1; /* Bring active tab to front to overlap adjacent borders */
+}
+
+/* --- Title and Char Count --- */
+.title-char-count {
+    font-size: 12px;
+    color: var(--reddit-text-meta);
+    text-align: right;
+    margin-top: var(--spacing-xs);
+}
+
+/* --- Tags Placeholder --- */
+.tags-input-group {
+    /* Group style, already handled by .form-group */
+}
+
+
+/* --- File Upload Specific Styling --- */
+.file-upload-group {
+    padding: var(--spacing-md);
+    border: 1px dashed var(--reddit-border);
+    border-radius: var(--border-radius-md);
+    background-color: var(--reddit-bg-secondary);
+    text-align: center;
+}
+
+.file-input {
+    margin-top: var(--spacing-sm);
+    display: block;
+    width: 100%;
+}
+
+.file-name-display {
+    font-size: 14px;
+    color: var(--reddit-text-primary);
+    margin-top: var(--spacing-sm);
+    word-break: break-all;
+}
+
+
+/* --- Formatting Toolbar --- */
+.formatting-toolbar { 
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--reddit-border);
+    border-bottom: none;
+    border-top-left-radius: var(--border-radius-md);
+    border-top-right-radius: var(--border-radius-md);
+    background-color: var(--reddit-bg-secondary);
+}
+
+.formatting-button {
+    padding: 4px 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: var(--border-radius-sm);
+    color: var(--reddit-text-primary);
+}
+
+.formatting-button:hover {
+    background-color: var(--reddit-hover);
+}
+
+/* --- Content Text Area --- */
+.content-textarea { 
+    width: 100%;
+    min-height: 200px;
+    font-size: 14px;
+    padding: var(--spacing-md);
+    border: 1px solid var(--reddit-border);
+    border-top: none;
+    border-bottom-left-radius: var(--border-radius-md);
+    border-bottom-right-radius: var(--border-radius-md);
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+/* --- Action Buttons --- */
+.action-buttons-container { 
+    display: flex; 
+    gap: var(--spacing-sm); 
+    justify-content: flex-end;
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--reddit-border);
+}
+
+.btn {
+    padding: var(--spacing-sm) var(--spacing-xl);
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+.btn-secondary { 
+    border: 1px solid var(--reddit-border);
+    background-color: transparent;
+    color: var(--reddit-text-primary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--reddit-hover);
+}
+
+.btn-primary { 
+    border: none;
+    background-color: var(--reddit-blue);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0060a8; /* Darker shade for hover */
+}
+
+.btn[disabled] {
+    background-color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+/* --- Error Message --- */
+.error {
+    color: red;
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-sm);
+    border: 1px solid red;
+    background-color: #ffe0e0;
+    border-radius: var(--border-radius-md);
+}
