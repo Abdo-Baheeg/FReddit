@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import { useTheme } from '../context/ThemeContext';
 import './Navbar.css';
@@ -8,51 +8,51 @@ import Login from '../pages/Login_windows/Login';
 const Navbar = () => {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
+  
+  // --- STATE ---
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showAppModal, setShowAppModal] = useState(false);
   
+  // Menus & Modals
+  const [showAppModal, setShowAppModal] = useState(false);
   const [showDotMenu, setShowDotMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+
+  // Refs for clicking outside
   const dotMenuRef = useRef(null);
   const userMenuRef = useRef(null);
 
-
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isSignupOpen, setIsSignupOpen] = useState(false);
-  const [isResetOpen, setIsResetOpen] = useState(false);
-
-  const closeAll = () => {
-    setIsLoginOpen(false);
-    setIsSignupOpen(false);
-    setIsResetOpen(false);
+  // --- HANDLERS ---
+  const handleSearch = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/search?q=${searchQuery}`);
+    }
   };
+
+  const handleAskAi = () => navigate('/ask-ai');
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('userId');
+    setIsLoggedIn(false);
+    setShowUserMenu(false);
+    navigate('/');
+    window.location.reload();
+  };
+
+  // --- AUTH & EVENT LISTENERS ---
   useEffect(() => {
     const checkAuthStatus = () => {
       const token = localStorage.getItem('token');
-      const user = localStorage.getItem('user');
-      
-      console.log('Checking auth status:', { token, user });
       if(token) setIsLoggedIn(true);
       setLoading(false);
     };
-
     checkAuthStatus();
-
-    const handleStorageChange = (e) => {
-      if (e.key === 'token' || e.key === 'user') {
-        checkAuthStatus();
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    const intervalId = setInterval(checkAuthStatus, 1000);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(intervalId);
-    };
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'token' || e.key === 'user') checkAuthStatus();
+    });
   }, []);
 
   useEffect(() => {
@@ -63,471 +63,185 @@ const Navbar = () => {
         setShowUserMenu(false);
       }
     };
-    
-    if (showAppModal || showDotMenu || showUserMenu) {
-      window.addEventListener('keydown', handleEsc);
-    }
-    
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
+    if (showAppModal || showDotMenu || showUserMenu) window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
   }, [showAppModal, showDotMenu, showUserMenu]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dotMenuRef.current && !dotMenuRef.current.contains(event.target)) {
-        setShowDotMenu(false);
-      }
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
-        setShowUserMenu(false);
-      }
+      if (dotMenuRef.current && !dotMenuRef.current.contains(event.target)) setShowDotMenu(false);
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) setShowUserMenu(false);
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const { unreadCounts = {} } = useSocket() || {};
+  const totalUnread = Object.values(unreadCounts).reduce((sum, count) => sum + (Number(count) || 0), 0);
 
-  const handleLogout = () => {
-    console.log('Logging out...');
-    
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('userId');
-    
-    setIsLoggedIn(false);
-    setShowUserMenu(false);
-    
-    navigate('/');
-    window.location.reload();
-  };
-
-
-
-
-  const totalUnread = Object.values(unreadCounts).reduce(
-    (sum, count) => sum + (Number(count) || 0),
-    0
-  );
-
-  if (loading) {
-    return (
-      <div className="vpBody">
-        <header className="vpNewTopBar">
-          <div className="vpTopBarContainer">
-            <div className="vpLogoNew">
-              <img
-                src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                alt="Reddit"
-                className="vpLogoIcon"
-              />
-              <span className="vpLogoTextNew">reddit</span>
-            </div>
-            <div className="vpSearchContainer">
-              <div className="vpSearchWrapper">
-                <input
-                  type="text"
-                  placeholder="Loading..."
-                  className="vpSearchInput"
-                  disabled
-                />
-              </div>
-            </div>
-          </div>
-        </header>
-      </div>
-    );
-  }
-
-  if (!isLoggedIn) {
-    return (
-      <div className="vpBody">
-        <header className="vpNewTopBar">
-          <div className="vpTopBarContainer">
-            <div className="vpLogoNew">
-              <img
-                src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                alt="Reddit"
-                className="vpLogoIcon"
-              />
-              <span className="vpLogoTextNew">reddit</span>
-            </div>
-
-            <div className="vpSearchContainer">
-              <div className="vpSearchWrapper">
-                <svg className="vpSearchIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Find anything"
-                  className="vpSearchInput"
-                />
-              </div>
-            </div>
-
-            <button 
-              className="vpGetAppBtn" 
-              onClick={() => setShowAppModal(true)}
-            >
-              Get App
-            </button>
-
-            <div className="vpRightIcons">
-              
-              {/* Theme Toggle */}
-              <button 
-                className="vpIconBtn" 
-                onClick={toggleTheme}
-                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-              >
-                {isDarkMode ? (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="5"/>
-                    <line x1="12" y1="1" x2="12" y2="3"/>
-                    <line x1="12" y1="21" x2="12" y2="23"/>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                    <line x1="1" y1="12" x2="3" y2="12"/>
-                    <line x1="21" y1="12" x2="23" y2="12"/>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                  </svg>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                  </svg>
-                )}
-              </button>
-              
-                <button className="vpLoginBtn" onClick={() => setIsLoginOpen(true)}>Log In</button>
-              {/* Modal */}
-             {isLoginOpen && <Login setOpen={setIsLoginOpen} />}
-
-              <div className="vpDotMenuContainer" ref={dotMenuRef}>
-                <button 
-                  className="vpdotBtn" 
-                  onClick={() => setShowDotMenu(!showDotMenu)}
-                >
-                  <b>•••</b>
-                </button>
-                
-                {showDotMenu && (
-                  <div className="vpDotDropdown">
-                    <button onClick={() => setIsLoginOpen(true)}
-                     className="vpDotDropItem" 
-                     style={{ textDecoration: "none", color: "inherit"  }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
-                      </svg>
-                      <span>Log in / Sign up</span>
-                    </button>
-                    
-                    <div className="vpDotDropdownItem">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                        <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
-                      </svg>
-                      <span>Advertise on Reddit</span>
-                    </div>
-                    
-                    <div className="vpDotDropdownItem">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M4 5a9 9 0 019 9M4 5v9h9M4 5l7 7"/>
-                        <path d="M20 5a9 9 0 01-9 9M20 5v9h-9M20 5l-7 7"/>
-                      </svg>
-                      <span>Try Reddit Pro Beta</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Modal لعرض صورة Get App */}
-        {showAppModal && (
-          <div className="vpModalOverlay" onClick={() => setShowAppModal(false)}>
-            <div className="vpModalContent" onClick={(e) => e.stopPropagation()}>
-              <button
-                className="vpModalClose"
-                onClick={() => setShowAppModal(false)}
-                aria-label="Close"
-              >
-                &times;
-              </button>
-              <div className="vpModalImageContainer">
-                  <h1>Get the Reddit app</h1>
-                  <p>Scan this QR code to download the app now</p>
-                <img
-                  src={process.env.PUBLIC_URL + "/images/Qr.png"}
-                  className="vpModalImage"
-                />
-                 <p>Or check it out in the app stores</p>
-                <div className="vpModalText">
-                  <div className="vpAppStores">
-                    <button 
-                      className="vpAppStoreBtn"
-                      onClick={() => window.open('https://apps.apple.com/us-app/reddit/id1064216828', '_blank')}
-                    >
-                      <span className="vpAppStoreText">Download on the App Store</span>
-                    </button>
-                    <button 
-                      className="vpPlayStoreBtn"
-                      onClick={() => window.open('https://play.google.com/store/apps/details?id=com.reddit.frontpage&pli=1')}
-                    >
-                      <span className="vpPlayStoreText">GET IT ON Google Play</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
+  if (loading) return null;
 
   return (
-    <div className="vpBody">
+    <div className={`vpBody ${isDarkMode ? 'vpDarkMode' : ''}`}>
       <header className="vpNewTopBar">
         <div className="vpTopBarContainer">
-          <div className="vpLogoNew">
-            <img
-              src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-              alt="Reddit"
-              className="vpLogoIcon"
-            />
+          
+          {/* LOGO */}
+          <div className="vpLogoNew" onClick={() => navigate('/')} style={{ cursor: 'pointer' }} title="Go to Home">
             <span className="vpLogoTextNew">reddit</span>
           </div>
 
+          {/* SEARCH BAR */}
           <div className="vpSearchContainer">
             <div className="vpSearchWrapper">
-              <svg className="vpSearchIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input type="text" placeholder="Search Reddit" className="vpSearchInput" />
-            </div>
-          </div>
-
-          <div className="vpRightIcons">
-            <button 
-              className="vpIconBtn" 
-              aria-label="Advertise"
-              onClick={() => navigate('/ads')} // Added navigation handler
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-9.75 14h-1.5v-7.5h1.5V17zm-.75-8.5a.75.75 0 110-1.5.75.75 0 010 1.5zm6.5 8.5h-1.5v-4.75c0-1.24-.56-1.95-1.58-1.95-.88 0-1.42.59-1.42 1.95V17h-1.5v-7.5h1.5v1.03c.2-.62.95-1.28 2.03-1.28 1.48 0 2.47 1.01 2.47 3.22V17z"/>
-              </svg>
-              <span className="vpAdLabel">AD</span>
-            </button>
-
-            <button className="vpIconBtn" aria-label="Chat">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2zm-2 12H6v-1h12v1zm0-3H6V9h12v2zm0-3H6V5h12v2z"/>
-              </svg>
-            </button>
-
-            <button 
-              className="vpCreateBtnNew" 
-              aria-label="Create"
-              onClick={() => navigate('/createpost')} // Added navigation handler
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 4v16m8-8H4" />
-              </svg>
-              Create
-            </button>
-
-            <button 
-              className="vpIconBtn" 
-              aria-label="Notifications" 
-              title={`${totalUnread} unread`}
-              onClick={() => navigate('/notifications')} // Added navigation handler
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-              </svg>
-              {totalUnread > 0 && <span className="vpNotifBadge">{totalUnread}</span>}
-            </button>
-
-            {/* User Avatar with Dropdown Menu */}
-            <div className="vpUserMenuContainer" ref={userMenuRef}>
-              <div 
-                className="vpUserAvatarNew" 
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                title="Click for options"
-              >
-                <img
-                  src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                  alt="User"
-                  className="vpAvatarImg"
-                />
-                <div className="vpOnlineIndicator"></div>
+              <div className="vpSearchLogoContainer">
+                <img src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png" alt="Reddit Logo" className="vpSearchLogoIcon"/>
               </div>
-              
-              {showUserMenu && (
-                <div className="vpUserDropdown">
-                  <div className="vpUserDropdownHeader">
-                    <div className="vpUserDropdownAvatar">
-                      <img
-                        src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                        alt="User"
-                      />
-                      <div className="vpUserDropdownOnline"></div>
-                    </div>
-                    <div className="vpUserDropdownInfo">
-                      <div className="vpUserDropdownName">
-
-                        <button 
-                    className="vpUserDropdownItem" 
-                    onClick={()=> navigate('/viewprofile')}
-                    style={{ background: 'none', border: 'none', width: '100%', textAlign: 'right' }}
-                  >
-                    <span>View Profile</span>
-                  </button>
-                  
-                      </div>
-
-                    </div>
-                  </div>
-                  
-                  <div className="vpUserDropdownItem">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                        <path d="M17 21v-8H7v8M7 3v5h8"/>
-                      </svg>
-                      <span>Edit Avatar</span>
-                    </div>
-
-                  <div className="vpUserDropdownItem">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                        <path d="M17 21v-8H7v8M7 3v5h8"/>
-                      </svg>
-                      <span>Drafts</span>
-                    </div>
-                
-                      <div className="vpUserDropdownItem">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                        <path d="M17 21v-8H7v8M7 3v5h8"/>
-                      </svg>
-                      <span>Achievements</span>
-                    </div>
-
-                      <div className="vpUserDropdownItem">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                        <path d="M17 21v-8H7v8M7 3v5h8"/>
-                      </svg>
-                      <span>Earn</span>
-                    </div>
-
-                      <div className="vpUserDropdownItem">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                        <path d="M17 21v-8H7v8M7 3v5h8"/>
-                      </svg>
-                      <span>Premium</span>
-                    </div>
-
-                     <div className="vpUserDropdownItem">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                        <path d="M17 21v-8H7v8M7 3v5h8"/>
-                      </svg>
-                      <span>Dark Mode </span>
-                    </div>
-
-                     
-                  <button 
-                    className="vpUserDropdownItem vpUserDropdownItemLogout" 
-                    onClick={handleLogout}
-                    style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left' }}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-                      <path d="M16 17l5-5-5-5" />
-                      <path d="M21 12H9" />
-                    </svg>
-                    <span>Log Out</span>
-                  </button>
-                  
-                   <div className="vpUserDropdownItem">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                        <path d="M17 21v-8H7v8M7 3v5h8"/>
-                      </svg>
-                      <span>Advertise on Reddit</span>
-                    </div>
-
-                     <div className="vpUserDropdownItem">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                        <path d="M17 21v-8H7v8M7 3v5h8"/>
-                      </svg>
-                      <span>Try Reddin Pro BETA</span>
-                    </div>
-
-                  <div className="vpUserDropdownDivider"></div>
-                  <button 
-                    className="vpUserDropdownItem" 
-                    onClick={()=> navigate('/setting')}
-                    style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left' }}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                      <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
-                    </svg>
-                    
-                    <span>Settings</span>
-                  </button>
-                </div>
-              )}
+              <input
+                type="text"
+                placeholder="Find anything"
+                className="vpSearchInput"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearch}
+              />
+              <div className="vpAskContainer">
+                <div className="vpAskSeparator"></div>
+                <button className="vpAskButton" onClick={handleAskAi}>
+                  <svg className="vpAskIcon" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 6C13.66 6 15 7.34 15 9C15 10.11 14.41 11.08 13.53 11.64L12 13L10.47 11.64C9.59 11.08 9 10.11 9 9C9 7.34 10.34 6 12 6ZM12 18C10.9 18 10 17.1 10 16C10 14.9 10.9 14 12 14C13.1 14 14 14.9 14 16C14 17.1 13.1 18 12 18Z" fill="#FF4500"/>
+                    <circle cx="12" cy="12" r="10" stroke="#FF4500" strokeWidth="2" fill="none"/> 
+                    <path d="M19 12C19 15.866 15.866 19 12 19C8.13401 19 5 15.866 5 12C5 8.13401 8.13401 5 12 5C15.866 5 19 8.13401 19 12Z" fill="currentColor" fillOpacity="0.2"/>
+                    <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" fill="#FF4500"/>
+                  </svg>
+                  <span>Ask</span>
+                </button>
+              </div>
             </div>
           </div>
+
+          {/* RIGHT SIDE ICONS */}
+          {!isLoggedIn ? (
+            /* --- LOGGED OUT VIEW --- */
+            <>
+              <button className="vpGetAppBtn" onClick={() => setShowAppModal(true)}>Get App</button>
+              <div className="vpRightIcons">
+                 <button className="vpIconBtn" onClick={toggleTheme}>
+                  {isDarkMode ? 
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> 
+                    : 
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                  }
+                 </button>
+                 <button className="vpLoginBtn" onClick={() => setIsLoginOpen(true)}>Log In</button>
+                 
+                 {/* Dot Menu (Logged Out) - UPDATED WITH ICONS FROM IMAGE */}
+                 <div className="vpDotMenuContainer" ref={dotMenuRef}>
+                    <button className="vpdotBtn" onClick={() => setShowDotMenu(!showDotMenu)}><b>•••</b></button>
+                    {showDotMenu && (
+                      <div className="vpDotDropdown">
+                        <button onClick={() => setIsLoginOpen(true)} className="vpDotDropItem">
+                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/></svg>
+                           Log In / Sign Up
+                        </button>
+                        <button onClick={() => navigate('/ads')} className="vpDotDropItem">
+                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+                           Advertise on Reddit
+                        </button>
+                      </div>
+                    )}
+                 </div>
+              </div>
+            </>
+          ) : (
+            /* --- LOGGED IN VIEW --- */
+            <div className="vpRightIcons">
+               {/* Advertise */}
+               <button className="vpIconBtn" onClick={() => navigate('/ads')} title="Advertise">
+                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+               </button>
+               
+               {/* Chat */}
+               <button className="vpIconBtn" onClick={() => navigate('/chat')} title="Chat">
+                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+               </button>
+
+               {/* Create Post */}
+               <button className="vpCreateBtnNew" onClick={() => navigate('/createpost')}>
+                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                 Create
+               </button>
+
+               {/* Notifications */}
+               <button className="vpIconBtn" onClick={() => navigate('/notifications')} title="Notifications">
+                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                 {totalUnread > 0 && <span className="vpNotifBadge">{totalUnread}</span>}
+               </button>
+
+               {/* User Avatar & Dropdown */}
+               <div className="vpUserMenuContainer" ref={userMenuRef}>
+                 <div className="vpUserAvatarNew" onClick={() => setShowUserMenu(!showUserMenu)}>
+                    <img src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png" alt="User" className="vpAvatarImg"/>
+                    <div className="vpOnlineIndicator"></div>
+                 </div>
+                 
+                 {showUserMenu && (
+                    <div className="vpUserDropdown">
+                       <div className="vpUserDropdownHeader">
+                          <div className="vpUserDropdownAvatar">
+                             <img src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png" alt="User"/>
+                          </div>
+                          <div className="vpUserDropdownInfo">
+                             <div className="vpUserDropdownName">User</div>
+                             <div className="vpUserDropdownKarma">1 karma</div>
+                          </div>
+                       </div>
+                       
+                       <button className="vpUserDropdownItem" onClick={() => navigate('/profile')}>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                          View Profile
+                       </button>
+                       <button className="vpUserDropdownItem" onClick={() => navigate('/settings')}>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                          Settings
+                       </button>
+                       <button className="vpUserDropdownItem" onClick={toggleTheme}>
+                          {isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                       </button>
+                       <div className="vpUserDropdownDivider"></div>
+                       <button className="vpUserDropdownItem vpUserDropdownItemLogout" onClick={handleLogout}>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                          Log Out
+                       </button>
+                    </div>
+                 )}
+               </div>
+            </div>
+          )}
         </div>
       </header>
 
-      {/* Modal لعرض صورة Get App */}
+      {/* LOGIN MODAL */}
+      {isLoginOpen && <Login setOpen={setIsLoginOpen} />}
+
+      {/* GET APP MODAL */}
       {showAppModal && (
         <div className="vpModalOverlay" onClick={() => setShowAppModal(false)}>
           <div className="vpModalContent" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="vpModalClose"
-              onClick={() => setShowAppModal(false)}
-              aria-label="Close"
-            >
-              &times;
-            </button>
+            <button className="vpModalClose" onClick={() => setShowAppModal(false)}>&times;</button>
             <div className="vpModalImageContainer">
                 <h1>Get the Reddit app</h1>
                 <p>Scan this QR code to download the app now</p>
-              <img
-                src={process.env.PUBLIC_URL + "/images/Qr.png"}
-                className="vpModalImage"
-              />
-               <p>Or check it out in the app stores</p>
-              <div className="vpModalText">
+                <img src={process.env.PUBLIC_URL + "/images/Qr.png"} className="vpModalImage" alt="QR Code"/>
+                <p>Or check it out in the app stores</p>
                 <div className="vpAppStores">
-                  <button 
-                    className="vpAppStoreBtn"
-                    onClick={() => window.open('https://apps.apple.com/us-app/reddit/id1064216828', '_blank')}
-                  >
-                    <span className="vpAppStoreText">Download on the App Store</span>
+                  <button className="vpAppStoreBtn" onClick={() => window.open('https://apps.apple.com/us-app/reddit/id1064216828', '_blank')}>
+                    Download on the App Store
                   </button>
-                  <button 
-                    className="vpPlayStoreBtn"
-                    onClick={() => window.open('https://play.google.com/store/apps/details?id=com.reddit.frontpage&pli=1')}
-                  >
-                    <span className="vpPlayStoreText">GET IT ON Google Play</span>
+                  <button className="vpPlayStoreBtn" onClick={() => window.open('https://play.google.com/store/apps/details?id=com.reddit.frontpage&pli=1', '_blank')}>
+                    GET IT ON Google Play
                   </button>
                 </div>
-              </div>
             </div>
           </div>
         </div>
