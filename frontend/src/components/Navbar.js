@@ -2,20 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import { useTheme } from '../context/ThemeContext';
+import { useCreateCommunity } from '../context/CreateCommunityContext';
 import './Navbar.css';
 import Login from '../pages/Login_windows/Login';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
+  const { openCreateCommunityModal } = useCreateCommunity();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showAppModal, setShowAppModal] = useState(false);
   
   const [showDotMenu, setShowDotMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showCreateMenu, setShowCreateMenu] = useState(false);
   const dotMenuRef = useRef(null);
   const userMenuRef = useRef(null);
+  const createMenuRef = useRef(null);
 
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -61,17 +65,18 @@ const Navbar = () => {
         setShowAppModal(false);
         setShowDotMenu(false);
         setShowUserMenu(false);
+        setShowCreateMenu(false);
       }
     };
     
-    if (showAppModal || showDotMenu || showUserMenu) {
+    if (showAppModal || showDotMenu || showUserMenu || showCreateMenu) {
       window.addEventListener('keydown', handleEsc);
     }
     
     return () => {
       window.removeEventListener('keydown', handleEsc);
     };
-  }, [showAppModal, showDotMenu, showUserMenu]);
+  }, [showAppModal, showDotMenu, showUserMenu, showCreateMenu]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -80,6 +85,9 @@ const Navbar = () => {
       }
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setShowUserMenu(false);
+      }
+      if (createMenuRef.current && !createMenuRef.current.contains(event.target)) {
+        setShowCreateMenu(false);
       }
     };
 
@@ -334,7 +342,7 @@ const Navbar = () => {
             <button 
               className="vpCreateBtnNew" 
               aria-label="Create"
-              onClick={() => navigate('/create-post')} // Added navigation handler
+              onClick={() => navigate('/createpost')} // Added navigation handler
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 4v16m8-8H4" />
