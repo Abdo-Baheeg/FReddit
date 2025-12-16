@@ -294,6 +294,15 @@ export const communityApi = {
       { headers: getAuthHeaders() }
     );
     return response.data;
+  },
+
+  // Get communities where user is a moderator
+  getModeratedCommunities: async () => {
+    const response = await axios.get(
+      `${API_URL}/api/communities/moderated/list`,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
   }
 
   // Note: communityData should include:

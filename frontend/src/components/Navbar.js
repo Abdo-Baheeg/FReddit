@@ -12,7 +12,11 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+  const [username, setUsername] = useState('User');
+  const [userEmail, setUserEmail] = useState('');
+  const [userAvatar, setUserAvatar] = useState('https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png');
+  const [userKarma, setUserKarma] = useState(0);
+  const [postCount, setPostCount] = useState(0);
   
   // Menus & Modals
   const [showAppModal, setShowAppModal] = useState(false);
@@ -45,7 +49,22 @@ const Navbar = () => {
   useEffect(() => {
     const checkAuthStatus = () => {
       const token = localStorage.getItem('token');
-      if(token) setIsLoggedIn(true);
+      const user = localStorage.getItem('user');
+      if(token) {
+        setIsLoggedIn(true);
+        if(user) {
+          try {
+            const userData = JSON.parse(user);
+            setUsername(userData.username || 'User');
+            setUserEmail(userData.email || '');
+            setUserAvatar(userData.avatar || userData.profilePicture || 'https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png');
+            setUserKarma(userData.karma || userData.totalKarma || 0);
+            setPostCount(userData.postCount || 0);
+          } catch(e) {
+            console.error('Error parsing user data:', e);
+          }
+        }
+      }
       setLoading(false);
     };
     checkAuthStatus();
@@ -222,12 +241,15 @@ const Navbar = () => {
               <div 
                 className="vpUserAvatarNew" 
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                title="Click for options"
+                title={`${username} - Click for options`}
               >
                 <img
-                  src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                  alt="User"
+                  src={userAvatar}
+                  alt={username}
                   className="vpAvatarImg"
+                  onError={(e) => {
+                    e.target.src = 'https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png';
+                  }}
                 />
                 <div className="vpOnlineIndicator"></div>
               </div>
@@ -237,18 +259,32 @@ const Navbar = () => {
                   <div className="vpUserDropdownHeader">
                     <div className="vpUserDropdownAvatar">
                       <img
-                        src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
-                        alt="User"
+                        src={userAvatar}
+                        alt={username}
+                        onError={(e) => {
+                          e.target.src = 'https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png';
+                        }}
                       />
                       <div className="vpUserDropdownOnline"></div>
                     </div>
                     <div className="vpUserDropdownInfo">
                       <div className="vpUserDropdownName">
-                        {JSON.parse(localStorage.getItem('user') || '{}').username || 'User'}
+                        u/{username}
                       </div>
                       <div className="vpUserDropdownEmail">
-                        {JSON.parse(localStorage.getItem('user') || '{}').email || ''}
+                        {userEmail}
                       </div>
+                    </div>
+                  </div>
+
+                  <div className="vpUserDropdownStats">
+                    <div className="vpUserDropdownStat">
+                      <span className="vpUserDropdownStatValue">{userKarma.toLocaleString()}</span>
+                      <span className="vpUserDropdownStatLabel">Karma</span>
+                    </div>
+                    <div className="vpUserDropdownStat">
+                      <span className="vpUserDropdownStatValue">{postCount}</span>
+                      <span className="vpUserDropdownStatLabel">Posts</span>
                     </div>
                   </div>
                   
@@ -265,7 +301,10 @@ const Navbar = () => {
 
                   <button 
                     className="vpUserDropdownItem"
-                    onClick={() => { setShowUserMenu(false); /* Add edit avatar functionality */ }}
+                    onClick={() => { 
+                      navigate('/viewprofile'); 
+                      setShowUserMenu(false); 
+                    }}
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <circle cx="12" cy="12" r="3"/>
@@ -297,14 +336,18 @@ const Navbar = () => {
 
                   <button 
                     className="vpUserDropdownItem"
-                    onClick={() => { navigate('/earn'); setShowUserMenu(false); }}
+                    onClick={() => { navigate('/all'); setShowUserMenu(false); }}
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10"/>
-                      <path d="M12 6v6l4 2"/>
+                      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                      <path d="M16 3.13a4 4 0 010 7.75"/>
                     </svg>
-                    <span>Earn</span>
+                    <span>View Communities</span>
                   </button>
+
+                  <div className="vpUserDropdownDivider"></div>
 
                   <button 
                     className="vpUserDropdownItem"

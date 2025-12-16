@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 import { useCreateCommunity } from '../context/CreateCommunityContext';
 
-const Sidebar = () => {
-  // State for the whole sidebar visibility
-  const [isCollapsed, setIsCollapsed] = useState(false);
+const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
 
   // State to manage the open/close status of the collapsible sections
   const [openSections, setOpenSections] = useState({
@@ -25,7 +23,7 @@ const Sidebar = () => {
   };
 
   const handleSidebarToggle = () => {
-    setIsCollapsed(!isCollapsed);
+    setIsCollapsed?.(!isCollapsed);
   };
 
   // ✅ REAL NAVIGATION
@@ -55,10 +53,10 @@ const Sidebar = () => {
 
       {/* --- SECTION: ACTIONS --- */}
       <div className="menu-group">
-       < MenuItem icon="add" label="Create Post" onClick={() => handleItemClick('/create-submit')} />
+        <MenuItem icon="add" label="Create Post" onClick={() => handleItemClick('/create-post')} />
         <MenuItem icon="rules" label="Create Community" onClick={openCreateCommunityModal} />
         
-        <MenuItem icon="best_of" label="Best Communities" onClick={() => handleItemClick('/best')} />
+        <MenuItem icon="best_of" label="Best Communities" onClick={() => handleItemClick('/communities')} />
         
         
       </div>

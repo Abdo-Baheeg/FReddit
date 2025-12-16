@@ -1,23 +1,24 @@
 /* Main Content Area - Adjust to sit next to sidebar */
 .main-content {
-  margin-top: 56px;
-  min-height: calc(100vh - 56px);
+  margin-top: 48px;
+  min-height: calc(100vh - 48px);
   padding: var(--spacing-xl);
   transition: all 0.3s ease;
-  width: 100%;
-  background:white;
+  margin-left: 240px;
+  width: calc(100% - 240px);
+  background: var(--reddit-bg);
 }
 
-/* When sidebar is open */
-.sidebar-open ~ .main-content {
-  margin-left: 260px;
-  width: calc(100% - 260px);
+/* When sidebar is expanded */
+.main-content.sidebar-expanded {
+  margin-left: 240px;
+  width: calc(100% - 240px);
 }
 
-/* When sidebar is closed */
-.sidebar-closed ~ .main-content {
-  margin-left: 0;
-  width: 100%;
+/* When sidebar is collapsed */
+.main-content.sidebar-collapsed {
+  margin-left: 60px;
+  width: calc(100% - 60px);
 }
 
 /* Container - center content */
@@ -26,31 +27,6 @@
   margin: 0 auto;
   padding: var(--spacing-2xl);
   display: block;
-}
-
-/* Sidebar styling - ensure it's positioned correctly */
-.sidebar {
-  position: fixed;
-  top: 56px;
-  left: 0;
-  width: 260px;
-  height: calc(100vh - 56px);
-  background: var(--reddit-card-bg);
-  border-right: 1px solid var(--reddit-border);
-  overflow-y: auto;
-  z-index: 100;
-  padding: var(--spacing-lg);
-  transition: all 0.3s ease;
-}
-
-/* Sidebar open state */
-.sidebar-open {
-  transform: translateX(0);
-}
-
-/* Sidebar closed state - hidden to left */
-.sidebar-closed {
-  transform: translateX(-100%);
 }
 
 /* Sidebar Widget */
@@ -74,24 +50,9 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .sidebar {
-    width: 260px; /* Keep width for mobile */
-  }
-  
-  .sidebar-open ~ .main-content {
-    margin-left: 0; /* No margin on mobile */
+  .main-content.sidebar-expanded,
+  .main-content.sidebar-collapsed {
+    margin-left: 0;
     width: 100%;
-  }
-  
-  /* Add overlay for mobile */
-  .sidebar-open::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 99;
   }
 }

@@ -187,6 +187,32 @@ router.post('/:id/leave', authMiddleware, async (req, res) => {
   }
 });
 
+// @route   GET /api/communities/moderated
+// @desc    Get all communities where the user is a moderator
+// @access  Private
+router.get('/moderated/list', authMiddleware, async (req, res) => {
+  try {
+    // Find all memberships where user is a moderator
+    const moderatorships = await Membership.find({
+      userId: req.user._id,
+      role: 'moderator'
+    }).populate('communityId');
+
+    // Extract and format the communities
+    const communities = moderatorships
+      .map(membership => membership.communityId)
+      .filter(community => community !== null); // Filter out any null communities
+
+    res.json({
+      communities,
+      count: communities.length
+    });
+  } catch (error) {
+    console.error('Error fetching moderated communities:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // @route   GET /api/communities/:id/posts
 // @desc    Get all posts from a community
 // @access  Public
