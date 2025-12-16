@@ -213,36 +213,211 @@
   background: transparent; border: none; cursor: pointer;
   font-size: 18px; color: var(--reddit-text-primary);
 }
-.vpUserAvatarNew { cursor: pointer; }
-.vpAvatarImg { width: 32px; height: 32px; border-radius: 50%; }
+
+/* User Avatar with Online Indicator */
+.vpUserAvatarNew { 
+  cursor: pointer; 
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vpAvatarImg { 
+  width: 32px; 
+  height: 32px; 
+  border-radius: 50%; 
+  object-fit: cover;
+}
+
+.vpOnlineIndicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: #46d160;
+  border: 2px solid var(--reddit-nav-bg);
+  border-radius: 50%;
+}
 
 .vpDotDropdown, .vpUserDropdown {
   position: absolute; top: 100%; right: 0;
   background: var(--reddit-nav-bg);
   border: 1px solid var(--reddit-border);
   border-radius: 8px; padding: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   z-index: 1000; min-width: 200px;
   margin-top: 10px;
 }
 
-.vpDotDropItem, .vpUserDropdownItem {
-  display: flex; align-items: center; gap: 12px;
-  width: 100%; text-align: left;
-  padding: 8px 12px; background: none; border: none;
-  cursor: pointer; font-weight: 500;
-  color: var(--reddit-text-primary);
+.vpUserDropdown {
+  min-width: 250px;
+  padding: 0;
 }
 
-.vpDotDropItem:hover, .vpUserDropdownItem:hover {
+/* User Dropdown Header */
+.vpUserDropdownHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--reddit-border);
+  background: var(--reddit-hover);
+}
+
+.vpUserDropdownAvatar {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.vpUserDropdownAvatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.vpUserDropdownOnline {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background-color: #46d160;
+  border: 2px solid var(--reddit-nav-bg);
+  border-radius: 50%;
+}
+
+.vpUserDropdownInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.vpUserDropdownName {
+  font-weight: 600;
+  color: var(--reddit-text-primary);
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.vpUserDropdownEmail {
+  font-size: 12px;
+  color: var(--reddit-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vpUserDropdownDivider {
+  height: 1px;
+  background: var(--reddit-border);
+  margin: 8px 0;
+}
+
+.vpDotDropItem {
+  display: flex; 
+  align-items: center; 
+  gap: 12px;
+  width: 100%; 
+  text-align: left;
+  padding: 10px 12px; 
+  background: none; 
+  border: none;
+  cursor: pointer; 
+  font-weight: 500;
+  color: var(--reddit-text-primary);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.vpDotDropItem:hover {
   background-color: var(--reddit-hover);
 }
 
+.vpUserDropdownItem {
+  display: flex; 
+  align-items: center; 
+  gap: 12px;
+  width: 100%; 
+  text-align: left;
+  padding: 10px 16px; 
+  background: none; 
+  border: none;
+  cursor: pointer; 
+  font-weight: 500;
+  color: var(--reddit-text-primary);
+  transition: background 0.2s ease;
+  font-size: 14px;
+}
+
+.vpUserDropdownItem:hover {
+  background-color: var(--reddit-hover);
+}
+
+.vpUserDropdownItem svg {
+  color: var(--reddit-text-secondary);
+  flex-shrink: 0;
+}
+
+.vpUserDropdownItemLogout {
+  color: #ea0027;
+}
+
+.vpUserDropdownItemLogout:hover {
+  background-color: rgba(234, 0, 39, 0.1);
+}
+
+.vpUserDropdownItemLogout svg {
+  color: #ea0027;
+}
+
+/* Create Button (Logged In) */
+.vpCreateBtnNew {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: transparent;
+  border: 1px solid var(--reddit-border);
+  color: var(--reddit-text-primary);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vpCreateBtnNew:hover {
+  background-color: var(--reddit-hover);
+}
+
+.vpCreateBtnNew svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* AD Label for Advertise Button */
+.vpAdLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--reddit-text-primary);
+  margin-left: 2px;
+}
+
+/* Notification Badge */
 .vpNotifBadge {
-  position: absolute; top: 0; right: 0;
-  background: #ff4500; color: white;
-  font-size: 10px; padding: 2px 5px; border-radius: 10px;
+  position: absolute; 
+  top: 0; 
+  right: 0;
+  background: #ff4500; 
+  color: white;
+  font-size: 10px; 
+  padding: 2px 5px; 
+  border-radius: 10px;
   transform: translate(2px, -2px);
+  font-weight: 700;
+  min-width: 18px;
+  text-align: center;
 }
 
 /* Responsive */
@@ -257,6 +432,21 @@
   }
   
   .vpLogoTextNew {
+    display: none;
+  }
+  
+  /* Hide Create button text on mobile */
+  .vpCreateBtnNew span {
+    display: none;
+  }
+  
+  .vpCreateBtnNew {
+    padding: 8px;
+    border-radius: 50%;
+  }
+  
+  /* Hide AD label on mobile */
+  .vpAdLabel {
     display: none;
   }
   
@@ -280,7 +470,7 @@
   }
   
   .vpUserDropdown {
-    min-width: 200px;
+    min-width: 220px;
     right: -20px;
   }
   
@@ -296,6 +486,19 @@
   
   .vpGetAppBtn {
     display: none;
+  }
+  
+  /* Stack icons more compactly on small screens */
+  .vpRightIcons {
+    gap: 4px;
+  }
+  
+  .vpIconBtn {
+    padding: 6px;
+  }
+  
+  .vpCreateBtnNew {
+    padding: 6px;
   }
   
   .vpModalImage {
@@ -317,12 +520,21 @@
   }
   
   .vpUserDropdown {
-    min-width: 180px;
-    right: -40px;
+    min-width: 200px;
+    right: -10px;
   }
   
   .vpUserDropdown::before {
-    right: 40px;
+    right: 20px;
+  }
+  
+  .vpUserDropdownHeader {
+    padding: 10px 12px;
+  }
+  
+  .vpUserDropdownItem {
+    padding: 8px 12px;
+    font-size: 13px;
   }
 }
 
