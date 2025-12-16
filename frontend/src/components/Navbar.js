@@ -2,15 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import { useTheme } from '../context/ThemeContext';
+import { useCreateCommunity } from '../context/CreateCommunityContext';
 import './Navbar.css';
 import Login from '../pages/Login_windows/Login';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
-  
-  // --- STATE ---
-  const [searchQuery, setSearchQuery] = useState('');
+  const { openCreateCommunityModal } = useCreateCommunity();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   
@@ -18,11 +17,10 @@ const Navbar = () => {
   const [showAppModal, setShowAppModal] = useState(false);
   const [showDotMenu, setShowDotMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-
-  // Refs for clicking outside
+  const [showCreateMenu, setShowCreateMenu] = useState(false);
   const dotMenuRef = useRef(null);
   const userMenuRef = useRef(null);
+  const createMenuRef = useRef(null);
 
   // --- HANDLERS ---
   const handleSearch = (e) => {
@@ -61,16 +59,30 @@ const Navbar = () => {
         setShowAppModal(false);
         setShowDotMenu(false);
         setShowUserMenu(false);
+        setShowCreateMenu(false);
       }
     };
-    if (showAppModal || showDotMenu || showUserMenu) window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, [showAppModal, showDotMenu, showUserMenu]);
+    
+    if (showAppModal || showDotMenu || showUserMenu || showCreateMenu) {
+      window.addEventListener('keydown', handleEsc);
+    }
+    
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [showAppModal, showDotMenu, showUserMenu, showCreateMenu]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dotMenuRef.current && !dotMenuRef.current.contains(event.target)) setShowDotMenu(false);
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) setShowUserMenu(false);
+      if (dotMenuRef.current && !dotMenuRef.current.contains(event.target)) {
+        setShowDotMenu(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setShowUserMenu(false);
+      }
+      if (createMenuRef.current && !createMenuRef.current.contains(event.target)) {
+        setShowCreateMenu(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);

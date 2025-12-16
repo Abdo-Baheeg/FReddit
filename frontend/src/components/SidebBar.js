@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
+import { useNavigate } from 'react-router-dom';
+import { useCreateCommunity } from '../context/CreateCommunityContext';
 
 const Sidebar = () => {
   // State for the whole sidebar visibility
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { openCreateCommunityModal } = useCreateCommunity();
 
   // State to manage the open/close status of the collapsible sections
   const [openSections, setOpenSections] = useState({
@@ -14,6 +17,8 @@ const Sidebar = () => {
     communities: true,
     resources: true,
   });
+  const navigate = useNavigate();
+
 
   const navigate = useNavigate();
 
@@ -25,9 +30,11 @@ const Sidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-  // ✅ REAL NAVIGATION
-  const handleItemClick = (path) => {
-    navigate(path);
+  // --- NEW: Generic handler for menu clicks ---
+  const handleItemClick = (label) => {
+    console.log(`Navigating to: ${label}`);
+    // You can replace this with navigation logic, e.g., navigate('/home')
+    alert(`You clicked on: ${label}`); 
   };
 
   return (
@@ -42,17 +49,20 @@ const Sidebar = () => {
 
       {/* --- SECTION: MAIN NAV --- */}
       <div className="menu-group first-group">
-        <MenuItem icon="home" label="Home" onClick={() => handleItemClick('/')} />
-        <MenuItem icon="popular" label="Popular" onClick={() => handleItemClick('/popular')} />
-        <MenuItem icon="explore" label="Explore" onClick={() => handleItemClick('/explore')} />
-        <MenuItem icon="all" label="All" onClick={() => handleItemClick('/all')} />
+        <MenuItem icon="home" label="Home" onClick={() => handleItemClick('Home')} />
+        <MenuItem icon="popular" label="Popular" onClick={() => handleItemClick('Popular')} />
+        <MenuItem icon="explore" label="Explore" onClick={() => handleItemClick('Explore')} />
+        <MenuItem icon="all" label="All" onClick={() => handleItemClick('All')} />
       </div>
 
       <div className="separator"></div>
 
       {/* --- SECTION: ACTIONS --- */}
-      <div className="menu-group">
-        <MenuItem icon="add" label="Start a community" onClick={() => handleItemClick('/create-post')} />
+
+      <div className="menu-group" onClick={openCreateCommunityModal}>
+        <MenuItem icon="add" label="Start a community" />
+
+     
       </div>
 
       <div className="separator"></div>
@@ -63,9 +73,9 @@ const Sidebar = () => {
         isOpen={openSections.games} 
         onToggle={() => toggleSection('games')}
       >
-        <div className="game-promo" onClick={() => handleItemClick('/games/jump-cat')}>
-          <div className="new-tag">NEW</div>
-          <div className="promo-content">
+        <div className="game-promo" onClick={() => handleItemClick('Jump Cat Game')}>
+            <div className="new-tag">NEW</div>
+            <div className="promo-content">
             <img 
               src="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" 
               className="game-promo-img"
@@ -80,10 +90,25 @@ const Sidebar = () => {
           </div>
         </div>
 
-        <MenuItem gameIcon="HC" gameColor="#000" label="Hot and Cold" onClick={() => handleItemClick('/games/hot-cold')} />
-        <MenuItem gameIcon="PG" gameColor="#FFD635" label="Pocket Grids" onClick={() => handleItemClick('/games/pocket-grids')} />
-        <MenuItem gameIcon="SF" gameColor="#FF4500" label="Stonefall" onClick={() => handleItemClick('/games/stonefall')} />
-        <MenuItem icon="controller" label="Discover More Games" onClick={() => handleItemClick('/games')} />
+        <MenuItem 
+            gameIcon="HC" 
+            gameColor="#000" 
+            label="Hot and Cold" 
+            onClick={() => handleItemClick('Hot and Cold')}
+        />
+        <MenuItem 
+            gameIcon="PG" 
+            gameColor="#FFD635" 
+            label="Pocket Grids" 
+            onClick={() => handleItemClick('Pocket Grids')}
+        />
+        <MenuItem 
+            gameIcon="SF" 
+            gameColor="#FF4500" 
+            label="Stonefall" 
+            onClick={() => handleItemClick('Stonefall')}
+        />
+        <MenuItem icon="controller" label="Discover More Games" onClick={() => handleItemClick('Discover More Games')} />
       </Collapsible>
 
       <div className="separator"></div>
@@ -94,7 +119,7 @@ const Sidebar = () => {
         isOpen={openSections.customFeeds} 
         onToggle={() => toggleSection('customFeeds')}
       >
-        <MenuItem icon="add" label="Create Custom Feed" onClick={() => handleItemClick('/custom-feeds')} />
+        <MenuItem icon="add" label="Create Custom Feed" onClick={() => handleItemClick('Create Custom Feed')} />
       </Collapsible>
 
       <div className="separator"></div>
@@ -105,9 +130,24 @@ const Sidebar = () => {
         isOpen={openSections.recent} 
         onToggle={() => toggleSection('recent')}
       >
-        <MenuItem imgSrc="https://styles.redditmedia.com/t5_5l62s/styles/communityIcon_s936154673.png" label="r/AlexandriaEgy" isRound onClick={() => handleItemClick('/r/AlexandriaEgy')} />
-        <MenuItem imgSrc="https://upload.wikimedia.org/wikipedia/commons/f/fa/Flag_of_Egypt.svg" label="r/ExEgypt" isRound onClick={() => handleItemClick('/r/ExEgypt')} />
-        <MenuItem imgSrc="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" label="r/Egypt" isRound onClick={() => handleItemClick('/r/Egypt')} />
+        <MenuItem 
+            imgSrc="https://styles.redditmedia.com/t5_5l62s/styles/communityIcon_s936154673.png" 
+            label="r/AlexandriaEgy" 
+            isRound={true}
+            onClick={() => handleItemClick('r/AlexandriaEgy')}
+        />
+        <MenuItem 
+            imgSrc="https://upload.wikimedia.org/wikipedia/commons/f/fa/Flag_of_Egypt.svg" 
+            label="r/ExEgypt" 
+            isRound={true}
+            onClick={() => handleItemClick('r/ExEgypt')}
+        />
+        <MenuItem 
+            imgSrc="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" 
+            label="r/Egypt" 
+            isRound={true}
+            onClick={() => handleItemClick('r/Egypt')}
+        />
       </Collapsible>
 
       <div className="separator"></div>
@@ -118,8 +158,18 @@ const Sidebar = () => {
         isOpen={openSections.communities} 
         onToggle={() => toggleSection('communities')}
       >
-        <MenuItem imgSrc="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" label="r/Cairo" isRound onClick={() => handleItemClick('/r/Cairo')} />
-        <MenuItem imgSrc="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" label="r/PersonalFinance" isRound onClick={() => handleItemClick('/r/PersonalFinance')} />
+        <MenuItem 
+            imgSrc="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" 
+            label="r/Cairo" 
+            isRound={true}
+            onClick={() => handleItemClick('r/Cairo')}
+        />
+        <MenuItem 
+            imgSrc="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" 
+            label="r/PersonalFinance" 
+            isRound={true}
+            onClick={() => handleItemClick('r/PersonalFinance')}
+        />
       </Collapsible>
 
       <div className="separator"></div>
@@ -130,14 +180,39 @@ const Sidebar = () => {
         isOpen={openSections.resources} 
         onToggle={() => toggleSection('resources')}
       >
-        <MenuItem icon="reddit" label="About Reddit" onClick={() => handleItemClick('/about')} />
-        <MenuItem icon="advertise" label="Advertise" onClick={() => handleItemClick('/advertise')} />
-        <MenuItem icon="dev" label="Developer Platform" onClick={() => handleItemClick('/developers')} />
-        <MenuItem icon="help" label="Help" onClick={() => handleItemClick('/help')} />
-        <MenuItem icon="blog" label="Blog" onClick={() => handleItemClick('/blog')} />
-        <MenuItem icon="careers" label="Careers" active onClick={() => handleItemClick('/careers')} />
-        <MenuItem icon="press" label="Press" onClick={() => handleItemClick('/press')} />
+        <MenuItem icon="reddit" label="About Reddit" onClick={() => handleItemClick('About Reddit')} />
+        <MenuItem icon="advertise" label="Advertise" onClick={() => handleItemClick('Advertise')} />
+        <MenuItem icon="dev" label="Developer Platform" onClick={() => handleItemClick('Developer Platform')} />
+        <div className="menu-item" onClick={() => handleItemClick('Reddit Pro')} style={{cursor: 'pointer'}}>
+            <span className="icon">{getSvg('pro')}</span>
+            <span className="label-text">Reddit Pro</span>
+            <span className="beta-tag">BETA</span>
+        </div>
+        <MenuItem icon="help" label="Help" onClick={() => handleItemClick('Help')} />
+        <MenuItem icon="blog" label="Blog" onClick={() => handleItemClick('Blog')} />
+        <MenuItem icon="careers" label="Careers" active={true} onClick={() => handleItemClick('Careers')} />
+        <MenuItem icon="press" label="Press" onClick={() => handleItemClick('Press')} />
       </Collapsible>
+
+      <div className="separator"></div>
+
+      {/* --- FOOTER LINKS (BEST OF) --- */}
+      <div className="menu-group footer-links">
+        <MenuItem icon="communities_footer" label="Communities" isFooter={true} onClick={() => handleItemClick('Footer: Communities')} />
+        <MenuItem icon="best_of" label="Best of Reddit" isFooter={true} onClick={() => handleItemClick('Footer: Best of Reddit')} />
+        <MenuItem icon="translate" label="Best of Reddit in Port..." isFooter={true} onClick={() => handleItemClick('Footer: Portuguese')} />
+        <MenuItem icon="translate" label="Best of Reddit in Ger..." isFooter={true} onClick={() => handleItemClick('Footer: German')} />
+      </div>
+
+      <div className="separator"></div>
+
+      {/* --- FOOTER LINKS (LEGAL) --- */}
+      <div className="menu-group footer-links">
+        <MenuItem icon="rules" label="Reddit Rules" isFooter={true} onClick={() => handleItemClick('Rules')} />
+        <MenuItem icon="rules" label="Privacy Policy" isFooter={true} onClick={() => handleItemClick('Privacy')} />
+        <MenuItem icon="rules" label="User Agreement" isFooter={true} onClick={() => handleItemClick('User Agreement')} />
+        <MenuItem icon="access" label="Accessibility" isFooter={true} onClick={() => handleItemClick('Accessibility')} />
+      </div>
 
       <div className="copyright">
         Reddit, Inc. © 2025. All rights reserved.
@@ -150,23 +225,49 @@ const Sidebar = () => {
 /* --- SUB-COMPONENTS --- */
 
 const Collapsible = ({ title, isOpen, onToggle, children }) => (
-  <div className={`collapsible-section ${isOpen ? 'expanded' : ''}`}>
-    <div className="section-header" onClick={onToggle}>
-      <span>{title}</span>
-      <ArrowIcon />
+    <div className={`collapsible-section ${isOpen ? 'expanded' : ''}`}>
+      <div className="section-header" onClick={onToggle} style={{cursor: 'pointer'}}>
+        <span>{title}</span>
+        <ArrowIcon />
+      </div>
+      {isOpen && <div className="section-content">{children}</div>}
     </div>
     {isOpen && <div className="section-content">{children}</div>}
   </div>
 );
 
-const MenuItem = ({ label, icon, imgSrc, isRound, gameIcon, gameColor, active, isFooter, onClick }) => (
-  <div className={`menu-item ${active ? 'active' : ''} ${isFooter ? 'footer-item' : ''}`} onClick={onClick} style={{ cursor: 'pointer' }}>
-    {icon && <span className="icon">{getSvg(icon)}</span>}
-    {imgSrc && <img src={imgSrc} alt="" className={`sub-icon ${isRound ? 'round' : ''}`} />}
-    {gameIcon && <div className="game-placeholder-icon" style={{ backgroundColor: gameColor }}>{gameIcon}</div>}
-    <span className="label-text">{label}</span>
-  </div>
-);
+// --- UPDATE: Added onClick prop and style cursor pointer ---
+const MenuItem = ({ label, icon, imgSrc, isRound, gameIcon, gameColor, active, isFooter, onClick }) => {
+  return (
+    <div 
+        className={`menu-item ${active ? 'active' : ''} ${isFooter ? 'footer-item' : ''}`}
+        onClick={onClick}
+        style={{ cursor: 'pointer' }}
+    >
+      {/* SVG Icon */}
+      {icon && <span className="icon">{getSvg(icon)}</span>}
+      
+      {/* Image Icon (Subreddit) */}
+      {imgSrc && (
+        <img 
+          src={imgSrc} 
+          alt="" 
+          className={`sub-icon ${isRound ? 'round' : ''}`}
+          onError={(e) => {e.target.style.opacity=0}} 
+        />
+      )}
+
+      {/* Game Icon Square */}
+      {gameIcon && (
+        <div className="game-placeholder-icon" style={{backgroundColor: gameColor}}>
+            {gameIcon}
+        </div>
+      )}
+
+      <span className="label-text">{label}</span>
+    </div>
+  );
+};
 
 /* --- ICONS --- */
 const ArrowIcon = () => (

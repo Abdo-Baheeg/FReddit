@@ -247,6 +247,138 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .vpSearchContainer { display: none; }
-  .vpGetAppBtn { display: none; }
+  .vpTopBarContainer {
+    padding: 0 8px;
+    gap: 8px;
+  }
+  
+  .vpSearchContainer {
+    max-width: 400px;
+  }
+  
+  .vpLogoTextNew {
+    display: none;
+  }
+  
+  .vpModalContent {
+    padding: 15px;
+  }
+  
+  .vpModalImage {
+    max-width: 250px;
+    max-height: 250px;
+  }
+  
+  .vpAppStoreBtn,
+  .vpPlayStoreBtn {
+    min-width: 200px;
+    padding: 10px 16px;
+  }
+  
+  .vpDotDropdown {
+    min-width: 180px;
+  }
+  
+  .vpUserDropdown {
+    min-width: 200px;
+    right: -20px;
+  }
+  
+  .vpUserDropdown::before {
+    right: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vpSearchContainer {
+    display: none;
+  }
+  
+  .vpGetAppBtn {
+    display: none;
+  }
+  
+  .vpModalImage {
+    max-width: 200px;
+    max-height: 200px;
+  }
+  
+  .vpModalText h3 {
+    font-size: 1.2rem;
+  }
+  
+  .vpDotDropdown {
+    min-width: 160px;
+    right: -50px;
+  }
+  
+  .vpDotDropdown::before {
+    right: 50px;
+  }
+  
+  .vpUserDropdown {
+    min-width: 180px;
+    right: -40px;
+  }
+  
+  .vpUserDropdown::before {
+    right: 40px;
+  }
+}
+
+/* ==================== CREATE MENU DROPDOWN ==================== */
+.vpCreateMenuContainer {
+  position: relative;
+}
+
+.vpCreateDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--reddit-card-bg);
+  border: 1px solid var(--reddit-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  min-width: 220px;
+  z-index: 1004;
+  margin-top: var(--spacing-sm);
+  animation: slideDown 0.2s ease-out;
+}
+
+.vpCreateDropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 12px;
+  width: 12px;
+  height: 12px;
+  background: var(--reddit-card-bg);
+  transform: rotate(45deg);
+  border-left: 1px solid var(--reddit-border);
+  border-top: 1px solid var(--reddit-border);
+}
+
+.vpCreateDropdownItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--reddit-text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+
+.vpCreateDropdownItem:hover {
+  background: var(--hover-bg);
+}
+
+.vpCreateDropdownItem svg {
+  color: var(--reddit-text-secondary);
+  flex-shrink: 0;
 }
