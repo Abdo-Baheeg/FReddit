@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 import { useNavigate } from 'react-router-dom';
 import { useCreateCommunity } from '../context/CreateCommunityContext';
@@ -18,6 +19,8 @@ const Sidebar = () => {
   });
   const navigate = useNavigate();
 
+
+  const navigate = useNavigate();
 
   const toggleSection = (section) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -40,7 +43,7 @@ const Sidebar = () => {
       {/* --- TOGGLE BUTTON --- */}
       <button className="sidebar-toggle-btn" onClick={handleSidebarToggle}>
         <svg viewBox="0 0 20 20" className="toggle-icon">
-            <path d="M2 4h16v2H2V4zm0 5h16v2H2V9zm0 5h16v2H2v-2z"/>
+          <path d="M2 4h16v2H2V4zm0 5h16v2H2V9zm0 5h16v2H2v-2z"/>
         </svg>
       </button>
 
@@ -74,17 +77,17 @@ const Sidebar = () => {
             <div className="new-tag">NEW</div>
             <div className="promo-content">
             <img 
-                src="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" 
-                className="game-promo-img"
-                alt="cat"
-                onError={(e) => e.target.style.display = 'none'}
+              src="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" 
+              className="game-promo-img"
+              alt="cat"
+              onError={(e) => e.target.style.display = 'none'}
             />
             <div className="game-text">
-                <strong>Jump Cat</strong>
-                <span>Mind the Gaps</span>
-                <small>199K monthly players</small>
+              <strong>Jump Cat</strong>
+              <span>Mind the Gaps</span>
+              <small>199K monthly players</small>
             </div>
-            </div>
+          </div>
         </div>
 
         <MenuItem 
@@ -171,8 +174,8 @@ const Sidebar = () => {
 
       <div className="separator"></div>
 
-       {/* --- SECTION: RESOURCES --- */}
-       <Collapsible 
+      {/* --- SECTION: RESOURCES --- */}
+      <Collapsible 
         title="RESOURCES" 
         isOpen={openSections.resources} 
         onToggle={() => toggleSection('resources')}
@@ -229,6 +232,8 @@ const Collapsible = ({ title, isOpen, onToggle, children }) => (
       </div>
       {isOpen && <div className="section-content">{children}</div>}
     </div>
+    {isOpen && <div className="section-content">{children}</div>}
+  </div>
 );
 
 // --- UPDATE: Added onClick prop and style cursor pointer ---
@@ -266,11 +271,13 @@ const MenuItem = ({ label, icon, imgSrc, isRound, gameIcon, gameColor, active, i
 
 /* --- ICONS --- */
 const ArrowIcon = () => (
-  <svg className="arrow" viewBox="0 0 20 20"><path d="M10 13.125l-5.25-5.25 1.5-1.5 3.75 3.75 3.75-3.75 1.5 1.5z"/></svg>
+  <svg className="arrow" viewBox="0 0 20 20">
+    <path d="M10 13.125l-5.25-5.25 1.5-1.5 3.75 3.75 3.75-3.75 1.5 1.5z"/>
+  </svg>
 );
 
 const getSvg = (name) => {
-  switch (name) {
+   switch (name) {
     case 'home': return <svg viewBox="0 0 20 20"><path d="M18.6 9.38L10.74 1.95a1.06 1.06 0 0 0-1.48 0L1.4 9.38a1.08 1.08 0 0 0-.32.77v8.77a1 1 0 0 0 1 1h5.83v-5.83h4.18v5.83h5.83a1 1 0 0 0 1-1V10.15a1.08 1.08 0 0 0-.32-.77z"></path></svg>;
     case 'popular': return <svg viewBox="0 0 20 20"><path d="M10 0a10 10 0 1 0 10 10A10 10 0 0 0 10 0zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M11 5h-2v4.17l-3.24 3.25 1.41 1.41L11 9.83z"/></svg>;
     case 'explore': return <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="2"/><path d="M10 0a10 10 0 1 0 10 10A10 10 0 0 0 10 0zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zM10 4a6 6 0 1 0 6 6 6 6 0 0 0-6-6z"/></svg>;

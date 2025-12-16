@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./allCommunities.css";
+
+// ✅ CENTRAL API ONLY
+import { communityApi, membershipApi } from "../api";
 
 export default function AllCommunities() {
   const navigate = useNavigate();
@@ -10,18 +13,7 @@ export default function AllCommunities() {
   const [error, setError] = useState("");
 
   const [joinedMap, setJoinedMap] = useState(new Map());
-
   const [actionLoading, setActionLoading] = useState(new Map());
-
- 
-
-  const getToken = () => {
-    try {
-      return localStorage.getItem("token") || null;
-    } catch {
-      return null;
-    }
-  };
 
   useEffect(() => {
     let mounted = true;
@@ -31,53 +23,35 @@ export default function AllCommunities() {
       setError("");
 
       try {
-        const res = await fetch(`${API_BASE}/api/communities`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" }
-        });
-
-        if (!res.ok) throw new Error("Failed to load communities.");
-
-        const data = await res.json();
+        // 1️⃣ Load all communities
+        const data = await communityApi.getAllCommunities();
         if (!mounted) return;
 
         setCommunities(data);
 
+        // init joined map
         const tempMap = new Map();
-        data.forEach((c) => {
-          const id = c._id;
-          tempMap.set(id, false);   
-        });
+        data.forEach((c) => tempMap.set(c._id, false));
         setJoinedMap(tempMap);
 
-        const token = getToken();
-        if (token) {
-          try {
-            const membershipRes = await fetch(`${API_BASE}/api/memberships/check-all`, {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
+        // 2️⃣ Load user memberships (if logged in)
+        try {
+          const memberships = await membershipApi.getUserMemberships();
+          const memberIds = new Set(
+            memberships.map((m) => String(m.communityId))
+          );
+
+          setJoinedMap((prev) => {
+            const copy = new Map(prev);
+            data.forEach((c) => {
+              if (memberIds.has(String(c._id))) {
+                copy.set(c._id, true);
               }
             });
-
-            if (membershipRes.ok) {
-              const membershipData = await membershipRes.json();
-              const memberIds = new Set(membershipData.map((m) => String(m.communityId)));
-
-              setJoinedMap((prev) => {
-                const copy = new Map(prev);
-                data.forEach((c) => {
-                  if (memberIds.has(String(c._id))) {
-                    copy.set(c._id, true);
-                  }
-                });
-                return copy;
-              });
-            }
-          } catch {
-            /* ignore */
-          }
+            return copy;
+          });
+        } catch {
+          // not logged in → ignore
         }
       } catch (err) {
         if (mounted) setError(err.message || "Failed to load communities");
@@ -87,30 +61,16 @@ export default function AllCommunities() {
     }
 
     load();
-    return () => (mounted = false);
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   async function joinCommunity(communityId) {
-    const token = getToken();
-    if (!token) return navigate("/login");
-
     setActionLoading((prev) => new Map(prev).set(communityId, true));
 
     try {
-      const res = await fetch(`${API_BASE}/api/communities/${communityId}/join`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      const body = await res.json();
-
-      if (!res.ok) {
-        if (res.status === 401) return navigate("/login");
-        throw new Error(body.message || "Join failed");
-      }
+      await communityApi.joinCommunity(communityId);
 
       setJoinedMap((prev) => {
         const copy = new Map(prev);
@@ -126,32 +86,21 @@ export default function AllCommunities() {
         )
       );
     } catch (err) {
-      setError(err.message);
+      if (err?.response?.status === 401) {
+        navigate("/login");
+      } else {
+        setError(err.message || "Join failed");
+      }
     } finally {
       setActionLoading((prev) => new Map(prev).set(communityId, false));
     }
   }
 
   async function leaveCommunity(communityId) {
-    const token = getToken();
-    if (!token) return navigate("/login");
-
     setActionLoading((prev) => new Map(prev).set(communityId, true));
 
     try {
-      const res = await fetch(`${API_BASE}/api/communities/${communityId}/leave`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      const body = await res.json();
-      if (!res.ok) {
-        if (res.status === 401) return navigate("/login");
-        throw new Error(body.message || "Leave failed");
-      }
+      await communityApi.leaveCommunity(communityId);
 
       setJoinedMap((prev) => {
         const copy = new Map(prev);
@@ -167,20 +116,19 @@ export default function AllCommunities() {
         )
       );
     } catch (err) {
-      setError(err.message);
+      if (err?.response?.status === 401) {
+        navigate("/login");
+      } else {
+        setError(err.message || "Leave failed");
+      }
     } finally {
       setActionLoading((prev) => new Map(prev).set(communityId, false));
     }
   }
 
   function toggleJoin(communityId, e) {
-    e.stopPropagation(); 
-
-    const token = getToken();
-    if (!token) return navigate("/login");
-
+    e.stopPropagation();
     const isJoined = joinedMap.get(communityId);
-
     if (isJoined) leaveCommunity(communityId);
     else joinCommunity(communityId);
   }
@@ -188,7 +136,6 @@ export default function AllCommunities() {
   function openCommunityPage(communityId) {
     navigate(`/community/${communityId}`);
   }
-
 
   if (loading)
     return (
@@ -208,14 +155,15 @@ export default function AllCommunities() {
 
   return (
     <div>
-      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>All Communities</h1>
+      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
+        All Communities
+      </h1>
 
       <div className="cc-grid">
         {communities.map((c) => {
           const communityId = c._id;
           const isJoined = joinedMap.get(communityId);
           const loadingAction = actionLoading.get(communityId);
-
           const avatarLetter = c.name ? c.name[0].toUpperCase() : "?";
 
           return (
@@ -225,9 +173,6 @@ export default function AllCommunities() {
               onClick={() => openCommunityPage(communityId)}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") openCommunityPage(communityId);
-              }}
             >
               <div className="cc-avatar-wrap">
                 <div className="cc-avatar-fallback">{avatarLetter}</div>
@@ -235,13 +180,17 @@ export default function AllCommunities() {
 
               <div className="cc-body">
                 <h3 className="cc-title">r/{c.name}</h3>
-                <p className="cc-desc">{c.description || "No description provided."}</p>
+                <p className="cc-desc">
+                  {c.description || "No description provided."}
+                </p>
                 <p className="cc-meta">{c.memberCount} members</p>
               </div>
 
               <div className="cc-actions">
                 <button
-                  className={`cc-join-btn ${isJoined ? "joined" : "not-joined"}`}
+                  className={`cc-join-btn ${
+                    isJoined ? "joined" : "not-joined"
+                  }`}
                   disabled={loadingAction}
                   onClick={(e) => toggleJoin(communityId, e)}
                 >

@@ -140,16 +140,50 @@ export const postApi = {
     return response.data;
   },
 
-  // Create new post
-  createPost: async (title, content, subreddit) => {
+  /**
+   * Creates a new post. Handles both JSON data and file uploads (multipart/form-data).
+   * * @param {string} title - The title of the post.
+   * @param {string} content - The text content, link, or caption.
+   * @param {string} subreddit - The target subreddit name.
+   * @param {File | null} file - The optional image or video file to upload.
+   * @param {string} postType - The type of post ('text', 'image', 'link', 'poll').
+   */
+  createPost: async (title, content, subreddit, file = null, postType = 'text') => {
+    
+    let data;
+    let headers = getAuthHeaders();
+    
+    if (file) {
+      // 1. If a file is present, use FormData (multipart/form-data)
+      data = new FormData();
+      data.append('title', title);
+      data.append('subreddit', subreddit);
+      data.append('postType', postType); // Send postType for backend routing
+      data.append('content', content);   // Used as a caption for the file
+      data.append('file', file);         // The actual file object
+
+      // Important: Do NOT manually set Content-Type: multipart/form-data
+      // When using FormData, axios/browser sets the correct Content-Type 
+      // including the necessary boundary string.
+      // We only need the authorization header.
+
+    } else {
+      // 2. If no file, use standard JSON (application/json)
+      data = { title, content, subreddit, postType };
+      headers['Content-Type'] = 'application/json'; // Explicitly set if not using a utility function for headers
+    }
+
     const response = await axios.post(
       `${API_URL}/api/posts/create`,
-      { title, content, subreddit },
-      { headers: getAuthHeaders() }
+      data,
+      { 
+        headers: headers 
+      }
     );
+    
     return response.data;
   },
-
+  
   // Generate post summary (AI)
   generateSummary: async (postId) => {
     const response = await axios.put(

@@ -1,3 +1,27 @@
+/* ==================== VARIABLES & DEFAULTS ==================== */
+:root {
+  --reddit-nav-bg: #ffffff;
+  --reddit-border: #edeff1;
+  --reddit-text-primary: #1c1c1c;
+  --reddit-text-secondary: #878a8c;
+  --reddit-hover: #f6f7f8;
+  --search-bg: #f6f7f8;
+  --ask-btn-text: #1c1c1c;
+  --divider-color: #edeff1;
+}
+
+/* DARK MODE OVERRIDES */
+.vpDarkMode {
+  --reddit-nav-bg: #1a1a1b;
+  --reddit-border: #343536;
+  --reddit-text-primary: #d7dadc;
+  --reddit-text-secondary: #818384;
+  --reddit-hover: #272729;
+  --search-bg: #272729;
+  --ask-btn-text: #d7dadc;
+  --divider-color: #343536;
+}
+
 /* ==================== TOP BAR ==================== */
 .vpNewTopBar {
   position: fixed;
@@ -8,7 +32,6 @@
   background: var(--reddit-nav-bg);
   border-bottom: 1px solid var(--reddit-border);
   z-index: 1003;
-  box-shadow: var(--shadow-sm);
   transition: background 0.3s ease, border-color 0.3s ease;
 }
 
@@ -22,584 +45,207 @@
   gap: var(--spacing-lg);
 }
 
+/* --- LOGO SECTION (Text Only) --- */
 .vpLogoNew {
   display: flex;
   align-items: center;
-  gap: 8px;
   flex-shrink: 0;
-}
-
-.vpLogoIcon {
-  width: 32px;
-  height: 32px;
 }
 
 .vpLogoTextNew {
   font-size: 24px;
-  font-weight: bold;
-  color: var(--reddit-orange);
-  transition: color 0.3s ease;
+  font-weight: 700;
+  color: #ff4500; /* Default Orange */
+  letter-spacing: -0.5px;
 }
 
+/* In Dark Mode, make "Reddit" text white */
+.vpDarkMode .vpLogoTextNew {
+  color: #ffffff;
+}
+
+/* ==================== SEARCH BAR STYLES ==================== */
 .vpSearchContainer {
   flex: 1;
-  max-width: 720px;
+  max-width: 650px;
   margin: 0 auto;
-  background: var(--hover-bg);
-  border-radius: var(--radius-full);
-  transition: background 0.3s ease;
 }
 
+/* Wrapper: The Pill Shape (Orange Border) */
 .vpSearchWrapper {
-  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--search-bg);
+  border: 1px solid #ff4500; /* This is the ONLY border you should see */
+  border-radius: 20px;
+  padding: 0 12px;
+  height: 40px;
+  transition: background-color 0.2s;
 }
 
-.vpSearchIcon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  color: #6b7280;
-  pointer-events: none;
+.vpSearchWrapper:hover {
+  background-color: var(--reddit-nav-bg);
 }
 
-.vpSearchContainer * {
-  background: transparent !important;
+/* 1. Left: Reddit Head Icon */
+.vpSearchLogoContainer {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
 }
 
+.vpSearchLogoIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* 2. Middle: Input Field - REMOVE ALL RECTANGLES */
 .vpSearchInput {
-  width: 100%;
-  padding: 12px var(--spacing-lg) 12px 44px;
-  background: var(--hover-bg);
-  border: 1px solid transparent;
-  border-radius: var(--radius-full);
+  flex-grow: 1;
+  background: transparent !important; /* No background color */
+  border: none !important;            /* No border */
+  outline: none !important;           /* No focus outline (blue rectangle) */
+  box-shadow: none !important;        /* No inner shadows */
   font-size: 14px;
   color: var(--reddit-text-primary);
-  transition: all 0.2s;
+  padding: 0 8px;
+  height: 100%;
+  appearance: none;                   /* Removes browser default styling */
 }
 
-.vpSearchInput:focus {
-  outline: none;
-  background: var(--reddit-card-bg);
-  border-color: var(--reddit-orange);
-  box-shadow: 0 0 0 3px rgba(255,69,0,0.15);
+/* Extra safety to ensure no border on click/focus */
+.vpSearchInput:focus,
+.vpSearchInput:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
+.vpSearchInput::placeholder {
+  color: var(--reddit-text-secondary);
+}
+
+/* 3. Right: Divider + Ask Button */
+.vpAskContainer {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.vpAskSeparator {
+  width: 1px;
+  height: 20px;
+  background-color: var(--divider-color);
+  margin-right: 8px;
+}
+
+.vpAskButton {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: var(--ask-btn-text);
+  font-weight: 600;
+  font-size: 14px;
+  gap: 6px;
+}
+
+.vpAskButton:hover {
+  opacity: 0.8;
+}
+
+.vpAskIcon {
+  width: 20px;
+  height: 20px;
+}
+
+/* ==================== RIGHT ICONS & BUTTONS ==================== */
 .vpRightIcons {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: 8px;
 }
 
 .vpIconBtn {
-  position: relative;
-  padding: var(--spacing-md);
-  border-radius: var(--radius-lg);
   background: transparent;
+  padding: 8px;
+  border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s ease;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--reddit-text-primary);
 }
 
 .vpIconBtn:hover {
-  background: var(--hover-bg);
-  transform: translateY(-1px);
+  background-color: var(--reddit-hover);
 }
 
-.vpAdLabel {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  background: #dbe4de;
-  color: white;
-  font-size: 8px;
-  font-weight: bold;
-  padding: 2px 4px;
-  border-radius: 4px;
-}
-
-.vpCreateBtnNew {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  background: var(--reddit-orange);
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
-  padding: var(--spacing-md) var(--spacing-xl);
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-  box-shadow: var(--shadow-sm);
-}
-
-.vpCreateBtnNew:hover {
-  background: var(--reddit-orange-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-/* ==================== USER DROPDOWN MENU ==================== */
-.vpUserMenuContainer {
-  position: relative;
-}
-
-.vpUserDropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: var(--spacing-sm);
-  background: var(--reddit-card-bg);
-  border: 1px solid var(--reddit-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  min-width: 240px;
-  z-index: 1004;
-  margin-top: 8px;
-  animation: slideDown 0.2s ease-out;
-}
-
-.vpUserDropdown::before {
-  content: '';
-  position: absolute;
-  top: -6px;
-  right: 12px;
-  width: 12px;
-  height: 12px;
-  background: var(--reddit-card-bg);
-  transform: rotate(45deg);
-  border-left: 1px solid var(--reddit-border);
-  border-top: 1px solid var(--reddit-border);
-}
-
-.vpUserDropdownHeader {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-lg);
-  border-bottom: 1px solid var(--reddit-border);
-}
-
-.vpUserDropdownAvatar {
-  position: relative;
-  width: 40px;
-  height: 40px;
-}
-
-.vpUserDropdownAvatar img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #10b981;
-}
-
-.vpUserDropdownOnline {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 12px;
-  height: 12px;
-  background: #10b981;
-  border: 2px solid white;
-  border-radius: 50%;
-}
-
-.vpUserDropdownInfo {
-  flex: 1;
-  min-width: 0;
-}
-
-.vpUserDropdownName {
-  font-weight: 600;
-  color: var(--reddit-text-primary);
-  font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.vpUserDropdownKarma {
-  font-size: 12px;
-  color: var(--reddit-text-secondary);
-  margin-top: var(--spacing-xs);
-}
-
-.vpUserDropdownItem {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: var(--reddit-text-primary);
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.vpUserDropdownItem:hover {
-  background: var(--hover-bg);
-}
-
-.vpUserDropdownItem svg {
-  color: var(--reddit-text-secondary);
-  flex-shrink: 0;
-}
-
-.vpUserDropdownItemLogout {
-  color: #dc2626;
-}
-
-.vpUserDropdownItemLogout:hover {
-  background: #fef2f2;
-}
-
-.vpUserDropdownItemLogout svg {
-  color: #dc2626;
-}
-
-.vpUserDropdownDivider {
-  height: 1px;
-  background: var(--reddit-border);
-  margin: var(--spacing-xs) 0;
-}
-
-/* ==================== AVATAR STYLES ==================== */
-.vpUserAvatarNew {
-  position: relative;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.vpAvatarImg {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 2px solid var(--reddit-border-dark);
-  object-fit: cover;
-  transition: transform 0.2s;
-}
-
-.vpUserAvatarNew:hover .vpAvatarImg {
-  transform: scale(1.05);
-}
-
-.vpOnlineIndicator {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  width: 14px;
-  height: 14px;
-  background: #10b981;
-  border: 3px solid white;
-  border-radius: 50%;
-}
-
-/* Remove the old logout text hover effect since we have dropdown now */
-.vpLogoutText {
-  display: none;
-}
-
-/* ==================== BUTTONS STYLES ==================== */
 .vpLoginBtn {
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: 20px;
-  background: rgba(221, 10, 10, 0.699);
-  border: 1px solid rgba(221, 10, 10, 0.699);
+  background: #d93a00;
   color: white;
   font-weight: 600;
+  border: none;
   cursor: pointer;
-  transition: 0.15s;
-}
-
-.vpLoginBtn:hover {
-  background: rgba(221, 10, 10, 0.699);
 }
 
 .vpGetAppBtn {
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: 20px;
-  background: #f3f4f6;
-  border: none;
+  background: #eff1f1;
+  color: black;
   font-weight: 600;
+  border: none;
   cursor: pointer;
-  transition: 0.15s;
+  margin-right: 8px;
 }
 
-.vpGetAppBtn:hover {
-  background: #eaeef0;
-}
-
+/* --- Dropdowns & Avatars --- */
+.vpDotMenuContainer, .vpUserMenuContainer { position: relative; }
 .vpdotBtn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  font-size: 16px;
-  color: #666;
+  background: transparent; border: none; cursor: pointer;
+  font-size: 18px; color: var(--reddit-text-primary);
 }
+.vpUserAvatarNew { cursor: pointer; }
+.vpAvatarImg { width: 32px; height: 32px; border-radius: 50%; }
 
-.vpdotBtn:hover {
-  color: #000;
-}
-
-/* ==================== DOT MENU DROPDOWN ==================== */
-.vpDotMenuContainer {
-  position: relative;
-}
-
-.vpDotDropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: var(--reddit-card-bg);
+.vpDotDropdown, .vpUserDropdown {
+  position: absolute; top: 100%; right: 0;
+  background: var(--reddit-nav-bg);
   border: 1px solid var(--reddit-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  min-width: 240px;
-  z-index: 1004;
-  margin-top: var(--spacing-sm);
-  animation: slideDown 0.2s ease-out;
+  border-radius: 8px; padding: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  z-index: 1000; min-width: 200px;
+  margin-top: 10px;
 }
 
-.vpDotDropdown::before {
-  content: '';
-  position: absolute;
-  top: -6px;
-  right: 12px;
-  width: 12px;
-  height: 12px;
-  background: var(--reddit-card-bg);
-  transform: rotate(45deg);
-  border-left: 1px solid var(--reddit-border);
-  border-top: 1px solid var(--reddit-border);
-}
-
-.vpDotDropdownItem {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
-  cursor: pointer;
-  transition: all 0.2s ease;
+.vpDotDropItem, .vpUserDropdownItem {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; text-align: left;
+  padding: 8px 12px; background: none; border: none;
+  cursor: pointer; font-weight: 500;
   color: var(--reddit-text-primary);
-  font-size: 14px;
-  font-weight: 500;
- 
 }
 
-.vpDotDropItem {
-  border: none;
-  background-color: transparent; /* Fixed spelling */
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  color: inherit;
+.vpDotDropItem:hover, .vpUserDropdownItem:hover {
+  background-color: var(--reddit-hover);
 }
 
-vpDotDropdownItem
-.vpDotDropdownItem:hover {
-  background: var(--hover-bg);
-}
-
-.vpDotDropdownItem svg {
-  color: var(--reddit-text-secondary);
-  flex-shrink: 0;
-}
-
-.vpDotDropdownDivider {
-  height: 1px;
-  background: var(--reddit-border);
-  margin: var(--spacing-xs) 0;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ==================== NOTIFICATION BADGE ==================== */
 .vpNotifBadge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  background: #ff4500;
-  color: white;
-  font-size: 11px;
-  font-weight: 700;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transform: translate(6px, -6px);
+  position: absolute; top: 0; right: 0;
+  background: #ff4500; color: white;
+  font-size: 10px; padding: 2px 5px; border-radius: 10px;
+  transform: translate(2px, -2px);
 }
 
-/* ==================== MODAL STYLES ==================== */
-.vpModalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  animation: fadeIn 0.2s ease-out;
-}
-
-.vpModalContent {
-  background: var(--reddit-card-bg);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-2xl);
-  position: relative;
-  width: auto;
-  max-width: 90%;
-  max-height: 90%;
-  overflow: auto;
-  box-shadow: var(--shadow-lg);
-  animation: slideUp 0.3s ease-out;
-}
-
-.vpModalImageContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-xl);
-  padding: var(--spacing-xl);
-}
-
-.vpModalImage {
-  width: auto;
-  height: auto;
-  max-width: 300px;
-  max-height: 300px;
-  border-radius: 8px;
-  display: block;
-  object-fit: contain;
-}
-
-.vpModalText {
-  text-align: center;
-  max-width: 300px;
-}
-
-.vpModalText h3 {
-  margin-bottom: var(--spacing-md);
-  color: var(--reddit-text-primary);
-  font-size: 1.5rem;
-}
-
-.vpModalText p {
-  color: var(--reddit-text-secondary);
-  margin-bottom: var(--spacing-xs);
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-.vpAppStores {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.vpAppStoreBtn,
-.vpPlayStoreBtn {
-  background: black;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 100px;
-}
-
-.vpAppStores {
-  display: flex;
-  flex-direction: row;
-  gap: 10px; 
-  justify-content: center; 
-  align-items: center;
-}
-
-.vpAppStoreText,
-.vpPlayStoreText {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.vpModalClose {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: transparent;
-  border: none;
-  font-size: 28px;
-  cursor: pointer;
-  color: #666;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: background 0.2s;
-  z-index: 10;
-}
-
-.vpModalClose:hover {
-  background: #f3f4f6;
-  color: #000;
-}
-
-/* ==================== ANIMATIONS ==================== */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ==================== RESPONSIVE STYLES ==================== */
+/* Responsive */
 @media (max-width: 768px) {
   .vpTopBarContainer {
     padding: 0 8px;
