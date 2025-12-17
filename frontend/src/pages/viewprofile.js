@@ -25,7 +25,6 @@ export default function RedditProfilePageMock() {
   // NEW: State for background image
   const [backgroundImage, setBackgroundImage] = useState(null);
   const fileInputRef = useRef(null);
-
   const optionsRef = useRef(null);
   const buttonRef = useRef(null);
   const commentsOptionsRef = useRef(null);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./allCommunities.css";
 
 // ✅ CENTRAL API ONLY
@@ -29,7 +29,7 @@ export default function AllCommunities() {
 
         setCommunities(data);
 
-        // init joined map
+        // Init joined map (default: not joined)
         const tempMap = new Map();
         data.forEach((c) => tempMap.set(c._id, false));
         setJoinedMap(tempMap);
@@ -37,8 +37,12 @@ export default function AllCommunities() {
         // 2️⃣ Load user memberships (if logged in)
         try {
           const memberships = await membershipApi.getUserMemberships();
+
+          // 🔥 FIX: handle populated OR non-populated communityId
           const memberIds = new Set(
-            memberships.map((m) => String(m.communityId))
+            memberships.map((m) =>
+              String(m.communityId?._id || m.communityId)
+            )
           );
 
           setJoinedMap((prev) => {
@@ -127,14 +131,12 @@ export default function AllCommunities() {
   }
 
   function toggleJoin(communityId, e) {
+    e.preventDefault();   // 🔥 required because card is wrapped in Link
     e.stopPropagation();
+
     const isJoined = joinedMap.get(communityId);
     if (isJoined) leaveCommunity(communityId);
     else joinCommunity(communityId);
-  }
-
-  function openCommunityPage(communityId) {
-    navigate(`/community/${communityId}`);
   }
 
   if (loading)
@@ -167,37 +169,37 @@ export default function AllCommunities() {
           const avatarLetter = c.name ? c.name[0].toUpperCase() : "?";
 
           return (
-            <article
+            <Link
               key={communityId}
-              className="cc-card"
-              onClick={() => openCommunityPage(communityId)}
-              role="button"
-              tabIndex={0}
+              to={`/community/${communityId}`}
+              className="cc-card-link"
             >
-              <div className="cc-avatar-wrap">
-                <div className="cc-avatar-fallback">{avatarLetter}</div>
-              </div>
+              <article className="cc-card" role="button" tabIndex={0}>
+                <div className="cc-avatar-wrap">
+                  <div className="cc-avatar-fallback">{avatarLetter}</div>
+                </div>
 
-              <div className="cc-body">
-                <h3 className="cc-title">r/{c.name}</h3>
-                <p className="cc-desc">
-                  {c.description || "No description provided."}
-                </p>
-                <p className="cc-meta">{c.memberCount} members</p>
-              </div>
+                <div className="cc-body">
+                  <h3 className="cc-title">r/{c.name}</h3>
+                  <p className="cc-desc">
+                    {c.description || "No description provided."}
+                  </p>
+                  <p className="cc-meta">{c.memberCount} members</p>
+                </div>
 
-              <div className="cc-actions">
-                <button
-                  className={`cc-join-btn ${
-                    isJoined ? "joined" : "not-joined"
-                  }`}
-                  disabled={loadingAction}
-                  onClick={(e) => toggleJoin(communityId, e)}
-                >
-                  {loadingAction ? "..." : isJoined ? "Leave" : "Join"}
-                </button>
-              </div>
-            </article>
+                <div className="cc-actions">
+                  <button
+                    className={`cc-join-btn ${
+                      isJoined ? "joined" : "not-joined"
+                    }`}
+                    disabled={loadingAction}
+                    onClick={(e) => toggleJoin(communityId, e)}
+                  >
+                    {loadingAction ? "..." : isJoined ? "Leave" : "Join"}
+                  </button>
+                </div>
+              </article>
+            </Link>
           );
         })}
       </div>
