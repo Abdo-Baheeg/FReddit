@@ -45,7 +45,6 @@ export default function CommunityPage() {
         setCurrentUser(user);
         setCommunity(communityData);
 
-        // normalize posts response
         const postsArray = Array.isArray(communityPosts)
           ? communityPosts
           : communityPosts?.posts ?? [];
@@ -73,6 +72,11 @@ export default function CommunityPage() {
       return;
     }
     navigate("/create-post", { state: { community } });
+  };
+
+  // 🔥 NEW: open post page
+  const openPost = (postId) => {
+    navigate(`/post/${postId}`);
   };
 
   if (loading)
@@ -103,9 +107,19 @@ export default function CommunityPage() {
               </button>
             </div>
           ) : (
-            posts.map((post) => (
-              <PostCard key={post._id || post.id} post={post} />
-            ))
+            posts.map((post) => {
+              const postId = post._id || post.id;
+
+              return (
+                <div
+                  key={postId}
+                  onClick={() => openPost(postId)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <PostCard post={post} />
+                </div>
+              );
+            })
           )}
         </main>
 
