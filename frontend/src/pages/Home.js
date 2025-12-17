@@ -2,8 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { feedApi, postApi } from '../api';
 import './Home.css';
-
-
+import PostCard from '../components/PostCard.jsx';
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -126,53 +125,11 @@ const Home = () => {
         </div>
       ) : (
         posts.map(post => (
-          <Link to={`/post/${post._id}`} key={post._id}>
-            <div className="post-card">
-              <div className="post-vote-section">
-                <button className="vote-btn" onClick={(e) => e.preventDefault()}>
-                  ▲
-                </button>
-                <span className="vote-count">{post.score || 0}</span>
-                <button className="vote-btn" onClick={(e) => e.preventDefault()}>
-                  ▼
-                </button>
-              </div>
-              <div className="post-content-section">
-                <div className="post-header">
-                  <span className="subreddit-link">r/{post.subreddit}</span>
-                  <span className="post-meta">
-                    <span>•</span>
-                    <span>Posted by u/{post.author?.username || 'Unknown'}</span>
-                  </span>
-                </div>
-                <h3 className="post-title">{post.title}</h3>
-                {post.content && (
-                  <p className="post-body">
-                    {post.content.substring(0, 300)}
-                    {post.content.length > 300 && '...'}
-                  </p>
-                )}
-                <div className="post-actions">
-                  <button className="post-action-btn">
-                    <span>💬</span>
-                    <span>{post.commentCount || 0} Comments</span>
-                  </button>
-                  <button className="post-action-btn">
-                    <span>🔗</span>
-                    <span>Share</span>
-                  </button>
-                  <button className="post-action-btn">
-                    <span>🔖</span>
-                    <span>Save</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </Link>
+         <Link to={`/post/${post._id}`} key={post._id}>
+          <PostCard post={post} />
+        </Link>
         ))
       )}
-
-      {/* Load More Button */}
       {hasMore && !loading && (
         <button 
           onClick={loadMorePosts} 
