@@ -5,7 +5,7 @@
   padding: var(--spacing-xl);
   transition: all 0.3s ease;
   width: 100%;
-  background: var(--reddit-bg);
+  background:white;
 }
 
 /* When sidebar is open */
