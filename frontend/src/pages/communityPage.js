@@ -3,10 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import CommunityHeader from "../components/communityHeader";
 import CommunitySidebar from "../components/communitySidebar";
 import PostCard from "../components/PostCard";
+import PrivateCommunityGate from "../components/privateCommunityGate";
 import "./communityPage.css";
 
 // ✅ CENTRAL API ONLY
-import { userApi, communityApi } from "../api";
+import { userApi, communityApi, membershipApi } from "../api";
 
 export default function CommunityPage() {
   const { communityId, id, slug } = useParams();
@@ -17,6 +18,9 @@ export default function CommunityPage() {
   const [currentUser, setCurrentUser] = useState(null);
   const [community, setCommunity] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [isMember, setIsMember] = useState(false);
+  const [checkingMembership, setCheckingMembership] = useState(true);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -50,17 +54,35 @@ export default function CommunityPage() {
           : communityPosts?.posts ?? [];
 
         setPosts(postsArray);
+
+        // 🔒 CHECK MEMBERSHIP FOR PRIVATE COMMUNITIES
+        if (user && !communityData.isPublic) {
+          try {
+            const membership = await membershipApi.checkMembership(
+              resolvedCommunityId
+            );
+            setIsMember(!!membership?.isMember);
+          } catch {
+            setIsMember(false);
+          }
+        } else {
+          setIsMember(false);
+        }
       } catch (err) {
         if (!cancelled) {
           console.error(err);
           setError("Failed to load community page.");
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setCheckingMembership(false);
+          setLoading(false);
+        }
       }
     }
 
     loadPage();
+
     return () => {
       cancelled = true;
     };
@@ -74,9 +96,17 @@ export default function CommunityPage() {
     navigate("/create-post", { state: { community } });
   };
 
-  // 🔥 NEW: open post page
   const openPost = (postId) => {
     navigate(`/post/${postId}`);
+  };
+
+  const handleJoinCommunity = async () => {
+    try {
+      await communityApi.joinCommunity(resolvedCommunityId);
+      setIsMember(true); // ✅ closes gate
+    } catch (err) {
+      console.error("Failed to join community", err);
+    }
   };
 
   if (loading)
@@ -87,6 +117,21 @@ export default function CommunityPage() {
 
   if (!community)
     return <div className="community-page-root">Community not found.</div>;
+
+  // 🔒 PRIVATE COMMUNITY GATE LOGIC
+  const shouldBlock =
+    !community.isPublic && (!currentUser || !isMember);
+
+  if (shouldBlock && !checkingMembership) {
+    return (
+      <PrivateCommunityGate
+        community={community}
+        isLoggedIn={!!currentUser}
+        isMember={isMember}
+        onJoin={handleJoinCommunity}
+      />
+    );
+  }
 
   return (
     <div className="community-page-root vpBody">
@@ -99,10 +144,15 @@ export default function CommunityPage() {
         <main className="community-post-column vpPageContentWrapper">
           {posts.length === 0 ? (
             <div className="empty-posts vpEmptyState">
-              <h2><b>This community doesn't have any posts yet</b></h2>
+              <h2>
+                <b>This community doesn't have any posts yet</b>
+              </h2>
               <p>Make one and get this feed started.</p>
 
-              <button className="vpCreatePostBtn" onClick={handleCreatePost}>
+              <button
+                className="vpCreatePostBtn"
+                onClick={handleCreatePost}
+              >
                 Create Post
               </button>
             </div>

@@ -117,6 +117,180 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
+// @route   PUT /api/users/me
+// @desc    Update user profile information
+// @access  Private
+router.put('/me', authMiddleware, [
+  body('username').optional().trim().isLength({ min: 3 }).withMessage('Username must be at least 3 characters'),
+  body('email').optional().isEmail().withMessage('Please enter a valid email'),
+  body('bio').optional().trim().isLength({ max: 500 }).withMessage('Bio must not exceed 500 characters'),
+  body('avatar_url').optional().trim(),
+  body('banner_url').optional().trim(),
+  body('gender').optional().isIn(['male', 'female', 'other']).withMessage('Invalid gender value')
+], async (req, res) => {
+  try {
+    const { username, email, bio, avatar_url, banner_url, gender } = req.body;
+    const userId = req.user._id;
+
+    // Build update object with only provided fields
+    const updateFields = {};
+    
+    if (username !== undefined) {
+      // Check if username is already taken by another user
+      const existingUser = await User.findOne({ username, _id: { $ne: userId } });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Username already taken' });
+      }
+      updateFields.username = username;
+    }
+    
+    if (email !== undefined) {
+      // Check if email is already taken by another user
+      const existingUser = await User.findOne({ email, _id: { $ne: userId } });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email already taken' });
+      }
+      updateFields.email = email;
+      updateFields.isEmailVerified = false; // Reset verification if email changes
+    }
+    
+    if (bio !== undefined) {
+      updateFields.bio = bio;
+    }
+    
+    if (avatar_url !== undefined) {
+      updateFields.avatar_url = avatar_url;
+    }
+
+    // Update user
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: updateFields },
+      { new: true, runValidators: true }
+    ).select('-password -emailVerificationToken -emailVerificationTokenExpires -passwordResetToken -passwordResetTokenExpires');
+
+    res.json({
+      message: 'Profile updated successfully',
+      user: {
+        id: updatedUser._id,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        bio: updatedUser.bio,
+        avatar_url: updatedUser.avatar_url,
+        karma: updatedUser.karma,
+        isEmailVerified: updatedUser.isEmailVerified
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// @route   DELETE /api/users/me
+// @desc    Delete user account and all associated data
+// @access  Private
+router.delete('/me', authMiddleware, [
+  body('password').notEmpty().withMessage('Password is required to delete account')
+], async (req, res) => {
+  try {
+    const { password } = req.body;
+    const userId = req.user._id;
+
+    // Get user and verify password
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Verify password before deletion
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid password. Cannot delete account.' });
+    }
+
+    // Delete all user's posts
+    await Post.deleteMany({ author: userId });
+
+    // Delete all user's comments
+    await Comment.deleteMany({ author: userId });
+
+    // Delete all user's votes
+    await Vote.deleteMany({ userId: userId });
+
+    // Remove user from all community memberships
+    const Membership = require('../models/Membership');
+    await Membership.deleteMany({ userId: userId });
+
+    // Delete all user's conversations and messages
+    const Conversation = require('../models/Conversation');
+    const Message = require('../models/Message');
+    const conversations = await Conversation.find({
+      participants: userId
+    });
+    const conversationIds = conversations.map(conv => conv._id);
+    await Message.deleteMany({ conversationId: { $in: conversationIds } });
+    await Conversation.deleteMany({ participants: userId });
+
+    // Delete user's notifications
+    const Notifications = require('../models/Notifications');
+    await Notifications.deleteMany({ userId: userId });
+
+    // Delete user's settings
+    const Settings = require('../models/Settings');
+    if (user.settings) {
+      await Settings.findByIdAndDelete(user.settings);
+    }
+
+    // Finally, delete the user account
+    await User.findByIdAndDelete(userId);
+
+    res.json({ message: 'Account deleted successfully' });
+  } catch (error) {
+    console.error('Delete account error:', error);
+    res.status(500).json({ message: 'Failed to delete account', error: error.message });
+  }
+});
+
+// @route   PUT /api/users/me/password
+// @desc    Change user password
+// @access  Private
+router.put('/me/password', authMiddleware, [
+  body('currentPassword').notEmpty().withMessage('Current password is required'),
+  body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters')
+], async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user._id;
+
+    // Get user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Verify current password
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    // Check if new password is different from current
+    const isSamePassword = await user.comparePassword(newPassword);
+    if (isSamePassword) {
+      return res.status(400).json({ message: 'New password must be different from current password' });
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save(); // This will trigger the pre-save hook to hash the password
+
+    res.json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({ message: 'Failed to change password', error: error.message });
+  }
+});
+
 // @route   POST /api/users/resend-verification
 // @desc    Resend email verification
 // @access  Private
