@@ -76,7 +76,7 @@ function HeaderContent({ communityId, initialCommunity }) {
   const [loading, setLoading] = useState(!initialCommunity);
   const [optimistic, setOptimistic] = useState(false);
 
-  // ✅ Fetch community (API layer)
+  // ✅ Fetch community
   useEffect(() => {
     if (!communityId || initialCommunity) return;
 
@@ -96,7 +96,7 @@ function HeaderContent({ communityId, initialCommunity }) {
     };
   }, [communityId, initialCommunity]);
 
-  // ✅ Resolve membership using API layer
+  // ✅ Resolve membership
   useEffect(() => {
     if (!community._id) return;
 
@@ -116,19 +116,13 @@ function HeaderContent({ communityId, initialCommunity }) {
     navigate("/create-post", { state: { community } });
   };
 
-  // ✅ Join / Leave using API layer
+  // ✅ Join / Leave → refresh page after success
   const handleJoinToggle = async () => {
     if (optimistic) return;
     if (!requireAuthOrRedirect(navigate)) return;
 
     const willJoin = !community.isMember;
-
     setOptimistic(true);
-    setCommunity((c) => ({
-      ...c,
-      isMember: willJoin,
-      membersCount: c.membersCount + (willJoin ? 1 : -1),
-    }));
 
     try {
       if (willJoin) {
@@ -136,14 +130,12 @@ function HeaderContent({ communityId, initialCommunity }) {
       } else {
         await membershipApi.leave(community._id);
       }
-    } catch {
-      // rollback on failure
-      setCommunity((c) => ({
-        ...c,
-        isMember: !willJoin,
-        membersCount: c.membersCount + (willJoin ? -1 : 1),
-      }));
-    } finally {
+
+      // 🔄 HARD REFRESH so CommunityPage + Gate re-evaluate
+      window.location.reload();
+
+    } catch (err) {
+      console.error("Join/Leave failed", err);
       setOptimistic(false);
     }
   };

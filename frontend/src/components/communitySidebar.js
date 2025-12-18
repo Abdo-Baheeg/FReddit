@@ -28,7 +28,7 @@ export default function CommunitySidebar({ community, currentUser }) {
 
   const communityId = community._id || community.id || community.communityId || community.community_id || null;
 
-  const communityAvatar = community.avatarUrl || community.avatar_url || "/default-community.png";
+  const communityAvatar = community.avatarUrl || community.avatar_url || "https://www.gravatar.com/avatar/?d=mp&s=200";
 
   const moderators = Array.isArray(community.moderators) ? community.moderators : [];
 
@@ -71,7 +71,7 @@ export default function CommunitySidebar({ community, currentUser }) {
               className="cs-small-avatar"
               src={communityAvatar}
               alt="community avatar"
-              onError={(e) => (e.currentTarget.src = "/default-community.png")}
+              onError={(e) => (e.currentTarget.src = "https://www.gravatar.com/avatar/?d=mp&s=200")}
             />
 
             <div className="cs-stats-headline">
@@ -104,9 +104,9 @@ export default function CommunitySidebar({ community, currentUser }) {
         <div className="cs-user-flair">
           <div className="cs-user-top">
             <img
-              src={currentUser?.avatar_url || "/default-avatar.png"}
+              src={currentUser?.avatar_url || "https://www.gravatar.com/avatar/?d=mp&s=200"}
               alt="you"
-              onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
+              onError={(e) => (e.currentTarget.src = "https://www.gravatar.com/avatar/?d=mp&s=200")}
             />
             <div>
               <div className="cs-flair-label">USER FLAIR</div>
@@ -156,11 +156,11 @@ export default function CommunitySidebar({ community, currentUser }) {
           ) : (
             displayModerators.map((m, i) => {
               const username = (m && (m.username || m.name)) || (typeof m === "string" ? `u/${m}` : "u/unknown");
-              const avatar = (m && (m.avatar_url || m.avatar)) || "/default-avatar.png";
+              const avatar = (m && (m.avatar_url || m.avatar)) || "https://www.gravatar.com/avatar/?d=mp&s=200";
 
               return (
                 <div className="cs-mod-item" key={i}>
-                  <img src={avatar} alt={username} onError={(e) => (e.currentTarget.src = "/default-avatar.png")} />
+                  <img src={avatar} alt={username} onError={(e) => (e.currentTarget.src = "https://www.gravatar.com/avatar/?d=mp&s=200")} />
                   <div className="cs-mod-meta">
                     <div className="cs-mod-name">{username}</div>
                     {m?.flair && <div className="cs-mod-flair">{m.flair}</div>}

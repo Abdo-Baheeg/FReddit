@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ ADDED
 import "./createCommunity.css";
 import { communityApi } from "../api";
 
 export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
+  const navigate = useNavigate(); // ✅ ADDED
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [rulesText, setRulesText] = useState("");
@@ -100,56 +103,60 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError(null);
+    e.preventDefault();
+    setError(null);
 
-  // login check (simple + correct)
-  const token = localStorage.getItem("token");
-  if (!token) {
-    setError("You must be logged in to create a community.");
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    const rules = rulesText
-      .split(/\r?\n/)
-      .map((r) => r.trim())
-      .filter(Boolean);
-
-    // ✅ FormData instead of JSON
-    const formData = new FormData();
-    formData.append("name", name.trim());
-    formData.append("description", description.trim());
-    formData.append("isPublic", isPublic);
-    formData.append("ageVerified", ageVerified);
-
-    rules.forEach((rule, index) => {
-      formData.append(`rules[${index}]`, rule);
-    });
-
-    // ✅ send REAL image files
-    if (bannerFile) {
-      formData.append("banner", bannerFile);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("You must be logged in to create a community.");
+      return;
     }
 
-    if (iconFile) {
-      formData.append("icon", iconFile);
+    setLoading(true);
+
+    try {
+      const rules = rulesText
+        .split(/\r?\n/)
+        .map((r) => r.trim())
+        .filter(Boolean);
+
+      const readFile = (file) =>
+        new Promise((resolve) => {
+          if (!file) return resolve(null);
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+
+      const bannerUrl = await readFile(bannerFile);
+      const avatarUrl = await readFile(iconFile);
+
+      const payload = {
+        name: name.trim(),
+        description: description.trim(),
+        rules,
+        isPublic,
+        ageVerified,
+        bannerUrl,
+        avatarUrl,
+      };
+
+      const createdCommunity = await communityApi.createCommunity(payload);
+
+      onCreated && onCreated(createdCommunity);
+      onClose && onClose();
+
+      // ✅ ADDED — ensure creator enters the community
+      navigate(`/community/${createdCommunity._id}`);
+      window.location.reload();
+
+    } catch (err) {
+      console.error(err);
+      setError("Failed to create community.");
+    } finally {
+      setLoading(false);
     }
-
-    const createdCommunity =
-      await communityApi.createCommunity(formData);
-
-    onCreated && onCreated(createdCommunity);
-    onClose && onClose();
-  } catch (err) {
-    console.error(err);
-    setError("Failed to create community.");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   if (!isOpen) return null;
 
@@ -217,7 +224,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
                 </div>
               </div>
 
-              {/* ✅ Clean inline age verification */}
               <div className="form-group">
                 <label
                   style={{

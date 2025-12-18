@@ -115,7 +115,81 @@ export const userApi = {
   getUserStats: async (userId) => {
     const response = await axios.get(`${API_URL}/api/users/${userId}/stats`);
     return response.data;
+  },
+
+  // Update entire user profile
+  updateProfile: async (updateData) => {
+    const response = await axios.put(
+      `${API_URL}/api/users/me`,
+      updateData,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Update username only
+  updateUsername: async (username) => {
+    const response = await axios.put(
+      `${API_URL}/api/users/me`,
+      { username },
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Update email only
+  updateEmail: async (email) => {
+    const response = await axios.put(
+      `${API_URL}/api/users/me`,
+      { email },
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Update bio only
+  updateBio: async (bio) => {
+    const response = await axios.put(
+      `${API_URL}/api/users/me`,
+      { bio },
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Update avatar URL only
+  updateAvatar: async (avatar_url) => {
+    const response = await axios.put(
+      `${API_URL}/api/users/me`,
+      { avatar_url },
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  //update password
+  updatePassword: async (currentPassword, newPassword) => {
+    const response = await axios.put(
+      `${API_URL}/api/users/me/password`,
+      { currentPassword, newPassword },
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Delete user account (requires password confirmation)
+  deleteAccount: async (password) => {
+    const response = await axios.delete(
+      `${API_URL}/api/users/me`,
+      {
+        headers: getAuthHeaders(),
+        data: { password }
+      }
+    );
+    return response.data;
   }
+
+
 };
 
 // Post API endpoints
