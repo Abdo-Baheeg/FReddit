@@ -60,6 +60,7 @@ const chatRoutes = require('./routes/chatRoutes');
 const voteRoutes = require('./routes/voteRoutes');
 const membershipRoutes = require('./routes/membershipRoutes');
 const feedRoutes = require('./routes/feedRoutes');
+const savedRoutes = require('./routes/savedRoutes');
 const authRoutes = require('./routes/auth');
 
 // Use routes
@@ -71,6 +72,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/votes', voteRoutes);
 app.use('/api/memberships', membershipRoutes);
 app.use('/api/feed', feedRoutes);
+app.use('/api/saved', savedRoutes);
 app.use('/auth', authRoutes); // Email verification and password reset routes
 
 // Socket.IO setup

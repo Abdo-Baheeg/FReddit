@@ -577,6 +577,67 @@ export const chatApi = {
   }
 };
 
+// Saved API endpoints
+export const savedApi = {
+  // Save or unsave a post/comment
+  toggleSave: async (targetId, targetType) => {
+    const response = await axios.post(
+      `${API_URL}/api/saved`,
+      { targetId, targetType },
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Get all saved items
+  getSavedItems: async (type = null, page = 1, limit = 20) => {
+    const params = { page, limit };
+    if (type) params.type = type;
+    
+    const response = await axios.get(`${API_URL}/api/saved`, {
+      params,
+      headers: getAuthHeaders()
+    });
+    return response.data;
+  },
+
+  // Get saved posts only
+  getSavedPosts: async (page = 1, limit = 20) => {
+    const response = await axios.get(`${API_URL}/api/saved/posts`, {
+      params: { page, limit },
+      headers: getAuthHeaders()
+    });
+    return response.data;
+  },
+
+  // Get saved comments only
+  getSavedComments: async (page = 1, limit = 20) => {
+    const response = await axios.get(`${API_URL}/api/saved/comments`, {
+      params: { page, limit },
+      headers: getAuthHeaders()
+    });
+    return response.data;
+  },
+
+  // Check if item is saved
+  checkSaved: async (targetId, targetType) => {
+    const response = await axios.get(
+      `${API_URL}/api/saved/check/${targetId}/${targetType}`,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Unsave an item
+  unsave: async (targetId, targetType) => {
+    const response = await axios.delete(
+      `${API_URL}/api/saved/${targetId}/${targetType}`,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  }
+};
+
 // Health check endpoint
 export const healthApi = {
   // Check API health
