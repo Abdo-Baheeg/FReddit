@@ -829,17 +829,358 @@
   opacity: 0.7;
 }
 
+
+
+
+/* Circle Selection Styles */
+.time-option-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.time-option-label {
+  flex: 1;
+  padding: 8px 0;
+}
+
+.time-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.time-option:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.time-option-selected {
+  background-color: rgba(0, 121, 211, 0.1);
+}
+
+.time-option-circle-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .time-option-circle {
   display: inline-block;
   width: 16px;
   height: 16px;
   border: 2px solid #000;
   border-radius: 50%;
-  margin-left: 8px;
-  background-color: transparent; 
-  transition: background-color 0.2s;
+  background-color: transparent;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-.time-option.time-option-selected .time-option-circle {
-  background-color: #000; 
+/* Default: All circles empty (no fill) */
+/* Selected: Circle filled with black */
+.time-option-circle.circle-selected {
+  background-color: #000;
 }
+
+/* Ensure the time options are properly displayed */
+.time-options {
+  width: 100%;
+}
+
+.time-options .time-option {
+  padding: 8px 12px;
+}
+
+/* Remove any old vote styles */
+.vote-container {
+  display: none;
+}
+
+ 
+.vpStatButton{
+background-color: transparent;
+border: none;
+cursor: pointer;
+}
+
+
+/* Contributions Modal Styles */
+.vpModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.vpModal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  width: 400px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.vpModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #edeff1;
+}
+
+.vpModalHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #1c1c1c;
+}
+
+.vpModalCloseBtn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #878a8c;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.vpModalCloseBtn:hover {
+  background-color: #f6f7f8;
+  color: #1c1c1c;
+}
+
+.vpModalContent {
+  padding: 20px;
+}
+
+.vpModalContent h4 {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1c1c1c;
+}
+
+.vpContributionsTable {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #edeff1;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.vpContributionsTable thead {
+  background-color: #f6f7f8;
+}
+
+.vpContributionsTable th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1c1c1c;
+  border-bottom: 1px solid #edeff1;
+}
+
+.vpContributionsTable tbody tr {
+  border-bottom: 1px solid #edeff1;
+}
+
+.vpContributionsTable tbody tr:last-child {
+  border-bottom: none;
+}
+
+.vpContributionsTable td {
+  padding: 16px;
+  font-size: 14px;
+  color: #7c7c7c;
+  vertical-align: middle;
+}
+
+.vpContributionsTable td:first-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vpUpdatesIndicator {
+  font-size: 16px;
+  color: #ff4500;
+}
+
+/* Update the Contributions button style */
+.vpStatButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+}
+
+.vpStatButton:hover .vpStatLabel {
+  color: #ff4500;
+  text-decoration: underline;
+}
+
+
+
+
+
+
+/* Contributions Modal Styles */
+.vpModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.vpModal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  width: 380px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.vpModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #edeff1;
+}
+
+.vpModalHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1c1c1c;
+}
+
+.vpModalCloseBtn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #878a8c;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.vpModalCloseBtn:hover {
+  background-color: #f6f7f8;
+  color: #1c1c1c;
+}
+
+.vpModalContent {
+  padding: 0 20px 20px;
+}
+
+.vpModalContent h4 {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #7c7c7c;
+  text-align: center;
+}
+
+.vpContributionItem {
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1px solid #edeff1;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.vpContributionItem:last-child {
+  margin-bottom: 0;
+}
+
+.vpContributionHeader {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.vpContributionIcon {
+  font-size: 16px;
+  color: #ff4500;
+  margin-right: 8px;
+  display: inline-block;
+  width: 20px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.vpContributionTitleContainer {
+  flex: 1;
+}
+
+.vpContributionTitle {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1c1c1c;
+  margin-bottom: 2px;
+}
+
+.vpContributionNote {
+  display: block;
+  font-size: 12px;
+  color: #7c7c7c;
+  margin-top: 2px;
+}
+
+.vpContributionValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1c1c1c;
+  text-align: center;
+  margin: 8px 0;
+  line-height: 1;
+}
+
+/* Update the Contributions button style */
+.vpStatButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+}
+

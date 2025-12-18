@@ -24,6 +24,10 @@ const Settings = () => {
   const [aboutDescriptionError, setAboutDescriptionError] = useState('');
   const [isSavingAboutDescription, setIsSavingAboutDescription] = useState(false);
   
+  // NEW STATES FOR INLINE EDITING
+  const [isEditing, setIsEditing] = useState(false);
+  const [newUsername, setNewUsername] = useState("");
+  
   const tabs = [
     'Account',
     'Profile',
@@ -53,6 +57,71 @@ const Settings = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Handle click on display name button - NEW VERSION
+  const handleDisplayNameClick = () => {
+    // Set the new username state with current display name or username
+    setNewUsername(user?.displayName || user?.username || "");
+    // Enable editing mode
+    setIsEditing(true);
+  };
+
+  // Handle saving display name - CONNECTED TO API - NEW FUNCTION
+  const handleSaveUsername = async () => {
+    // Validate display name
+    if (!newUsername.trim()) {
+      setDisplayNameError('Display name cannot be empty');
+      return;
+    }
+
+    if (newUsername.length > 90) {
+      setDisplayNameError('Display name must be 90 characters or less');
+      return;
+    }
+
+    setIsSavingDisplayName(true);
+
+    try {
+      // Call the API to update username
+      // This is the key connection point - calling the API function you provided
+      const updatedUser = await userApi.updateUsername(newUsername.trim());
+      
+      // Update the user in state
+      setUser(updatedUser);
+      
+      // Exit editing mode
+      setIsEditing(false);
+      setDisplayNameError('');
+      
+      // Optional: Refresh user data from server to ensure consistency
+      await fetchCurrentUser();
+      
+      console.log('Display name updated successfully via API');
+      
+    } catch (err) {
+      console.error('Error updating display name:', err);
+      
+      // Handle specific error cases
+      if (err.response?.status === 401) {
+        setDisplayNameError('Your session has expired. Please log in again.');
+      } else if (err.response?.status === 409) {
+        setDisplayNameError('This display name is already taken.');
+      } else if (err.message === 'Network Error') {
+        setDisplayNameError('Network error. Please check your internet connection.');
+      } else {
+        setDisplayNameError('Failed to update display name. Please try again.');
+      }
+    } finally {
+      setIsSavingDisplayName(false);
+    }
+  };
+
+  // Handle cancel editing
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setNewUsername("");
+    setDisplayNameError('');
   };
 
   // About Description Modal Functions
@@ -95,16 +164,6 @@ const Settings = () => {
         updatedAt: new Date().toISOString()
       }));
       
-      // If you add the API endpoint later, uncomment this:
-      /*
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/users/update-bio`,
-        { bio: aboutDescriptionInput.trim() },
-        { headers: getAuthHeaders() }
-      );
-      setUser(response.data.user);
-      */
-      
       // Close modal
       setShowAboutModal(false);
       setAboutDescriptionError('');
@@ -143,8 +202,8 @@ const Settings = () => {
     }
   };
 
-  // Display Name Modal Functions
-  const handleDisplayNameClick = () => {
+  // Display Name Modal Functions (for modal version - kept as backup)
+  const handleModalDisplayNameClick = () => {
     setDisplayNameInput(user?.displayName || '');
     setDisplayNameError('');
     setShowDisplayNameModal(true);
@@ -478,7 +537,7 @@ const Settings = () => {
     </div>
   );
 
-  // Render Profile tab content
+  // Render Profile tab content - UPDATED WITH INLINE EDITING
   const renderProfileContent = () => (
     <div className="settings-main">
       <div className="general-section">
@@ -493,11 +552,51 @@ const Settings = () => {
               </span>
             </div>
             <div className="setting-control">
-              <button className="displaybutton" onClick={handleDisplayNameClick}>
-                <span className="display-name">
-                  {user.displayName || user.username || 'No display name set'}
-                </span>
-              </button>
+              {!isEditing ? (
+                // View mode - shows button with current display name
+                <button className="displaybutton" onClick={handleDisplayNameClick}>
+                  <span className="display-name">
+                    {user.displayName || user.username || 'No display name set'}
+                  </span>
+                </button>
+              ) : (
+                // Edit mode - shows input field and action buttons
+                <div className="display-name-edit-container">
+                  <input
+                    type="text"
+                    className="display-name-input-inline"
+                    value={newUsername}
+                    onChange={(e) => setNewUsername(e.target.value)}
+                    placeholder="Enter display name"
+                    maxLength={90}
+                    autoFocus
+                  />
+                  <div className="inline-buttons">
+                    <button 
+                      className="save-button-inline"
+                      onClick={handleSaveUsername}
+                      disabled={isSavingDisplayName || !newUsername.trim()}
+                    >
+                      {isSavingDisplayName ? 'Saving...' : 'Save'}
+                    </button>
+                    <button 
+                      className="cancel-button-inline"
+                      onClick={handleCancelEdit}
+                      disabled={isSavingDisplayName}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  {displayNameError && (
+                    <div className="inline-error">
+                      {displayNameError}
+                    </div>
+                  )}
+                  <div className="character-counter-inline">
+                    {newUsername.length}/90
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -1402,7 +1501,7 @@ const Settings = () => {
         </div>
       )}
 
-      {/* Display Name Modal */}
+      {/* Display Name Modal (kept as backup) */}
       {showDisplayNameModal && (
         <div className="display-name-modal-overlay">
           <div className="display-name-modal">
