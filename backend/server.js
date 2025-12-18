@@ -105,6 +105,24 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Join a specific conversation
+  socket.on('join_conversation', async (data) => {
+    try {
+      const { conversationId } = data;
+      
+      // Verify user is part of conversation
+      const conversation = await Conversation.findById(conversationId);
+      if (conversation && conversation.participants.includes(socket.user._id)) {
+        socket.join(`conversation:${conversationId}`);
+        socket.emit('conversation_joined', { conversationId });
+      } else {
+        socket.emit('error', { message: 'Not authorized to join this conversation' });
+      }
+    } catch (error) {
+      socket.emit('error', { message: 'Failed to join conversation' });
+    }
+  });
+
   // Send message
   socket.on('send_message', async (data) => {
     try {

@@ -187,6 +187,15 @@ export const userApi = {
       }
     );
     return response.data;
+  },
+
+  // Search for users by username
+  searchUsers: async (query, limit = 10) => {
+    const response = await axios.get(`${API_URL}/api/users/search`, {
+      params: { q: query, limit },
+      headers: getAuthHeaders()
+    });
+    return response.data;
   }
 
 
