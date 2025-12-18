@@ -243,4 +243,66 @@ router.put('/:id/summary', authMiddleware, async (req, res) => {
   }
 });
 
+// @route   GET /api/posts/search/query
+// @desc    Search posts by title and content
+// @access  Public
+router.get('/search/query', async (req, res) => {
+  try {
+    const { q, page = 1, limit = 20, sort = 'relevant' } = req.query;
+
+    if (!q || q.trim().length < 2) {
+      return res.status(400).json({ message: 'Search query must be at least 2 characters' });
+    }
+
+    const skip = (page - 1) * limit;
+    const searchRegex = { $regex: q, $options: 'i' };
+
+    // Build search query
+    const searchQuery = {
+      $or: [
+        { title: searchRegex },
+        { content: searchRegex }
+      ]
+    };
+
+    // Determine sort order
+    let sortOption = {};
+    switch (sort) {
+      case 'new':
+        sortOption = { createdAt: -1 };
+        break;
+      case 'top':
+        sortOption = { upvotes: -1, createdAt: -1 };
+        break;
+      case 'comments':
+        sortOption = { commentCount: -1, createdAt: -1 };
+        break;
+      default: // relevant
+        sortOption = { upvotes: -1, createdAt: -1 };
+    }
+
+    const posts = await Post.find(searchQuery)
+      .populate('author', 'username avatar')
+      .populate('community', 'name icon_url')
+      .sort(sortOption)
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const total = await Post.countDocuments(searchQuery);
+
+    res.json({
+      posts,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
+  } catch (error) {
+    console.error('Search posts error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 module.exports = router;

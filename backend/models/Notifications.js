@@ -6,27 +6,37 @@ const notificationSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-    type: {
+  type: {
     type: String,
-    enum: ['comment', 'reply', 'upvote', 'mention', 'follow'],
+    enum: ['comment', 'reply', 'upvote', 'downvote', 'mention', 'follow', 'post', 'community'],
     required: true,
-    },
-    contentId: {
+  },
+  contentId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    },
-    message: {
+  },
+  triggeredBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  message: {
     type: String,
     required: true,
-    },
-    isRead: {
+  },
+  title: {
+    type: String
+  },
+  link: {
+    type: String
+  },
+  isRead: {
     type: Boolean,
     default: false,
-    },
-    createdAt: {
+  },
+  createdAt: {
     type: Date,
     default: Date.now,
-    }
+  }
 });
 
 // Indexes for faster queries
