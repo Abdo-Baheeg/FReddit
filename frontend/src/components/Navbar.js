@@ -4,6 +4,7 @@ import { useSocket } from "../context/SocketContext";
 import { useTheme } from "../context/ThemeContext";
 import "./Navbar.css";
 import Login from "../pages/Login_windows/Login";
+import { userApi } from "../api";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [username, setUsername] = useState("User");
+  const [username, setUsername] = useState("defaultUser");
   const [userEmail, setUserEmail] = useState("");
   const [userAvatar, setUserAvatar] = useState(
     "https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
@@ -37,6 +38,12 @@ const Navbar = () => {
   };
 
   const handleAskAi = () => navigate("/ask-ai");
+  
+  const handleItemClick = (path) => {
+    console.log("Navigating to:", path);
+    navigate(path);
+  };
+  
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -49,26 +56,25 @@ const Navbar = () => {
 
   // --- AUTH & EVENT LISTENERS ---
   useEffect(() => {
-    const checkAuthStatus = () => {
+    const checkAuthStatus = async () => {
       const token = localStorage.getItem("token");
-      const user = localStorage.getItem("user");
       if (token) {
         setIsLoggedIn(true);
-        if (user) {
-          try {
-            const userData = JSON.parse(user);
-            setUsername(userData.username || "User");
-            setUserEmail(userData.email || "");
+        try {
+          const user = await userApi.getCurrentUser();
+          if (user) {
+            setUsername(user.username);
+            setUserEmail(user.email);
             setUserAvatar(
-              userData.avatar ||
-                userData.profilePicture ||
+              user.avatar ||
+                user.profilePicture ||
                 "https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
             );
-            setUserKarma(userData.karma || userData.totalKarma || 0);
-            setPostCount(userData.postCount || 0);
-          } catch (e) {
-            console.error("Error parsing user data:", e);
+            setUserKarma(user.karma || user.totalKarma || 0);
+            setPostCount(user.postCount || 0);
           }
+        } catch (e) {
+          console.error("Error fetching user data:", e);
         }
       }
       setLoading(false);
@@ -267,7 +273,7 @@ const Navbar = () => {
                         Log In / Sign Up
                       </button>
                       <button
-                        onClick={() => navigate("/ads")}
+                        onClick={() => handleItemClick('/advertise')}
                         className="vpDotDropItem"
                       >
                         <svg
@@ -296,7 +302,7 @@ const Navbar = () => {
               <button
                 className="vpIconBtn"
                 aria-label="Advertise"
-                onClick={() => window.open("https://ads.reddit.com", "_blank")}
+                onClick={() => handleItemClick('/advertise')}
                 title="Advertise on Reddit"
               >
                 <svg
@@ -327,9 +333,10 @@ const Navbar = () => {
               </button>
 
               <button
+                type="button"
                 className="vpCreateBtnNew"
                 aria-label="Create"
-                onClick={() => navigate("/createpost")}
+                onClick={() => handleItemClick('/createpost')}
                 title="Create a post"
               >
                 <svg
@@ -640,7 +647,7 @@ const Navbar = () => {
                         />
                         <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
                       </svg>
-                      <span>Advertise on Reddit</span>
+                      <span>Adv</span>
                     </button>
 
                     <button
