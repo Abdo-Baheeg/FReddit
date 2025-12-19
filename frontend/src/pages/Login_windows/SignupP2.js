@@ -81,7 +81,7 @@ const SignupP2 = ({ setOpen, email, onSignupSuccess }) => {
               label="Username"
               required
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value.replace(/\s/g, ""))}
               onFocus={() => setError("")}
             />
 

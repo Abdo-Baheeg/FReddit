@@ -17,7 +17,8 @@ import SignupSuccess from "./SignupSuccess.js";
 
 const Signup = ({ setOpen }) => {
   const [username, setUsername] = useState("");
-  const disabled = username.trim() === "";
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const disabled = !emailRegex.test(username);
   const [error, setError] = useState("");
   // Modals State
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -100,7 +101,7 @@ const Signup = ({ setOpen }) => {
               label="Email"
               required
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value.replace(/\s/g, ""))}
               onFocus={() => setError("")}
             />
           </div>
