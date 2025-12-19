@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { feedApi, postApi } from '../api';
 import './Home.css';
-import PostCard from '../components/PostCard.jsx';
+import {PostCard} from '../components/PostCard.jsx';
 
 const Home = () => {
   const [posts, setPosts] = useState([]);

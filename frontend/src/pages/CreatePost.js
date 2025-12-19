@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postApi } from '../api';
-import './CreatePost.css'; // Import the new CSS file
+import './CreatePost.css'; 
 
 const CreatePost = () => {
   const [postType, setPostType] = useState('text'); // text, image, link, poll
