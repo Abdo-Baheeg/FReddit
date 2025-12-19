@@ -187,6 +187,15 @@ export const userApi = {
       }
     );
     return response.data;
+  },
+
+  // Search for users by username
+  searchUsers: async (query, limit = 10) => {
+    const response = await axios.get(`${API_URL}/api/users/search`, {
+      params: { q: query, limit },
+      headers: getAuthHeaders()
+    });
+    return response.data;
   }
 
 
@@ -571,6 +580,67 @@ export const chatApi = {
   deleteMessage: async (messageId) => {
     const response = await axios.delete(
       `${API_URL}/api/chat/messages/${messageId}`,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  }
+};
+
+// Saved API endpoints
+export const savedApi = {
+  // Save or unsave a post/comment
+  toggleSave: async (targetId, targetType) => {
+    const response = await axios.post(
+      `${API_URL}/api/saved`,
+      { targetId, targetType },
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Get all saved items
+  getSavedItems: async (type = null, page = 1, limit = 20) => {
+    const params = { page, limit };
+    if (type) params.type = type;
+    
+    const response = await axios.get(`${API_URL}/api/saved`, {
+      params,
+      headers: getAuthHeaders()
+    });
+    return response.data;
+  },
+
+  // Get saved posts only
+  getSavedPosts: async (page = 1, limit = 20) => {
+    const response = await axios.get(`${API_URL}/api/saved/posts`, {
+      params: { page, limit },
+      headers: getAuthHeaders()
+    });
+    return response.data;
+  },
+
+  // Get saved comments only
+  getSavedComments: async (page = 1, limit = 20) => {
+    const response = await axios.get(`${API_URL}/api/saved/comments`, {
+      params: { page, limit },
+      headers: getAuthHeaders()
+    });
+    return response.data;
+  },
+
+  // Check if item is saved
+  checkSaved: async (targetId, targetType) => {
+    const response = await axios.get(
+      `${API_URL}/api/saved/check/${targetId}/${targetType}`,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Unsave an item
+  unsave: async (targetId, targetType) => {
+    const response = await axios.delete(
+      `${API_URL}/api/saved/${targetId}/${targetType}`,
       { headers: getAuthHeaders() }
     );
     return response.data;
