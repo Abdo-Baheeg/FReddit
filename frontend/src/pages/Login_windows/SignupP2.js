@@ -5,10 +5,10 @@ import {
   Loginparagraph,
   InputText,
   Submit,
-  CloseButton,
   BackButton,
 } from "./components.js";
 import { userApi } from "../../api";
+
 
 const SignupP2 = ({ setOpen, email, onSignupSuccess }) => {
   const [username, setUsername] = useState("");
@@ -17,6 +17,7 @@ const SignupP2 = ({ setOpen, email, onSignupSuccess }) => {
   const disabled = username.trim() === "" || password.trim() === "";
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
 
   const handleSignup = async () => {
     if (disabled) return;

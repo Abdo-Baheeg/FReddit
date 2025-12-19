@@ -13,6 +13,7 @@ import {
 } from "./components.js";
 import Login from "./Login.js";
 import SignupP2 from "./SignupP2.js";
+import SignupSuccess from "./SignupSuccess.js";
 
 const Signup = ({ setOpen }) => {
   const [username, setUsername] = useState("");
@@ -21,13 +22,19 @@ const Signup = ({ setOpen }) => {
   // Modals State
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupP2Open, setIsSignupP2Open] = useState(false);
+  const [isSignupSuccessOpen, setIsSignupSuccessOpen] = useState(false);
 
   const handleSignupSuccess = () => {
-    // close P2 if open, close this signup modal, and ensure any login modal state is closed
+    // close P2 if open, open success window
     setIsSignupP2Open(false);
-    setOpen(false);
+    setIsSignupSuccessOpen(true);
     setIsLoginOpen(false);
     setError("");
+  };
+
+  const handleCloseSuccess = () => {
+    setIsSignupSuccessOpen(false);
+    setOpen(false);
   };
 
   // listen for global close events (e.g., X clicked in other windows)
@@ -117,6 +124,9 @@ const Signup = ({ setOpen }) => {
                 email={username}
                 onSignupSuccess={handleSignupSuccess}
               />
+            )}
+            {isSignupSuccessOpen && (
+              <SignupSuccess setOpen={handleCloseSuccess} />
             )}
           </div>
         </div>
