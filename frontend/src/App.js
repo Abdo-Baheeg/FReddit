@@ -26,7 +26,7 @@ import Navbar from "./components/Navbar";
 import Sidebar from "./components/SidebBar";
 import CreateCommunityModal from "./components/createCommunity";
 import CommunityPage from "./pages/communityPage";
-
+import About from "./pages/About";
 function AppContent() {
   const { isCreateCommunityModalOpen, closeCreateCommunityModal } =
     useCreateCommunity();
@@ -71,6 +71,7 @@ function AppContent() {
           <Route path="/premium" element={<Premium />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/community/:communityId" element={<CommunityPage />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </div>
 
