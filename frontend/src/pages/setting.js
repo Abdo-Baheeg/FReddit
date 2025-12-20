@@ -440,7 +440,7 @@ const Settings = () => {
             </div>
             <div className="setting-control">
               <span className="account-username">
-                <p>u/{user.username || 'No username'}</p>
+                <p> {user.username || 'No username'}</p>
               </span>
             </div>
           </div>
