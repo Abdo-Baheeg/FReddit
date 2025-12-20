@@ -6,7 +6,7 @@ import './viewprofile.css';
 export default function RedditProfilePageMock() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Overview');
-  const [activeView, setActiveView] = useState('top'); // 'top' or 'back'
+  const [activeView, setActiveView] = useState('top');
   const [selectedTime, setSelectedTime] = useState('Today');
   
   // User data
@@ -21,15 +21,25 @@ export default function RedditProfilePageMock() {
     feed: false,
     comments: false
   });
-
-  // NEW: State for background image
+  
+  // State for background image
   const [backgroundImage, setBackgroundImage] = useState(null);
+  
+  // State for contributions modal
+  const [showContributionsModal, setShowContributionsModal] = useState(false);
+
   const fileInputRef = useRef(null);
   const optionsRef = useRef(null);
   const buttonRef = useRef(null);
   const commentsOptionsRef = useRef(null);
   const commentsButtonRef = useRef(null);
   const topBackButtonRef = useRef(null);
+  const contributionsModalRef = useRef(null);
+
+  // Calculate total comments from all posts
+  const totalComments = posts.reduce((total, post) => {
+    return total + (post.comments?.length || 0);
+  }, 0);
 
   // Fetch user data
   useEffect(() => {
@@ -40,20 +50,13 @@ export default function RedditProfilePageMock() {
           navigate('/login');
           return;
         }
-
-        // Fetch user profile
         const userData = await userApi.getCurrentUser();
         setUser(userData);
-
-        // Fetch user's posts
         const allPosts = await postApi.getAllPosts();
         const userPosts = allPosts.filter(post => post.author?._id === userData.id);
         setPosts(userPosts);
-
-        // Fetch user's memberships
         const userMemberships = await membershipApi.getUserMemberships();
         setMemberships(userMemberships);
-
         setLoading(false);
       } catch (err) {
         console.error('Error fetching user data:', err);
@@ -64,36 +67,30 @@ export default function RedditProfilePageMock() {
         }
       }
     };
-
     fetchUserData();
   }, [navigate]);
 
-  // NEW: Function to handle button click
+  // Function to handle button click
   const handleBackgroundButtonClick = () => {
-    // Trigger the hidden file input
     fileInputRef.current.click();
   };
 
-  // NEW: Function to handle file selection
+  // Function to handle file selection
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Check if it's an image file
       if (!file.type.match('image.*')) {
         alert('Please select an image file');
         return;
       }
-
-      // Create a URL for the selected image
       const imageUrl = URL.createObjectURL(file);
       setBackgroundImage(imageUrl);
     }
   };
 
-  // NEW: Function to remove background image
+  // Function to remove background image
   const removeBackgroundImage = () => {
     setBackgroundImage(null);
-    // Clear the file input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -122,7 +119,12 @@ export default function RedditProfilePageMock() {
   // Handle time selection
   const handleTimeSelect = (time) => {
     setSelectedTime(time);
-    setActiveView('top'); // Switch back to top view after selecting time
+    setActiveView('top');
+  };
+
+  // Toggle contributions modal
+  const toggleContributionsModal = () => {
+    setShowContributionsModal(!showContributionsModal);
   };
 
   // Time options data
@@ -135,54 +137,58 @@ export default function RedditProfilePageMock() {
     { value: 'All Time', label: 'All Time' }
   ];
 
-  // Close options when clicking outside
+  // Close options 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Check if clicking outside feed dropdown
-      const isOutsideFeed = showOptions.feed && 
-        optionsRef.current && 
+      const isOutsideFeed = showOptions.feed &&
+        optionsRef.current &&
         !optionsRef.current.contains(event.target) &&
-        buttonRef.current && 
+        buttonRef.current &&
         !buttonRef.current.contains(event.target) &&
-        topBackButtonRef.current && 
+        topBackButtonRef.current &&
         !topBackButtonRef.current.contains(event.target);
       
-      // Check if clicking outside comments dropdown
-      const isOutsideComments = showOptions.comments && 
-        commentsOptionsRef.current && 
+      const isOutsideComments = showOptions.comments &&
+        commentsOptionsRef.current &&
         !commentsOptionsRef.current.contains(event.target) &&
-        commentsButtonRef.current && 
+        commentsButtonRef.current &&
         !commentsButtonRef.current.contains(event.target);
-
+      
+      const isOutsideModal = showContributionsModal &&
+        contributionsModalRef.current &&
+        !contributionsModalRef.current.contains(event.target);
+      
       if (isOutsideFeed || isOutsideComments) {
         setShowOptions({
           feed: false,
           comments: false
         });
       }
+      
+      if (isOutsideModal) {
+        setShowContributionsModal(false);
+      }
     };
-
+    
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showOptions.feed, showOptions.comments]);
+  }, [showOptions.feed, showOptions.comments, showContributionsModal]);
 
   if (loading) {
     return <div className="vpBody"><div className="loading">Loading profile...</div></div>;
   }
-
   if (error) {
     return <div className="vpBody"><div className="error">{error}</div></div>;
   }
-
   if (!user) {
     return <div className="vpBody"><div className="error">User not found</div></div>;
   }
 
   return (
     <div className="vpBody">
-      {/* Hidden file input for image selection */}
+      {/* File input for image selection */}
       <input
         type="file"
         ref={fileInputRef}
@@ -191,16 +197,59 @@ export default function RedditProfilePageMock() {
         onChange={handleFileChange}
       />
     
-      {/* Main Layout Container (Flexbox) */}
+      {/* Contributions Modal */}
+      {showContributionsModal && (
+        <div className="vpModalOverlay">
+          <div ref={contributionsModalRef} className="vpModal">
+            <div className="vpModalHeader">
+              <h3>Contributions</h3>
+              <button 
+                className="vpModalCloseBtn"
+                onClick={toggleContributionsModal}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="vpModalContent">
+              <h4>Total posts and comments</h4>
+              
+              {/* Posts Section */}
+              <div className="vpContributionItem">
+                <div className="vpContributionHeader">
+                  <span className="vpContributionIcon">①</span>
+                  <div className="vpContributionTitleContainer">
+                    <span className="vpContributionTitle">Posts</span>
+                  </div>
+                </div>
+                <div className="vpContributionValue">{posts.length}</div>
+              </div>
+              
+              {/* Comments Section */}
+              <div className="vpContributionItem">
+                <div className="vpContributionHeader">
+                  <span className="vpContributionIcon">①</span>
+                  <div className="vpContributionTitleContainer">
+                    <span className="vpContributionTitle">Comments</span>
+                  </div>
+                </div>
+                <div className="vpContributionValue">{totalComments}</div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      )}
+    
+      {/* Main Layout Container */}
       <div className="vpLayoutContainer">
         
-        {/* Main Content Area - Shifts when sidebar opens */}
+        {/* Main Content Area */}
         <div className="vpPageContentWrapper">
           
           <div className="vpPageContent">
             <main className="vpMain">
               <div className="vpBanner" />
-
               <div className="vpProfileInfo">
                 <div className="vpAvatarLarge">
                   <img
@@ -214,7 +263,6 @@ export default function RedditProfilePageMock() {
                   <p className="vpKarma">⭐ {user.karma || 0} karma</p>
                 </div>
               </div>
-
               <div className="vpTabs">
                 {['Overview', 'Posts', 'Comments', 'Saved', 'History', 'Hidden', 'Upvoted', 'Downvoted']
                   .map((tab) => (
@@ -228,13 +276,12 @@ export default function RedditProfilePageMock() {
                   ))
                 }
               </div>
-
               <div className="vpContentArea">
                 
                 {/* Show "Showing all content" section only for Overview, Posts, and Comments tabs */}
                 {(activeTab === 'Overview' || activeTab === 'Posts' || activeTab === 'Comments') && (
                   <div className="vpContentHeader">
-                    <div 
+                    <div
                       className="vpShowContent"
                       onClick={() => window.location.href = '/setting'}
                     >
@@ -247,7 +294,7 @@ export default function RedditProfilePageMock() {
                       <div className="vpCommentsHeaderRight">
                         {/* Comments dropdown wrapper */}
                         <div className="vpFeedButtonWrapper" style={{position: 'relative', display: 'inline-block'}}>
-                          <button 
+                          <button
                             ref={commentsButtonRef}
                             className="vpNewButton"
                             onClick={toggleCommentsOptions}
@@ -257,7 +304,7 @@ export default function RedditProfilePageMock() {
                           
                           {/* Comments options dropdown menu */}
                           {showOptions.comments && (
-                            <div 
+                            <div
                               ref={commentsOptionsRef}
                               className="feed-options-bar"
                             >
@@ -283,7 +330,7 @@ export default function RedditProfilePageMock() {
                     )}
                   </div>
                 )}
-
+                
                 {/* Show buttons container only for Overview and Posts tabs */}
                 {(activeTab === 'Overview' || activeTab === 'Posts') && (
                   <div className="vpButtonsContainer">
@@ -293,9 +340,9 @@ export default function RedditProfilePageMock() {
                       <span>+</span> Create Post
                     </button>
                     
-                    {/* Arrow button with relative positioning for dropdown */}
+                    {/* Arrow button with dropdown */}
                     <div className="vpFeedButtonWrapper" style={{position: 'relative', display: 'inline-block'}}>
-                      <button 
+                      <button
                         ref={buttonRef}
                         className="vpfeedBtn"
                         onClick={toggleFeedOptions}
@@ -303,9 +350,9 @@ export default function RedditProfilePageMock() {
                         <span>{'->'}</span>
                       </button>
                       
-                      {/* Options dropdown menu - appears next to the button */}
+                      {/* Options dropdown menu */}
                       {showOptions.feed && (
-                        <div 
+                        <div
                           ref={optionsRef}
                           className="feed-options-bar"
                         >
@@ -319,8 +366,9 @@ export default function RedditProfilePageMock() {
                               <span className="feed-option-icon">🆕</span>
                               <span className="feed-option-text">New</span>
                             </div>
+                            
                             {/* Top/Back Toggle Button */}
-                            <div 
+                            <div
                               ref={topBackButtonRef}
                               className={`feed-option-item toggle-button ${activeView === 'back' ? 'top-back-active' : ''}`}
                               onClick={toggleView}
@@ -337,29 +385,35 @@ export default function RedditProfilePageMock() {
                                 </>
                               )}
                             </div>
-
-                            {/* Time Filter Options - Only show when in "Back" mode */}
+                            
+                            {/* Time Filter Options */}
                             {activeView === 'back' && (
                               <div className="time-options">
-                                {timeOptions.map((time) => (
-                                  <div 
-                                    key={time.value}
-                                    className={`time-option ${selectedTime === time.value ? 'time-option-selected' : ''}`}
-                                    style={{ cursor: 'pointer' }}
-                                  >
-                                    <span 
-                                      className="time-option-label"
+                                {timeOptions.map((time) => {
+                                  const isSelected = selectedTime === time.value;
+                                  
+                                  return (
+                                    <div
+                                      key={time.value}
+                                      className={`time-option ${isSelected ? 'time-option-selected' : ''}`}
                                       onClick={() => handleTimeSelect(time.value)}
+                                      style={{ cursor: 'pointer' }}
                                     >
-                                      {time.label}
-                                    </span>
-
-                                    <span 
-                                      className="time-option-circle"
-                                      onClick={() => handleTimeSelect(time.value)}
-                                    ></span>
-                                  </div>
-                                ))}
+                                      <div className="time-option-left">
+                                        <span className="time-option-label">
+                                          {time.label}
+                                        </span>
+                                      </div>
+                                      
+                                      {/* Circle */}
+                                      <div className="time-option-circle-wrapper">
+                                        <div 
+                                          className={`time-option-circle ${isSelected ? 'circle-selected' : ''}`}
+                                        ></div>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
                               </div>
                             )}
                             
@@ -378,7 +432,7 @@ export default function RedditProfilePageMock() {
                     </div>
                   </div>
                 )}
-
+                
                 <div className="vpTabContent">
 
                   {activeTab === 'Overview' && (
@@ -387,15 +441,16 @@ export default function RedditProfilePageMock() {
                         <div className="vpEmptyState">
                           <div className="vpEmptyRobot">
                             <img
-                       src="/images/robot.png"
-                       width={162}
-                       height={162}
-                       />
-                      </div>
+                              src="/images/robot.png"
+                              width={162}
+                              height={162}
+                              alt="Robot"
+                            />
+                          </div>
                           <h2><b>You don't have any posts yet</b></h2>
                           <p>Once you post to a community, it'll show up here.</p>
-                           <button onClick={() => window.location.href = '/setting'}
-                       className="vpUpdateSettingsBtn">Update Settings</button>
+                          <button onClick={() => window.location.href = '/setting'}
+                            className="vpUpdateSettingsBtn">Update Settings</button>
                         </div>
                       ) : (
                         <div className="vpPostsList">
@@ -418,24 +473,24 @@ export default function RedditProfilePageMock() {
                       )}
                     </div>
                   )}
-
+                  
                   {activeTab === 'Posts' && (
                     <div>
                       {posts.length === 0 ? (
                         <div className="vpEmptyState">
                           <div className="vpEmptyRobot">
-                      <img
-                       src="/images/robot.png"
-                       width={162}
-                       height={162}
-                       />
-                      </div>
+                            <img
+                              src="/images/robot.png"
+                              width={162}
+                              height={162}
+                              alt="Robot"
+                            />
+                          </div>
                           <h2><b>You don't have any posts yet</b></h2>
                           <p>Once you post to a community, it'll show up here.</p>
-                           <button onClick={() => window.location.href = '/setting'}
-                       className="vpUpdateSettingsBtn">Update Settings</button>
+                          <button onClick={() => window.location.href = '/setting'}
+                            className="vpUpdateSettingsBtn">Update Settings</button>
                         </div>
-                        
                       ) : (
                         <div className="vpPostsList">
                           {posts.map(post => (
@@ -457,92 +512,97 @@ export default function RedditProfilePageMock() {
                       )}
                     </div>
                   )}
-
+                  
                   {activeTab === 'Comments' && (
                     <div className="vpEmptyState">
                       <div className="vpEmptyRobot">
                         <img
-                       src="/images/robot.png"
-                       width={162}
-                       height={162}
-                       />
+                          src="/images/robot.png"
+                          width={162}
+                          height={162}
+                          alt="Robot"
+                        />
                       </div>
                       <h2><b>You don't have any Comments yet</b></h2>
                       <button onClick={() => window.location.href = '/setting'}
-                       className="vpUpdateSettingsBtn">Update Settings</button>
+                        className="vpUpdateSettingsBtn">Update Settings</button>
                     </div>
                   )}
-
+                  
                   {activeTab === 'Saved' && (
                     <div className="vpEmptyState">
                       <div className="vpEmptyRobot">
                         <img
-                       src="/images/robot.png"
-                       width={162}
-                       height={162}
-                       />
+                          src="/images/robot.png"
+                          width={162}
+                          height={162}
+                          alt="Robot"
+                        />
                       </div>
                       <h2><b>Looks like you haven't saved anything yet</b></h2>
                     </div>
                   )}
-
+                  
                   {activeTab === 'History' && (
                     <div className="vpEmptyState">
                       <div className="vpEmptyRobot">
-                         <img
-                       src="/images/robot.png"
-                       width={162}
-                       height={162}
-                       />
+                        <img
+                          src="/images/robot.png"
+                          width={162}
+                          height={162}
+                          alt="Robot"
+                        />
                       </div>
                       <h2><b>Looks like you haven't visited any posts yet</b></h2>
                     </div>
                   )}
-
+                  
                   {activeTab === 'Hidden' && (
                     <div className="vpEmptyState">
                       <div className="vpEmptyRobot">
                         <img
-                       src="/images/robot.png"
-                       width={162}
-                       height={162}
-                       />
+                          src="/images/robot.png"
+                          width={162}
+                          height={162}
+                          alt="Robot"
+                        />
                       </div>
                       <h2><b>You haven't hidden any posts</b></h2>
                     </div>
                   )}
-
+                  
                   {activeTab === 'Upvoted' && (
                     <div className="vpEmptyState">
                       <div className="vpEmptyRobot">
-                      <img
-                       src="/images/robot.png"
-                       width={162}
-                       height={162}
-                       />
+                        <img
+                          src="/images/robot.png"
+                          width={162}
+                          height={162}
+                          alt="Robot"
+                        />
                       </div>
                       <h2><b>You haven't upvoted anything yet</b></h2>
                     </div>
                   )}
-
+                  
                   {activeTab === 'Downvoted' && (
                     <div className="vpEmptyState">
                       <div className="vpEmptyRobot">
-                       <img
-                       src="/images/robot.png"
-                       width={162}
-                       height={162}
-                       />
+                        <img
+                          src="/images/robot.png"
+                          width={162}
+                          height={162}
+                          alt="Robot"
+                        />
                       </div>
                       <h2><b>You haven't downvoted anything yet</b></h2>
                     </div>
                   )}
-
                 </div>
-
               </div>
             </main>
-{/****************************************Right sidebar******************************************************/}
+            
+            {/* Right sidebar */}
             <aside className="vpRightSidebar">
               <div className="vpRightCard">
                 <div className="Vpback" style={{
@@ -568,7 +628,7 @@ export default function RedditProfilePageMock() {
                     display: 'flex',
                     gap: '5px'
                   }}>
-                    <button 
+                    <button
                       onClick={handleBackgroundButtonClick}
                       style={{
                         width: '36px',
@@ -601,7 +661,7 @@ export default function RedditProfilePageMock() {
                     </button>
                     
                     {backgroundImage && (
-                      <button 
+                      <button
                         onClick={removeBackgroundImage}
                         style={{
                           width: '36px',
@@ -634,7 +694,6 @@ export default function RedditProfilePageMock() {
                       </button>
                     )}
                   </div>
-
                   {!backgroundImage && (
                     <div style={{
                       position: 'absolute',
@@ -652,39 +711,39 @@ export default function RedditProfilePageMock() {
                     </div>
                   )}
                 </div>
-
                 <div className="vpRightHeader">
-
                   <div className="vpRightUsername">{user.username}
-
-                     <div className="vpSectionHeaderRow">
-                    <button className="vpSectionBtnSmall" 
-                onClick={() => {navigator.clipboard.writeText(window.location.href); alert("Link Copied!");}}>
-                   Share
-                    </button>
+                    <div className="vpSectionHeaderRow">
+                      <button className="vpSectionBtnSmall"
+                        onClick={() => {navigator.clipboard.writeText(window.location.href); alert("Link Copied!");}}>
+                        Share
+                      </button>
+                    </div>
                   </div>
-                  </div>
-                  
                 </div>
-
             
-
                 <div className="vpStatsGrid">
                   <div><div className="vpStatValue">1</div><div className="vpStatLabel">Karma</div></div>
-                  <div><div className="vpStatValue">0</div><div className="vpStatLabel">Contributions</div></div>
-                  <div><div className="vpStatValue">1 m</div><div className="vpStatLabel">Reddit Age</div></div>
-
                   <div>
-                    <div className="vpStatValue">0</div> 
-                  <button onClick={() => window.location.href = '/setting'}
-                  className="vpStatLabel">Actived in 
-                  </button>
+                    <div className="vpStatValue">0</div>
+                    <button 
+                      className="vpStatButton"
+                      onClick={toggleContributionsModal}
+                    >
+                      <div className="vpStatLabel">Contributions</div>
+                    </button>
                   </div>
-                   <div><div className="vpStatValue">0</div><div className="vpStatLabel">Gold earned</div></div>
+                  <div><div className="vpStatValue">1 m</div><div className="vpStatLabel">Reddit Age</div></div>
+                  <div>
+                    <div className="vpStatValue">0</div>
+                    <button onClick={() => window.location.href = '/setting'}
+                      className="vpStatLabel">Actived in >
+                    </button>
+                  </div>
+                  <div><div className="vpStatValue">0</div><div className="vpStatLabel">Gold earned</div></div>
                 </div>
-
                 <hr className="vpDivider" />
-
+                
                 <div className="vpAchievements">
                   <h4>ACHIEVEMENTS</h4>
                   <div className="vpAchievementsRow">
@@ -693,67 +752,63 @@ export default function RedditProfilePageMock() {
                     <img src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png" alt="Joined Reddit" />
                     <span className="vpMoreAchievements">+1 more</span>
                   </div>
-
                   <div className="vpAchievementsCount">
-                    4 unlocked 
+                    4 unlocked
                     <a href="#" className="vpViewAll">
                       <button onClick={() => window.location.href = '/achievement'}
-                      className="vpSectionBtn">View All
+                        className="vpSectionBtn">View All
                       </button>
                     </a>
                   </div>
                 </div>
-
                 <hr className="vpDivider" />
-
-                {/* ================= PROFILE ================= */}
+                
+                {/* PROFILE */}
                 <div className="vpProfileSection">
                   <div className="vpSectionHeaderRow">
                     <h4>Profile</h4>
                     <button onClick={() => window.location.href = '/setting'}
-                    className="vpSectionBtnSmall">Update</button>
+                      className="vpSectionBtnSmall">Update</button>
                   </div>
                   <span className="vpSectionSubtitle">Customize your profile</span>
                 </div>
-
-                {/* ================= CURATE PROFILE ================= */}
+                
+                {/* CURATE PROFILE  */}
                 <div className="vpProfileSection">
                   <div className="vpSectionHeaderRow">
                     <h4>Curate your profile</h4>
                     <button onClick={() => window.location.href = '/setting'}
-                     className="vpSectionBtnSmall">Update</button>
+                      className="vpSectionBtnSmall">Update</button>
                   </div>
                   <span className="vpSectionSubtitle">Manage what people see when they visit your profile</span>
                 </div>
-
-                {/* ================= AVATAR ================= */}
+                
+                {/* AVATAR */}
                 <div className="vpProfileSection">
                   <div className="vpSectionHeaderRow">
                     <h4>Avatar</h4>
                     <button onClick={() => window.location.href = '/setting'}
-                    className="vpSectionBtnSmall">Update</button>
+                      className="vpSectionBtnSmall">Update</button>
                   </div>
                   <span className="vpSectionSubtitle">Style your avatar</span>
                 </div>
-
+                
                 <div className="vpProfileSection">
                   <div className="vpSectionHeaderRow">
                     <h4>Mod Tools</h4>
                     <button onClick={() => window.location.href = '/setting'}
-                    className="vpSectionBtnSmall">Update</button>
+                      className="vpSectionBtnSmall">Update</button>
                   </div>
                   <span className="vpSectionSubtitle">Style your avatar</span>
-                </div>   
-
-
+                </div>
+                
                 <div className="vpSocialLinks">
                   <div className="vpSectionHeaderRow">
                     <h4><b>SOCIAL LINKS</b></h4>
                   </div>
                   <button onClick={() => window.location.href = '/setting'}
-                   className="vpSectionBtnSmall">+ Add Social Link </button>
-                </div>   
-
+                    className="vpSectionBtnSmall">+ Add Social Link </button>
+                </div>
               </div>
             </aside>
           </div>
