@@ -875,19 +875,16 @@ const Settings = () => {
               <span className="label-sub">
                 Edit your avatar or upload an image
               </span>
-            </div>
-            <div className="setting-control">
-              <div className="avatar-preview">
-                {user.avatarUrl ? (
-                  <img src={user.avatarUrl} alt="Avatar" className="avatar-image" />
-                ) : (
-                  <div className="avatar-placeholder">
-                    {user.username?.charAt(0).toUpperCase() || 'U'}
-                  </div>
-                )}
               </div>
+            <div className="setting-control">
+              <button className="bio-button" >
+                <span className="about-description">
+                  { '>'}
+                </span>
+              </button>
             </div>
           </div>
+
 
           <div className="settings-row">
             <div className="setting-label">

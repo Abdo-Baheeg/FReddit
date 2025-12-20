@@ -157,15 +157,7 @@ export const userApi = {
     return response.data;
   },
 
-  // Update avatar URL only
-  updateAvatar: async (avatar_url) => {
-    const response = await axios.put(
-      `${API_URL}/api/users/me`,
-      { avatar_url },
-      { headers: getAuthHeaders() }
-    );
-    return response.data;
-  },
+
 
   //update password
   updatePassword: async (currentPassword, newPassword) => {
@@ -177,17 +169,6 @@ export const userApi = {
     return response.data;
   },
 
-  // Delete user account (requires password confirmation)
-  deleteAccount: async (password) => {
-    const response = await axios.delete(
-      `${API_URL}/api/users/me`,
-      {
-        headers: getAuthHeaders(),
-        data: { password }
-      }
-    );
-    return response.data;
-  }
 
 
 };
