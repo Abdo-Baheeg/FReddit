@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CommunityHeader from "../components/communityHeader";
 import CommunitySidebar from "../components/communitySidebar";
-import {PostCard} from "../components/PostCard";
+import PostCard from "../components/PostCard";
 import PrivateCommunityGate from "../components/privateCommunityGate";
 import "./communityPage.css";
 

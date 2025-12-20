@@ -7,6 +7,19 @@
   background-color: var(--background-color);
   height: 100%;
   overflow: hidden;
+  --background-color: #ffffff;
+  --text-primary: #1c1c1c;
+  --text-secondary: #7c7c7c;
+  --border-color: #edeff1;
+  --hover-color: #f6f7f8;
+}
+
+.vpDarkMode .chat-sidebar {
+  --background-color: #1a1a1b;
+  --text-primary: #d7dadc;
+  --text-secondary: #818384;
+  --border-color: #343536;
+  --hover-color: #272729;
 }
 
 .chat-sidebar-header {

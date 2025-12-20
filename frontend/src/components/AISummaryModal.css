@@ -32,8 +32,19 @@
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   animation: slideUp 0.3s ease-out;
+  border: 1px solid var(--reddit-border);
+  --reddit-card-bg: #ffffff;
+  --reddit-border: #edeff1;
+  --reddit-text-primary: #1c1c1c;
+}
+
+.vpDarkMode .ai-modal-container {
+  --reddit-card-bg: #1a1a1b;
+  --reddit-border: #343536;
+  --reddit-text-primary: #d7dadc;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
 }
 
 @keyframes slideUp {

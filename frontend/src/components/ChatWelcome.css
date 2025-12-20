@@ -5,6 +5,21 @@
   height: 100%;
   position: relative;
   background-color: var(--background-color);
+  --background-color: #ffffff;
+  --text-primary: #1c1c1c;
+  --text-secondary: #7c7c7c;
+  --hover-color: #f6f7f8;
+  --primary-color: #0045ac;
+  --primary-hover: #003584;
+}
+
+.vpDarkMode .chat-welcome-container {
+  --background-color: #1a1a1b;
+  --text-primary: #d7dadc;
+  --text-secondary: #818384;
+  --hover-color: #272729;
+  --primary-color: #4a90e2;
+  --primary-hover: #3a7bc8;
 }
 
 .chat-welcome-controls {
@@ -87,7 +102,7 @@
 }
 
 .chat-welcome-btn {
-  background-color: #0045ac;
+  background-color: var(--primary-color);
   color: white;
   font-weight: 700;
   padding: 10px 24px;
@@ -98,6 +113,11 @@
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease;
+}
+
+.chat-welcome-btn:hover {
+  background-color: var(--primary-hover);
+
   font-size: 14px;
 }
 

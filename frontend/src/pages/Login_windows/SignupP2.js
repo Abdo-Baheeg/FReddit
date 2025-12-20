@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import {
   Logintitle,
@@ -11,6 +12,7 @@ import { userApi } from "../../api";
 
 
 const SignupP2 = ({ setOpen, email, onSignupSuccess }) => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   // Both are Empty → disabled
@@ -31,6 +33,10 @@ const SignupP2 = ({ setOpen, email, onSignupSuccess }) => {
       setOpen(false);
       // notify parent to close other windows (signup/login)
       onSignupSuccess && onSignupSuccess();
+      
+      // Navigate to home and reload to update navbar/sidebar
+      navigate('/');
+      window.location.reload();
     } catch (err) {
       // If backend indicates username already exists, show the required text
       const msg =

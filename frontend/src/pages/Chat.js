@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import { useTheme } from '../context/ThemeContext';
 import { chatApi } from '../api';
-import { userApi } from '../api/userApi';
+import { userApi } from '../api';
 import { MessageCircle } from 'lucide-react';
 import ChatSidebar from '../components/ChatSidebar';
 import ChatWelcome from '../components/ChatWelcome';
@@ -31,18 +31,19 @@ const Chat = () => {
     joinConversation
   } = useSocket();
 
+  const [unreadCounts, setUnreadCounts] = useState({});
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showNewChatModal, setShowNewChatModal] = useState(false);
-
+  
   const getOtherUser = (conv) => {
-  if (!conv || conv.type === 'community') return null;
-  return conv.participants.find(
-    p => String(p._id) !== String(currentUserId)
-  );
-};
-
-
+    if (!conv || conv.type === 'community') return null;
+    return conv.participants.find(
+      p => String(p._id) !== String(currentUserId)
+    );
+  };
+  
+  
   // ================= Load current user =================
   useEffect(() => {
     const loadCurrentUser = async () => {
@@ -57,7 +58,7 @@ const Chat = () => {
     };
     loadCurrentUser();
   }, []);
-
+  
   // ================= Load conversations =================
   useEffect(() => {
     const loadConversations = async () => {
@@ -72,11 +73,11 @@ const Chat = () => {
     };
     loadConversations();
   }, [setConversations]);
-
+  
   // ================= Auto select conversation =================
   useEffect(() => {
     if (!conversations.length) return;
-
+    
     if (conversationId) {
       const conv = conversations.find(c => c._id === conversationId);
       if (conv) setSelectedConversation(conv);
@@ -85,12 +86,12 @@ const Chat = () => {
       navigate(`/chat/${conversations[0]._id}`);
     }
   }, [conversations, conversationId, navigate]);
-
+  
   // ================= Load messages =================
   useEffect(() => {
     const loadMessages = async () => {
       if (!selectedConversation) return;
-
+      
       try {
         const msgs = await chatApi.getMessages(selectedConversation._id);
         setMessages(prev => ({
@@ -102,24 +103,24 @@ const Chat = () => {
         console.error(err);
       }
     };
-
+    
     if (selectedConversation && !messages[selectedConversation._id]) {
       loadMessages();
     } else if (selectedConversation) {
       markAsRead(selectedConversation._id);
     }
   }, [selectedConversation, messages, setMessages, markAsRead]);
-
+  
   // ================= Handlers =================
   const handleSelectConversation = (conv) => {
     setSelectedConversation(conv);
     navigate(`/chat/${conv._id}`);
   };
-
+  
   const handleStartNewChat = () => {
     setShowNewChatModal(true);
   };
-
+  
   const handleChatCreated = (conversation) => {
     // Add new conversation to list if not already there
     const exists = conversations.find(c => c._id === conversation._id);
@@ -135,15 +136,15 @@ const Chat = () => {
       joinConversation(conversation._id);
     }
   };
-
+  
   const handleSendMessageFromInput = (content) => {
     if (selectedConversation && content.trim()) {
       sendMessage(selectedConversation._id, content);
       setTyping(selectedConversation._id, false);
     }
   };
-
-  const currentUserId = localStorage.getItem('userId');
+  
+  const [currentUserId, setCurrentUserId] = useState(null);
   const currentMessages = selectedConversation ? messages[selectedConversation._id] || [] : [];
   const typingInCurrent = selectedConversation ? typingUsers[selectedConversation._id] || {} : {};
 

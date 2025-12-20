@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import Signup from "./Signup.js";
 import Reset from "./Reset.js";
@@ -18,6 +19,7 @@ import {
 import { userApi } from "../../api";
 
 const Login = ({ setOpen }) => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   // Both are Empty → disabled
@@ -46,8 +48,12 @@ const Login = ({ setOpen }) => {
         localStorage.setItem("token", response.token);
       }
 
-      // Close the modal on successful login
+      // Close the modal
       setOpen(false);
+      
+      // Navigate to home and reload to update navbar/sidebar
+      navigate('/');
+      window.location.reload();
     } catch (err) {
       // show a user-friendly message on login failure
       setError("Invalid email or password");

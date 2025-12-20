@@ -10,6 +10,19 @@
   z-index: 10;
   gap: 16px;
   flex-wrap: wrap;
+  --color-canvas-default: #ffffff;
+  --color-canvas-subtle: #f6f7f8;
+  --color-border-default: #edeff1;
+  --color-fg-default: #1c1c1c;
+  --color-accent-emphasis: #0045ac;
+}
+
+.vpDarkMode .notification-filters {
+  --color-canvas-default: #1a1a1b;
+  --color-canvas-subtle: #272729;
+  --color-border-default: #343536;
+  --color-fg-default: #d7dadc;
+  --color-accent-emphasis: #4a90e2;
 }
 
 .filter-tabs {

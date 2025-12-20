@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Home, TrendingUp, Compass, Circle, Plus, Gamepad2, 
   CircleDot, MonitorPlay, Shield, Users as UsersIcon, 
-  Trophy, Globe, ChevronDown 
+  Trophy, Globe, ChevronDown, PenSquare, HelpCircle,
+  BookOpen, Briefcase, Newspaper, Megaphone
 } from 'lucide-react';
 import './Sidebar.css';
 import { useCreateCommunity } from '../context/CreateCommunityContext';
+import { membershipApi } from '../api';
 
 const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
 
@@ -14,7 +16,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   const [openSections, setOpenSections] = useState({
     games: true,
     customFeeds: true,
-    recent: true,
     communities: true,
     resources: true,
   });
@@ -35,16 +36,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
           return;
         }
 
-        const response = await fetch('http://localhost:5000/api/communities/joined', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setJoinedCommunities(data);
-        }
+        const data = await membershipApi.getUserMemberships();
+        // Extract community details from membership data
+        const communities = data.memberships.map(membership => membership.community);
+        setJoinedCommunities(communities);
       } catch (error) {
         console.error('Error fetching joined communities:', error);
       } finally {
@@ -138,19 +133,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
 
       <div className="separator"></div>
 
-      {/* --- SECTION: RECENT --- */}
-      <Collapsible 
-        title="RECENT" 
-        isOpen={openSections.recent} 
-        onToggle={() => toggleSection('recent')}
-      >
-        <MenuItem imgSrc="https://styles.redditmedia.com/t5_5l62s/styles/communityIcon_s936154673.png" label="r/AlexandriaEgy" isRound onClick={() => handleItemClick('/r/AlexandriaEgy')} />
-        <MenuItem imgSrc="https://upload.wikimedia.org/wikipedia/commons/f/fa/Flag_of_Egypt.svg" label="r/ExEgypt" isRound onClick={() => handleItemClick('/r/ExEgypt')} />
-        <MenuItem imgSrc="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" label="r/Egypt" isRound onClick={() => handleItemClick('/r/Egypt')} />
-      </Collapsible>
-
-      <div className="separator"></div>
-
       {/* --- SECTION: COMMUNITIES (JOINED) --- */}
       <Collapsible 
         title="COMMUNITIES" 
@@ -231,16 +213,15 @@ const getIcon = (name) => {
     case 'popular': return <TrendingUp size={20} />;
     case 'explore': return <Compass size={20} />;
     case 'all': return <Circle size={20} />;
-    case 'add': return <Plus size={20} />;
+    case 'add': return <PenSquare size={20} />;
     case 'controller': return <Gamepad2 size={20} />;
     case 'reddit': return <CircleDot size={20} />;
-    case 'advertise': return <MonitorPlay size={20} />;
-    case 'dev': return <CircleDot size={20} />;
-    case 'pro': return <CircleDot size={20} />;
-    case 'help': return <CircleDot size={20} />;
-    case 'blog': return <CircleDot size={20} />;
-    case 'careers': return <CircleDot size={20} />;
-    case 'press': return <CircleDot size={20} />;
+    case 'advertise': return <Megaphone size={20} />;
+    case 'dev': return <MonitorPlay size={20} />;
+    case 'help': return <HelpCircle size={20} />;
+    case 'blog': return <BookOpen size={20} />;
+    case 'careers': return <Briefcase size={20} />;
+    case 'press': return <Newspaper size={20} />;
     case 'rules': return <Shield size={20} />;
     case 'access': return <UsersIcon size={20} />;
     case 'communities_footer': return <UsersIcon size={20} />;
