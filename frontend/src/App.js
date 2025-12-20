@@ -15,6 +15,7 @@ import Chat from "./pages/Chat";
 import RedditProfilePage from "./pages/viewprofile.js";
 import Setting from "./pages/setting";
 import Notifications from "./pages/Notifications";
+import Search from "./pages/Search";
 import Drafts from "./pages/Drafts";
 import Achievements from "./pages/Achievements";
 import Premium from "./pages/Premium";
@@ -53,9 +54,10 @@ function AppContent() {
           <Route path="/post/:id" element={<PostDetail />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/chat/:conversationId" element={<Chat />} />
-          <Route path="/viewprofile" element={<RedditProfilePage />} />
+          <Route path="/me" element={<RedditProfilePage />} />
           <Route path="/setting" element={<Setting />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/search" element={<Search />} />
           <Route path="/drafts" element={<Drafts />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/premium" element={<Premium />} />

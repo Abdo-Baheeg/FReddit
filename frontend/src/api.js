@@ -647,6 +647,108 @@ export const savedApi = {
   }
 };
 
+// Notifications API endpoints
+export const notificationApi = {
+  // Get all notifications
+  getNotifications: async () => {
+    const response = await axios.get(`${API_URL}/api/notifications`, {
+      headers: getAuthHeaders()
+    });
+    return response.data;
+  },
+
+  // Get unread count
+  getUnreadCount: async () => {
+    const response = await axios.get(`${API_URL}/api/notifications/unread-count`, {
+      headers: getAuthHeaders()
+    });
+    return response.data;
+  },
+
+  // Mark notification as read
+  markAsRead: async (notificationId) => {
+    const response = await axios.put(
+      `${API_URL}/api/notifications/${notificationId}/read`,
+      {},
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Mark all notifications as read
+  markAllAsRead: async () => {
+    const response = await axios.put(
+      `${API_URL}/api/notifications/mark-all-read`,
+      {},
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Delete notification
+  deleteNotification: async (notificationId) => {
+    const response = await axios.delete(
+      `${API_URL}/api/notifications/${notificationId}`,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Delete all notifications
+  deleteAllNotifications: async () => {
+    const response = await axios.delete(
+      `${API_URL}/api/notifications`,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // Create test notifications (for development)
+  createTestNotifications: async () => {
+    const response = await axios.post(
+      `${API_URL}/api/notifications/test`,
+      {},
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  }
+};
+
+// Search API endpoints
+export const searchApi = {
+  // Global search across all types
+  search: async (query, type = 'all', page = 1, limit = 20, sort = 'relevant') => {
+    const response = await axios.get(`${API_URL}/api/search`, {
+      params: { q: query, type, page, limit, sort }
+    });
+    return response.data;
+  },
+
+  // Search posts only
+  searchPosts: async (query, page = 1, limit = 20, sort = 'relevant') => {
+    const response = await axios.get(`${API_URL}/api/search`, {
+      params: { q: query, type: 'posts', page, limit, sort }
+    });
+    return response.data;
+  },
+
+  // Search communities only
+  searchCommunities: async (query, page = 1, limit = 20) => {
+    const response = await axios.get(`${API_URL}/api/search`, {
+      params: { q: query, type: 'communities', page, limit }
+    });
+    return response.data;
+  },
+
+  // Search users only
+  searchUsers: async (query, page = 1, limit = 20) => {
+    const response = await axios.get(`${API_URL}/api/search`, {
+      params: { q: query, type: 'users', page, limit }
+    });
+    return response.data;
+  }
+};
+
 // Health check endpoint
 export const healthApi = {
   // Check API health

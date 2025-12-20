@@ -1,0 +1,110 @@
+.chat-welcome-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  background-color: var(--background-color);
+}
+
+.chat-welcome-controls {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10;
+}
+
+.chat-control-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.chat-control-btn:hover {
+  background-color: var(--hover-color);
+}
+
+.chat-control-btn .material-icons-outlined {
+  font-size: 20px;
+}
+
+.chat-welcome-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.chat-welcome-image {
+  margin-bottom: 24px;
+  width: 192px;
+  height: 192px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #caf0f8;
+  overflow: hidden;
+  position: relative;
+}
+
+.chat-welcome-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.1);
+}
+
+.chat-welcome-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.chat-welcome-description {
+  color: var(--text-secondary);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 32px;
+  max-width: 400px;
+}
+
+.chat-welcome-btn {
+  background-color: #0045ac;
+  color: white;
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
+}
+
+.chat-welcome-btn:hover {
+  background-color: #003584;
+}
+
+.chat-welcome-btn .material-icons-outlined {
+  font-size: 20px;
+}

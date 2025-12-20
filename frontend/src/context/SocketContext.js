@@ -48,6 +48,22 @@ export const SocketProvider = ({ children }) => {
           ...prev,
           [conversationId]: [...(prev[conversationId] || []), message]
         }));
+        
+        // Update conversation list with latest message
+        setConversations(prev => {
+          const updated = prev.map(conv => {
+            if (conv._id === conversationId) {
+              return {
+                ...conv,
+                lastMessage: message,
+                updatedAt: new Date()
+              };
+            }
+            return conv;
+          });
+          // Sort by updatedAt
+          return updated.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        });
       });
 
       newSocket.on('unread_update', (data) => {
