@@ -108,12 +108,13 @@
 }
 
 .vote-button.active {
-  background-color: rgba(255, 69, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
-.vote-button.active img {
+/* REMOVED: Color filter for active vote buttons */
+/* .vote-button.active img {
   filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) !important;
-}
+} */
 
 .vote-count {
   padding: 0 0.75rem;
@@ -144,7 +145,8 @@
   background-color: #e5e7eb;
 }
 
-.action-button.active {
+/* REMOVED: Active state styling for AI Summary button */
+/* .action-button.active {
   color: #ff4500;
   background-color: rgba(255, 69, 0, 0.1);
 }
@@ -152,7 +154,7 @@
 .action-button.active svg {
   fill: #ff4500;
   color: #ff4500;
-}
+} */
 
 .action-count, .share-text, .ai-text {
   font-size: 0.875rem;
@@ -212,15 +214,10 @@
   border-color: #9ca3af !important;
 }
 
-.save-button.saved {
-  background-color: rgba(255, 69, 0, 0.1) !important;
-  color: #ff4500 !important;
-  border-color: rgba(255, 69, 0, 0.3) !important;
-}
-
-.save-button.saved img {
+/* REMOVED: Color filter for saved button icon */
+/* .save-button.saved img {
   filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) !important;
-}
+} */
 
 .save-button:disabled {
   opacity: 0.5;
@@ -271,21 +268,12 @@
   }
 }
 
-/* Ensure images are visible */
-img[src*="upvote.png"],
-img[src*="downvote.png"],
-img[src*="comment.png"],
-img[src*="share.png"],
-img[src*="save.png"],
-img[src*="saved.png"] {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  width: 20px !important;
-  height: 20px !important;
+/* Action button disabled state */
+.action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-/* Debug border for troubleshooting */
-.debug-border {
-  border: 1px solid red !important;
+.action-button:disabled:hover {
+  background-color: #f3f4f6 !important;
 }
