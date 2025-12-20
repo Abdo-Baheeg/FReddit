@@ -1302,3 +1302,14 @@ input:checked + .toggle-slider:before {
 
 
 
+.change-email-btn {
+  background-color: transparent;
+  border:none;
+  cursor: pointer;
+}
+
+.change-password-btn {
+  background-color: transparent;
+  border:none;
+  cursor: pointer;
+}

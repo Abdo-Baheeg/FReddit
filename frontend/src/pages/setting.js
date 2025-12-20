@@ -27,6 +27,21 @@ const Settings = () => {
   // NEW STATES FOR INLINE EDITING
   const [isEditing, setIsEditing] = useState(false);
   const [newUsername, setNewUsername] = useState("");
+
+  // NEW STATES FOR EMAIL INLINE EDITING
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [isSavingEmail, setIsSavingEmail] = useState(false);
+
+  // NEW STATES FOR PASSWORD INLINE EDITING
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
+
   
   const tabs = [
     'Account',
@@ -122,6 +137,130 @@ const Settings = () => {
     setIsEditing(false);
     setNewUsername("");
     setDisplayNameError('');
+  };
+
+  // NEW: Handle saving email
+  const handleSaveEmail = async () => {
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!newEmail.trim()) {
+      setEmailError('Email cannot be empty');
+      return;
+    }
+
+    if (!emailRegex.test(newEmail)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+
+    // Check if email is same as current
+    if (newEmail === user?.email) {
+      setEmailError('This is already your current email');
+      return;
+    }
+
+    setIsSavingEmail(true);
+
+    try {
+      // Call the API to update email
+      const updatedUser = await userApi.updateEmail(newEmail.trim());
+      
+      // Update the user in state
+      setUser(updatedUser);
+      
+      // Exit editing mode
+      setIsEditingEmail(false);
+      setEmailError('');
+      
+      // Refresh user data from server
+      await fetchCurrentUser();
+      
+      console.log('Email updated successfully via API');
+      
+    } catch (err) {
+      console.error('Error updating email:', err);
+      
+      // Handle specific error cases
+      if (err.response?.status === 401) {
+        setEmailError('Your session has expired. Please log in again.');
+      } else if (err.response?.status === 409) {
+        setEmailError('This email is already in use.');
+      } else if (err.message === 'Network Error') {
+        setEmailError('Network error. Please check your internet connection.');
+      } else {
+        setEmailError('Failed to update email. Please try again.');
+      }
+    } finally {
+      setIsSavingEmail(false);
+    }
+  };
+
+  // NEW: Handle saving password
+  const handleSavePassword = async () => {
+    // Validate password
+    if (!currentPassword.trim()) {
+      setPasswordError('Current password is required');
+      return;
+    }
+
+    if (!newPassword.trim()) {
+      setPasswordError('New password is required');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordError('New password must be at least 6 characters');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('New passwords do not match');
+      return;
+    }
+
+    setIsSavingPassword(true);
+
+    try {
+      // Call the API to update password
+      await userApi.updatePassword(currentPassword.trim(), newPassword.trim());
+      
+      // Clear password fields
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      
+      // Exit editing mode
+      setIsEditingPassword(false);
+      setPasswordError('');
+      
+      console.log('Password updated successfully via API');
+      
+    } catch (err) {
+      console.error('Error updating password:', err);
+      
+      // Handle specific error cases
+      if (err.response?.status === 401) {
+        setPasswordError('Current password is incorrect');
+      } else if (err.response?.status === 400) {
+        setPasswordError('Invalid password format');
+      } else if (err.message === 'Network Error') {
+        setPasswordError('Network error. Please check your internet connection.');
+      } else {
+        setPasswordError('Failed to update password. Please try again.');
+      }
+    } finally {
+      setIsSavingPassword(false);
+    }
+  };
+
+  // NEW: Handle cancel password editing
+  const handleCancelPasswordEdit = () => {
+    setIsEditingPassword(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setPasswordError('');
   };
 
   // About Description Modal Functions
@@ -380,7 +519,7 @@ const Settings = () => {
     }
   };
 
-  // Render Account tab content
+  // Render Account tab content - UPDATED WITH EMAIL AND PASSWORD INLINE EDITING
   const renderAccountContent = () => (
     <div className="settings-main">
       <div className="general-section">
@@ -447,22 +586,136 @@ const Settings = () => {
 
           <div className="settings-row">
             <div className="setting-label">
-              <span className="label-main">Account created</span>
+              <span className="label-main">Change Email </span>
             </div>
             <div className="setting-control">
-              <span className="account-created">
-                <p>
-                  {user.createdAt 
-                    ? new Date(user.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })
-                    : 'Unknown'}
-                </p>
-              </span>
+              {!isEditingEmail ? (
+                /* VIEW MODE */
+                <span className="change-email">
+                  <button
+                    className="change-email-btn"
+                    onClick={() => {
+                      setNewEmail(user?.email || '');
+                      setIsEditingEmail(true);
+                    }}
+                  >
+                    Change Ur Email >
+                  </button>
+                </span>
+              ) : (
+                /* EDIT MODE */
+                <div className="display-name-edit-container">
+                  <input
+                    type="email"
+                    className="display-name-input-inline"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    placeholder="Enter new email"
+                    autoFocus
+                  />
+
+                  <div className="inline-buttons">
+                    <button
+                      className="save-button-inline"
+                      onClick={handleSaveEmail}
+                      disabled={isSavingEmail || !newEmail.trim()}
+                    >
+                      {isSavingEmail ? 'Saving...' : 'Save'}
+                    </button>
+
+                    <button
+                      className="cancel-button-inline"
+                      onClick={() => {
+                        setIsEditingEmail(false);
+                        setEmailError('');
+                      }}
+                      disabled={isSavingEmail}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+
+                  {emailError && (
+                    <div className="inline-error">
+                      {emailError}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
+
+          <div className="settings-row">
+            <div className="setting-label">
+              <span className="label-main">Change Password  </span>
+            </div>
+            <div className="setting-control">
+              {!isEditingPassword ? (
+                /* VIEW MODE */
+                <span className="change-password">
+                  <button
+                    className="change-password-btn"
+                    onClick={() => setIsEditingPassword(true)}
+                  >
+                    Change Ur Password >
+                  </button>
+                </span>
+              ) : (
+                /* EDIT MODE */
+                <div className="password-edit-container">
+                  <div className="password-input-group">
+                    <input
+                      type="password"
+                      className="display-name-input-inline"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="Current password"
+                      autoFocus
+                    />
+                    <input
+                      type="password"
+                      className="display-name-input-inline"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="New password"
+                    />
+                    <input
+                      type="password"
+                      className="display-name-input-inline"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm new password"
+                    />
+                  </div>
+
+                  <div className="inline-buttons">
+                    <button
+                      className="save-button-inline"
+                      onClick={handleSavePassword}
+                      disabled={isSavingPassword || !currentPassword.trim() || !newPassword.trim() || !confirmPassword.trim()}
+                    >
+                      {isSavingPassword ? 'Saving...' : 'Save'}
+                    </button>
+
+                    <button
+                      className="cancel-button-inline"
+                      onClick={handleCancelPasswordEdit}
+                      disabled={isSavingPassword}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+
+                  {passwordError && (
+                    <div className="inline-error">
+                      {passwordError}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
 
         <h2 className="section-title" style={{marginTop: '40px'}}>Account authorization</h2>
