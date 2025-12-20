@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./allCommunities.css";
 
-// ✅ CENTRAL API ONLY
 import { communityApi, membershipApi } from "../api";
 
 export default function AllCommunities() {
@@ -23,22 +22,18 @@ export default function AllCommunities() {
       setError("");
 
       try {
-        // 1️⃣ Load all communities
         const data = await communityApi.getAllCommunities();
         if (!mounted) return;
 
         setCommunities(data);
 
-        // Init joined map (default: not joined)
         const tempMap = new Map();
         data.forEach((c) => tempMap.set(c._id, false));
         setJoinedMap(tempMap);
 
-        // 2️⃣ Load user memberships (if logged in)
         try {
           const memberships = await membershipApi.getUserMemberships();
 
-          // 🔥 FIX: handle populated OR non-populated communityId
           const memberIds = new Set(
             memberships.map((m) =>
               String(m.communityId?._id || m.communityId)
@@ -55,7 +50,6 @@ export default function AllCommunities() {
             return copy;
           });
         } catch {
-          // not logged in → ignore
         }
       } catch (err) {
         if (mounted) setError(err.message || "Failed to load communities");
@@ -91,7 +85,8 @@ export default function AllCommunities() {
       );
     } catch (err) {
       if (err?.response?.status === 401) {
-        navigate("/login");
+        const loginBtn = document.querySelector(".vpLoginBtn");
+        if (loginBtn) loginBtn.click();
       } else {
         setError(err.message || "Join failed");
       }
@@ -121,7 +116,8 @@ export default function AllCommunities() {
       );
     } catch (err) {
       if (err?.response?.status === 401) {
-        navigate("/login");
+        const loginBtn = document.querySelector(".vpLoginBtn");
+        if (loginBtn) loginBtn.click();
       } else {
         setError(err.message || "Leave failed");
       }
@@ -131,7 +127,7 @@ export default function AllCommunities() {
   }
 
   function toggleJoin(communityId, e) {
-    e.preventDefault();   // 🔥 required because card is wrapped in Link
+    e.preventDefault();
     e.stopPropagation();
 
     const isJoined = joinedMap.get(communityId);

@@ -1,0 +1,154 @@
+.about-page {
+  min-height: 100vh;
+  background-color: #f6f7f8;
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.about-page.dark {
+  background-color: #030303;
+}
+
+.about-card {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border: 1px solid #d37847;
+  border-radius: 8px;
+  padding: 32px;
+}
+
+.about-page.dark .about-card {
+  background: #1a1a1b;
+  border-color: #343536;
+  color: #d7dadc;
+}
+
+/* Header */
+.about-header {
+  text-align: center;
+}
+
+.about-header img {
+  width: 64px;
+  margin-bottom: 12px;
+}
+
+.about-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.about-subtitle {
+  font-size: 14px;
+  color: #7c7c7c;
+}
+
+/* Description */
+.about-desc {
+  margin: 20px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Sections */
+.about-section {
+  margin-top: 24px;
+}
+
+.about-section h3 {
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+/* Tech badges */
+.tech-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tech-badges span {
+  background: #e5895e;
+  border: 1px solid #edeff1;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.about-page.dark .tech-badges span {
+  background: #272729;
+  border-color: #343536;
+}
+
+/* Links */
+.about-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.about-links a {
+  text-decoration: none;
+  color: #e1724d;
+  font-weight: 600;
+  border: 1px solid #e1724d;
+  padding: 10px;
+  border-radius: 20px;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.about-links a:hover {
+  background: #e1724d;
+  color: #fff;
+}
+
+/* Contributors */
+.contributors {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contributors li {
+  padding: 6px 0;
+  font-size: 14px;
+}
+.contributors-section {
+  margin-top: 16px;
+}
+
+.contributors-section h3 {
+  font-size: 14px;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.contributors-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contributors-list li {
+  margin-bottom: 6px;
+}
+
+.contributors-list a {
+  color: #e1724d;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.contributors-list a:hover {
+  text-decoration: underline;
+}
+/* Footer */
+.about-footer {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 12px;
+  color: #878a8c;
+}

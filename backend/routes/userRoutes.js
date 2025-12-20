@@ -887,4 +887,28 @@ router.get('/:userId/stats', async (req, res) => {
   }
 });
 
+// @route   GET /api/users/search
+// @desc    Search for users by username
+// @access  Private
+router.get('/search', authMiddleware, async (req, res) => {
+  try {
+    const { q, limit = 10 } = req.query;
+
+    if (!q || q.trim().length < 2) {
+      return res.status(400).json({ message: 'Search query must be at least 2 characters' });
+    }
+
+    const users = await User.find({
+      username: { $regex: q, $options: 'i' }
+    })
+      .select('username avatar_url email')
+      .limit(parseInt(limit));
+
+    res.json(users);
+  } catch (error) {
+    console.error('Search users error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 module.exports = router;

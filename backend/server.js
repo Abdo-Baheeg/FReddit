@@ -60,7 +60,10 @@ const chatRoutes = require('./routes/chatRoutes');
 const voteRoutes = require('./routes/voteRoutes');
 const membershipRoutes = require('./routes/membershipRoutes');
 const feedRoutes = require('./routes/feedRoutes');
+const savedRoutes = require('./routes/savedRoutes');
 const authRoutes = require('./routes/auth');
+const notificationRoutes = require('./routes/notificationRoutes');
+const searchRoutes = require('./routes/searchRoutes');
 
 // Use routes
 app.use('/api/users', userRoutes);
@@ -71,6 +74,9 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/votes', voteRoutes);
 app.use('/api/memberships', membershipRoutes);
 app.use('/api/feed', feedRoutes);
+app.use('/api/saved', savedRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/search', searchRoutes);
 app.use('/auth', authRoutes); // Email verification and password reset routes
 
 // Socket.IO setup
@@ -100,6 +106,24 @@ io.on('connection', (socket) => {
       socket.emit('conversations_joined', { count: conversations.length });
     } catch (error) {
       socket.emit('error', { message: 'Failed to join conversations' });
+    }
+  });
+
+  // Join a specific conversation
+  socket.on('join_conversation', async (data) => {
+    try {
+      const { conversationId } = data;
+      
+      // Verify user is part of conversation
+      const conversation = await Conversation.findById(conversationId);
+      if (conversation && conversation.participants.includes(socket.user._id)) {
+        socket.join(`conversation:${conversationId}`);
+        socket.emit('conversation_joined', { conversationId });
+      } else {
+        socket.emit('error', { message: 'Not authorized to join this conversation' });
+      }
+    } catch (error) {
+      socket.emit('error', { message: 'Failed to join conversation' });
     }
   });
 

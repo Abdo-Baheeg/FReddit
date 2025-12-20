@@ -2,15 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./communityHeader.css";
 
-// ✅ USE ONLY THE CENTRAL API FILE
 import { communityApi, membershipApi } from "../api";
 
-export function requireAuthOrRedirect(navigate) {
+export function requireAuthOrRedirect() {
   const token = localStorage.getItem("token");
+
   if (!token) {
-    navigate("/login");
+    const loginBtn = document.querySelector(".vpLoginBtn");
+    if (loginBtn) {
+      loginBtn.click();
+    }
     return false;
   }
+
   return true;
 }
 
@@ -54,7 +58,7 @@ function HeaderContent({ communityId, initialCommunity }) {
       avatarUrl: raw.avatarUrl || fallbackAvatar,
       membersCount: Number(membersCount),
       postsCount: raw.postsCount ?? 0,
-      isMember: false, // resolved separately
+      isMember: false,
     };
   };
 
@@ -76,7 +80,6 @@ function HeaderContent({ communityId, initialCommunity }) {
   const [loading, setLoading] = useState(!initialCommunity);
   const [optimistic, setOptimistic] = useState(false);
 
-  // ✅ Fetch community
   useEffect(() => {
     if (!communityId || initialCommunity) return;
 
@@ -96,7 +99,6 @@ function HeaderContent({ communityId, initialCommunity }) {
     };
   }, [communityId, initialCommunity]);
 
-  // ✅ Resolve membership
   useEffect(() => {
     if (!community._id) return;
 
@@ -112,14 +114,14 @@ function HeaderContent({ communityId, initialCommunity }) {
   }, [community._id]);
 
   const handleCreatePost = () => {
-    if (!requireAuthOrRedirect(navigate)) return;
+    if (!requireAuthOrRedirect()) return;
     navigate("/create-post", { state: { community } });
   };
 
-  // ✅ Join / Leave → refresh page after success
   const handleJoinToggle = async () => {
     if (optimistic) return;
-    if (!requireAuthOrRedirect(navigate)) return;
+
+    if (!requireAuthOrRedirect()) return;
 
     const willJoin = !community.isMember;
     setOptimistic(true);
@@ -131,9 +133,7 @@ function HeaderContent({ communityId, initialCommunity }) {
         await membershipApi.leave(community._id);
       }
 
-      // 🔄 HARD REFRESH so CommunityPage + Gate re-evaluate
       window.location.reload();
-
     } catch (err) {
       console.error("Join/Leave failed", err);
       setOptimistic(false);

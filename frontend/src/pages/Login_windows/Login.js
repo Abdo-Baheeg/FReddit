@@ -123,7 +123,7 @@ const Login = ({ setOpen }) => {
                 label="Email or username"
                 required
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => setUsername(e.target.value.replace(/\s/g, ""))}
                 onFocus={() => setError("")}
               />
 

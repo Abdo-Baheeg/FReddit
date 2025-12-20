@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ ADDED
 import "./createCommunity.css";
 import { communityApi } from "../api";
+import {uploadImageToCloudinary} from "../context/CloudinaryHelper";
 
 export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
-  const navigate = useNavigate(); // ✅ ADDED
-
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [rulesText, setRulesText] = useState("");
@@ -15,6 +13,8 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
   const [iconFile, setIconFile] = useState(null);
   const [bannerPreview, setBannerPreview] = useState(null);
   const [iconPreview, setIconPreview] = useState(null);
+  const [bannerUploading, setBannerUploading] = useState(false);
+  const [iconUploading, setIconUploading] = useState(false);
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -41,32 +41,58 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
     setError(null);
   }
 
-  function handleBannerChange(e) {
+  async function handleBannerChange(e) {
     const file = e.target.files?.[0] || null;
-    setBannerFile(file);
 
     if (!file) {
       setBannerPreview(null);
+      setBannerFile(null);
       return;
     }
 
     const reader = new FileReader();
     reader.onload = () => setBannerPreview(reader.result);
     reader.readAsDataURL(file);
+
+    setBannerUploading(true);
+    setError(null);
+    try {
+      const url = await uploadImageToCloudinary(file);
+      setBannerFile(url); 
+    } catch (err) {
+      console.error('Error uploading banner to Cloudinary:', err);
+      setError('Failed to upload banner image. Please try again.');
+      setBannerPreview(null);
+    } finally {
+      setBannerUploading(false);
+    }
   }
 
-  function handleIconChange(e) {
+  async function handleIconChange(e) {
     const file = e.target.files?.[0] || null;
-    setIconFile(file);
 
     if (!file) {
       setIconPreview(null);
+      setIconFile(null);
       return;
     }
 
     const reader = new FileReader();
     reader.onload = () => setIconPreview(reader.result);
     reader.readAsDataURL(file);
+
+    setIconUploading(true);
+    setError(null);
+    try {
+      const url = await uploadImageToCloudinary(file);
+      setIconFile(url); 
+    } catch (err) {
+      console.error('Error uploading icon to Cloudinary:', err);
+      setError('Failed to upload icon image. Please try again.');
+      setIconPreview(null);
+    } finally {
+      setIconUploading(false);
+    }
   }
 
   function validateStepOne() {
@@ -103,60 +129,45 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
+  e.preventDefault();
+  setError(null);
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("You must be logged in to create a community.");
-      return;
-    }
+  const token = localStorage.getItem("token");
+  if (!token) {
+    setError("You must be logged in to create a community.");
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const rules = rulesText
-        .split(/\r?\n/)
-        .map((r) => r.trim())
-        .filter(Boolean);
+  try {
+    const rules = rulesText
+      .split(/\r?\n/)
+      .map((r) => r.trim())
+      .filter(Boolean);
 
-      const readFile = (file) =>
-        new Promise((resolve) => {
-          if (!file) return resolve(null);
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.readAsDataURL(file);
-        });
+    const createdCommunity =
+      await communityApi.createCommunity(
+        {
+          name: name.trim(),
+          description: description.trim(),
+          isPublic,
+          ageVerified,
+          rules,
+          bannerUrl: bannerFile || "",
+          avatarUrl: iconFile || "",
+        }
+      );
 
-      const bannerUrl = await readFile(bannerFile);
-      const avatarUrl = await readFile(iconFile);
-
-      const payload = {
-        name: name.trim(),
-        description: description.trim(),
-        rules,
-        isPublic,
-        ageVerified,
-        bannerUrl,
-        avatarUrl,
-      };
-
-      const createdCommunity = await communityApi.createCommunity(payload);
-
-      onCreated && onCreated(createdCommunity);
-      onClose && onClose();
-
-      // ✅ ADDED — ensure creator enters the community
-      navigate(`/community/${createdCommunity._id}`);
-      window.location.reload();
-
-    } catch (err) {
-      console.error(err);
-      setError("Failed to create community.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    onCreated && onCreated(createdCommunity);
+    onClose && onClose();
+  } catch (err) {
+    console.error(err);
+    setError("Failed to create community.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (!isOpen) return null;
 
@@ -177,7 +188,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* STEP 1 */}
           {step === 1 && (
             <>
               <div className="form-group">
@@ -199,7 +209,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
             </>
           )}
 
-          {/* STEP 2 */}
           {step === 2 && (
             <>
               <div className="form-group">
@@ -256,7 +265,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
             </>
           )}
 
-          {/* STEP 3 */}
           {step === 3 && (
             <div className="form-group">
               <label>Rules (optional)</label>
@@ -268,7 +276,6 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
             </div>
           )}
 
-          {/* STEP 4 */}
           {step === 4 && (
             <>
               <div className="form-group">
@@ -319,8 +326,12 @@ export default function CreateCommunityModal({ isOpen, onClose, onCreated }) {
             )}
 
             {step === 4 && (
-              <button type="submit" className="create-button" disabled={loading}>
-                {loading ? "Creating..." : "Create"}
+              <button 
+                type="submit" 
+                className="create-button" 
+                disabled={loading || bannerUploading || iconUploading}
+              >
+                {loading ? "Creating..." : bannerUploading || iconUploading ? "Uploading images..." : "Create"}
               </button>
             )}
           </div>

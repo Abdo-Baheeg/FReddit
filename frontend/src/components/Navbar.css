@@ -410,15 +410,29 @@
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  pointer-events: auto;
+  z-index: 10;
 }
 
 .vpCreateBtnNew:hover {
   background-color: var(--reddit-hover);
+  border-color: #ff4500;
+  color: #ff4500;
+}
+
+.vpCreateBtnNew:active {
+  opacity: 0.8;
+}
+
+.vpCreateBtnNew:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .vpCreateBtnNew svg {
   width: 20px;
   height: 20px;
+  stroke: currentColor;
 }
 
 /* AD Label for Advertise Button */
