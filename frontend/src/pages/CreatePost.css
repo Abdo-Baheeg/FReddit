@@ -352,3 +352,104 @@
     width: 100%;
   }
 }
+
+/* ReactQuill Styling */
+.react-quill-editor {
+  border: 1px solid #edeff1;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.react-quill-editor .ql-toolbar {
+  background-color: #f6f7f8;
+  border-bottom: 1px solid #edeff1;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.react-quill-editor .ql-container {
+  border: none;
+  min-height: 200px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.react-quill-editor .ql-editor {
+  min-height: 200px;
+  font-size: 14px;
+  color: #1a1a1b;
+}
+
+.react-quill-editor .ql-editor::before {
+  color: #878a8c;
+  font-style: normal;
+}
+
+/* Override default text-editor-container styles for ReactQuill */
+.text-editor-container {
+  margin-bottom: 20px;
+}
+
+/* File upload styling */
+.file-upload-container {
+  margin-bottom: 20px;
+}
+
+.file-upload-area {
+  border: 2px dashed #edeff1;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: border-color 0.2s;
+}
+
+.file-upload-area:hover {
+  border-color: #0079d3;
+}
+
+.file-placeholder {
+  color: #878a8c;
+  font-size: 14px;
+}
+
+.file-hint {
+  font-size: 12px;
+  color: #b8b8b8;
+  margin-top: 8px;
+}
+
+.file-selected {
+  color: #1a1a1b;
+}
+
+.change-file-btn {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background: none;
+  border: 1px solid #0079d3;
+  border-radius: 4px;
+  color: #0079d3;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.change-file-btn:hover {
+  background-color: #f0f8ff;
+}
+
+/* Loading and error states */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #878a8c;
+}
+
+.error-message {
+  background-color: #fee;
+  color: #c00;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}

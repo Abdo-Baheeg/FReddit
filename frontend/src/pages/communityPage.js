@@ -91,9 +91,27 @@ export default function CommunityPage() {
       navigate("/login");
       return;
     }
-    navigate("/create-post", { state: { community } });
+    
+    // Get current path as referrer
+    const currentPath = window.location.pathname;
+    
+    // Make sure community object has all needed properties
+    const communityData = {
+      _id: community._id,
+      name: community.name || community.title || 'Unknown',
+      title: community.title,
+      memberCount: community.memberCount || 0
+    };
+    
+    navigate("/create-post", { 
+      state: { 
+        community: communityData,
+        referrer: currentPath // Pass current page as referrer
+      } 
+    });
   };
 
+  // ADD THIS FUNCTION - it was missing
   const openPost = (postId) => {
     navigate(`/post/${postId}`);
   };
