@@ -1092,18 +1092,3 @@ cursor: pointer;
   line-height: 1;
 }
 
-.vpTabsContainer,
-.vpTabs,
-.vpTabContent,
-.vpEmptyState,
-.vpTabContent > * {
-  scrollbar-width: none; /* Firefox */
-}
-
-.vpTabsContainer::-webkit-scrollbar,
-.vpTabs::-webkit-scrollbar,
-.vpTabContent::-webkit-scrollbar,
-.vpEmptyState::-webkit-scrollbar,
-.vpTabContent > *::-webkit-scrollbar {
-  display: none; 
-}
