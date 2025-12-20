@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { feedApi, postApi } from '../api';
 import { TrendingUp, Home as HomeIcon, Compass, Flame, Clock, Star, ChevronDown } from 'lucide-react';
 import './Home.css';
-import PostCard from '../components/PostCard';
+import {PostCard} from '../components/PostCard';
 
 const Home = () => {
   const [posts, setPosts] = useState([]);

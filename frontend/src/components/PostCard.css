@@ -9,9 +9,9 @@
   border-radius: 0.5rem;
   padding: 1rem;
   margin-bottom: 1rem;
-  display: flex;
   flex-direction: column;
 }
+
 .post-card-title-row {
   display: flex;
   align-items: center;
@@ -33,7 +33,12 @@
   font-weight: bold;
   margin-bottom: 0.75rem;
   line-height: 1.5;
-  width: 100%; 
+  width: 100%;
+  cursor: pointer;
+}
+
+.post-card-title:hover {
+  text-decoration: underline;
 }
 
 .post-card-header {
@@ -41,6 +46,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .post-card-actions {
@@ -55,63 +61,129 @@
   font-size: 0.875rem;
   margin-bottom: 1rem;
   line-height: 1.5;
+  cursor: pointer;
 }
 
+.post-card-content:hover {
+  color: #374151;
+}
+
+/* Post Actions Container */
 .post-actions-container {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
+  padding: 0.75rem 0 0 0;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 0.5rem;
   flex-wrap: wrap;
-  background-color: transparent;
 }
 
+/* Vote Container - Fixed to ensure visibility */
 .vote-container {
-  display: flex;
+  display: flex !important;
   align-items: center;
   background-color: #f3f4f6;
   border-radius: 32px;
-  padding: 0.25rem 0.5rem;
-  gap: 0.5rem;
+  padding: 0.25rem;
+  min-width: 120px;
 }
 
 .vote-button {
-  padding: 0.25rem;
-  border-radius: 4px;
+  padding: 0.5rem;
+  border-radius: 50%;
   border: none;
   cursor: pointer;
   background: transparent;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6b7280;
+  width: 32px;
+  height: 32px;
 }
 
 .vote-button:hover {
   background-color: #e5e7eb;
-  color: #374151;
 }
 
 .vote-button.active {
-  color: #ff4500;
+  background-color: rgba(255, 69, 0, 0.1);
 }
 
-.vote-button svg {
-  width: 20px;
-  height: 20px;
+.vote-button.active img {
+  filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) !important;
 }
 
 .vote-count {
+  padding: 0 0.75rem;
   font-size: 0.875rem;
-  font-weight: 700;
-  color: #1c1c1c;
-  min-width: 24px;
+  font-weight: 600;
+  color: #374151;
+  min-width: 40px;
   text-align: center;
 }
 
+/* Action Buttons */
 .action-button {
-  background: #e5e7eb;
-  color: #111;
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f3f4f6;
+  border-radius: 32px;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 0.875rem;
+  color: #374151;
+  height: 36px;
+}
+
+.action-button:hover {
+  background-color: #e5e7eb;
+}
+
+.action-button.active {
+  color: #ff4500;
+  background-color: rgba(255, 69, 0, 0.1);
+}
+
+.action-button.active svg {
+  fill: #ff4500;
+  color: #ff4500;
+}
+
+.action-count, .share-text, .ai-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Join Button */
+.join-button {
+  background-color: #0A449B;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  height: 36px;
+}
+
+.join-button:hover {
+  background-color: #08367d;
+}
+
+.join-button.joined {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.join-button.joined:hover {
+  background-color: #d1d5db;
 }
 
 .join-button:disabled {
@@ -119,175 +191,101 @@
   cursor: not-allowed;
 }
 
-.action-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: #e5ebee;
-  border-radius: 32px;
-  padding: 0.5rem 0.75rem;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.875rem;
-  color: #374151;
-}
-
-.action-button:hover {
-  background-color: #d1d5db;
-}
-
-.action-button svg {
-  width: 20px;
-  height: 20px;
-}
-
-.action-count {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #374151;
-  padding: 0.25rem;
-}
-
-.icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  object-fit: contain;
-}
-
-/* Dark Mode Support */
-.vpDarkMode .post-card-container {
-  background-color: #1a1a1b;
-  border-color: #343536;
-}
-
-.vpDarkMode .vote-container {
-  background-color: #272729;
-}
-
-.vpDarkMode .vote-button {
-  color: #818384;
-}
-
-.vpDarkMode .vote-button:hover {
-  background-color: #343536;
-  color: #d7dadc;
-}
-
-.vpDarkMode .vote-button.active {
-  color: #ff4500;
-}
-
-.vpDarkMode .vote-count {
-  color: #d7dadc;
-}
-
-.vpDarkMode .post-card-title {
-  color: #d7dadc;
-}
-
-.vpDarkMode .post-card-content {
-  color: #d7dadc;
-}
-
-.vpDarkMode .action-button {
-  background-color: #272729;
-  color: #d7dadc;
-}
-
-.vpDarkMode .action-button:hover {
-  background-color: #343536;
-}
-
-.vpDarkMode .save-button {
-  background-color: #1a1a1b !important;
-  border-color: #343536 !important;
-  color: #d7dadc !important;
-}
-
-.vpDarkMode .save-button:hover {
-  background-color: #272729 !important;
-  border-color: #4f5152 !important;
-}
-
-.vpDarkMode .save-button.saved {
-  background-color: rgba(255, 69, 0, 0.1) !important;
-  border-color: #ff4500 !important;
-  color: #ff4500 !important;
-}
-
-.join-button {
-  background-color: #0A449B;
-  border: 1px solid #d1d5db;
-  border-radius: 9999px;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  color: white !important;
-}
-
-.join-button:hover {
-  background-color: #f9fafb;
-}
-
+/* Save Button */
 .save-button {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: white !important;  
+  background-color: #f3f4f6 !important;
   border-radius: 32px;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db !important;  
+  border: 1px solid #d1d5db !important;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
   font-size: 0.875rem;
-  color: black !important;
+  color: #374151 !important;
+  height: 36px;
 }
 
 .save-button:hover {
-  background-color: #f9fafb !important;
+  background-color: #e5e7eb !important;
   border-color: #9ca3af !important;
 }
 
 .save-button.saved {
-  background-color: #fef2f2 !important;
-  border-color: #ff4500 !important;
+  background-color: rgba(255, 69, 0, 0.1) !important;
   color: #ff4500 !important;
+  border-color: rgba(255, 69, 0, 0.3) !important;
 }
 
-.save-button svg {
-  width: 20px;
-  height: 20px;
+.save-button.saved img {
+  filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) !important;
 }
 
 .save-button:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-.action-button.active {
-  background-color: #667eea;
-  color: white;
+/* Icons */
+.icon {
+  width: 20px !important;
+  height: 20px !important;
+  display: block !important;
+  object-fit: contain;
 }
 
-.action-button.active:hover {
-  background-color: #5568d3;
+/* Loading states */
+.vote-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.vpDarkMode .action-button.active {
-  background-color: #667eea;
-  color: white;
-}
-
-.vpDarkMode .action-button.active:hover {
-  background-color: #5568d3;
-}
-
+/* Responsive */
 @media (max-width: 640px) {
-  .share-text {
-    display: none;
-    padding: 0.25rem;
+  .post-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
+  
+  .post-card-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .post-actions-container {
+    gap: 0.5rem;
+  }
+  
+  .share-text, .ai-text {
+    display: none;
+  }
+  
+  .action-button {
+    padding: 0.5rem;
+  }
+  
+  .vote-container {
+    min-width: 100px;
+  }
+}
+
+/* Ensure images are visible */
+img[src*="upvote.png"],
+img[src*="downvote.png"],
+img[src*="comment.png"],
+img[src*="share.png"],
+img[src*="save.png"],
+img[src*="saved.png"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* Debug border for troubleshooting */
+.debug-border {
+  border: 1px solid red !important;
 }
