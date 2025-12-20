@@ -67,7 +67,7 @@ function AppContent() {
           <Route path="/post/:id" element={<PostDetail />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/chat/:conversationId" element={<Chat />} />
-          <Route path="/me" element={<RedditProfilePage />} />
+          <Route path="/viewprofile" element={<RedditProfilePage />} />
           <Route path="/setting" element={<Setting />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/search" element={<Search />} />
