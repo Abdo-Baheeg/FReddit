@@ -732,6 +732,10 @@ export default function RedditProfilePageMock() {
                     >
                       <div className="vpStatLabel">Contributions</div>
                     </button>
+                    <div className="vpStatValue">0</div> 
+                  <button onClick={() => window.location.href = '/setting'}
+                  className="vpStatLabel">Actived in 
+                  </button>
                   </div>
                   <div><div className="vpStatValue">1 m</div><div className="vpStatLabel">Reddit Age</div></div>
                   <div>
