@@ -1,239 +1,455 @@
-/* Define custom properties (optional, adjust to your actual global variables) */
-:root {
-    --spacing-xs: 4px;
-    --spacing-sm: 8px;
-    --spacing-md: 12px;
-    --spacing-lg: 16px;
-    --spacing-xl: 24px;
-    --border-radius-sm: 4px;
-    --border-radius-md: 8px;
-    --reddit-border: #ccc;
-    --reddit-bg-secondary: #f6f7f8;
-    --reddit-text-primary: #1c1c1c;
-    --reddit-text-meta: #7c7c7c;
-    --reddit-blue: #0079d3;
-    --reddit-hover: #e8e8e8;
+.create-post-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.form-container {
-    background-color: white; /* Example background */
-    padding: var(--spacing-xl);
-    border-radius: var(--border-radius-md);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.create-post-header h1 {
+  margin: 0 0 24px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1b;
 }
 
-.create-post-header {
-    font-size: 18px;
-    font-weight: 500;
-    margin-bottom: var(--spacing-lg);
-    padding-bottom: var(--spacing-md);
-    border-bottom: 1px solid var(--reddit-border);
-}
-
-/* --- Form Groups and Inputs --- */
-.form-group {
-    margin-bottom: var(--spacing-lg);
-}
-
-.form-label {
-    display: block; 
-    margin-bottom: var(--spacing-xs);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--reddit-text-primary);
-}
-
-.form-input {
-    font-size: 14px;
-    width: 100%;
-    padding: var(--spacing-sm) var(--spacing-md);
-    border: 1px solid var(--reddit-border);
-    border-radius: var(--border-radius-md);
-    box-sizing: border-box; /* Crucial for padding/border inside width */
-}
-
-/* --- Community Selector --- */
 .community-selector {
-    margin-bottom: var(--spacing-lg);
+  margin-bottom: 20px;
 }
 
-.select-community-placeholder,
-.add-tags-placeholder {
-    padding: var(--spacing-sm) var(--spacing-md);
-    border: 1px solid var(--reddit-border);
-    border-radius: var(--border-radius-md);
-    background-color: var(--reddit-bg-secondary);
-    cursor: pointer;
-    font-size: 14px;
+.community-dropdown {
+  position: relative;
+  width: 300px;
 }
 
-.placeholder-text {
-    color: var(--reddit-text-meta);
+.community-dropdown-toggle {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: white;
+  border: 1px solid #edeff1;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #878a8c;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.2s;
 }
 
-/* --- Post Type Tabs --- */
-.feed-tabs { 
-    margin-bottom: var(--spacing-lg);
-    display: flex;
-    gap: 0;
+.community-dropdown-toggle:hover {
+  border-color: #878a8c;
 }
 
-.feed-tab {
-    flex: 1;
-    padding: var(--spacing-sm);
-    border: 1px solid var(--reddit-border);
-    background-color: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-xs);
-    cursor: pointer;
-    font-size: 14px;
-    color: var(--reddit-text-primary);
+.community-placeholder {
+  color: #878a8c;
 }
 
-.feed-tab:not(:last-child) {
-    border-right: none;
+.dropdown-arrow {
+  font-size: 12px;
+  color: #878a8c;
 }
 
-.feed-tab:first-child {
-    border-top-left-radius: var(--border-radius-md);
-    border-bottom-left-radius: var(--border-radius-md);
+.community-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #edeff1;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
-.feed-tab:last-child {
-    border-top-right-radius: var(--border-radius-md);
-    border-bottom-right-radius: var(--border-radius-md);
+.community-option {
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #1a1a1b;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.feed-tab.active {
-    background-color: var(--reddit-bg-secondary);
-    border-color: var(--reddit-border); /* Ensures active border is visible */
-    z-index: 1; /* Bring active tab to front to overlap adjacent borders */
+.community-option:hover {
+  background-color: #f6f7f8;
 }
 
-/* --- Title and Char Count --- */
-.title-char-count {
-    font-size: 12px;
-    color: var(--reddit-text-meta);
-    text-align: right;
-    margin-top: var(--spacing-xs);
+.post-type-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #edeff1;
+  padding-bottom: 8px;
 }
 
-
-/* --- File Upload Specific Styling --- */
-.file-upload-group {
-    padding: var(--spacing-md);
-    border: 1px dashed var(--reddit-border);
-    border-radius: var(--border-radius-md);
-    background-color: var(--reddit-bg-secondary);
-    text-align: center;
+.tab-button {
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #878a8c;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.file-input {
-    margin-top: var(--spacing-sm);
-    display: block;
+.tab-button:hover {
+  background-color: #f6f7f8;
+  color: #1a1a1b;
+}
+
+.tab-button.active {
+  background-color: #f6f7f8;
+  color: #1a1a1b;
+  font-weight: 600;
+}
+
+.post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1b;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #edeff1;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #1a1a1b;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #0079d3;
+}
+
+.tags-input-container {
+  position: relative;
+}
+
+.char-counter {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #878a8c;
+}
+
+.text-editor-container {
+  border: 1px solid #edeff1;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 8px;
+  background-color: #f6f7f8;
+  border-bottom: 1px solid #edeff1;
+}
+
+.toolbar-button {
+  padding: 6px 8px;
+  background: none;
+  border: none;
+  border-radius: 2px;
+  font-size: 14px;
+  color: #878a8c;
+  cursor: pointer;
+  min-width: 32px;
+  transition: background-color 0.2s;
+}
+
+.toolbar-button:hover {
+  background-color: #e9e9e9;
+  color: #1a1a1b;
+}
+
+.body-textarea {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  font-size: 14px;
+  color: #1a1a1b;
+  resize: vertical;
+  min-height: 200px;
+  font-family: inherit;
+}
+
+.body-textarea:focus {
+  outline: none;
+}
+
+.body-textarea::placeholder {
+  color: #878a8c;
+}
+
+.poll-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.poll-option {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.poll-option input {
+  flex: 1;
+}
+
+.remove-option {
+  padding: 6px 10px;
+  background: none;
+  border: 1px solid #edeff1;
+  border-radius: 4px;
+  color: #ff585b;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  transition: background-color 0.2s;
+}
+
+.remove-option:hover {
+  background-color: #fff0f0;
+}
+
+.add-option-button {
+  padding: 10px 16px;
+  background: none;
+  border: 1px solid #0079d3;
+  border-radius: 4px;
+  color: #0079d3;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background-color 0.2s;
+}
+
+.add-option-button:hover {
+  background-color: #f0f8ff;
+}
+
+.poll-duration {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.poll-duration label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1b;
+}
+
+.poll-duration select {
+  padding: 10px 12px;
+  border: 1px solid #edeff1;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #1a1a1b;
+  background-color: white;
+  cursor: pointer;
+  max-width: 200px;
+}
+
+.poll-duration select:focus {
+  outline: none;
+  border-color: #0079d3;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid #edeff1;
+}
+
+.save-draft-button {
+  padding: 10px 24px;
+  background: none;
+  border: 1px solid #878a8c;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #878a8c;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-draft-button:hover {
+  background-color: #f6f7f8;
+}
+
+.submit-post-button {
+  padding: 10px 24px;
+  background-color: #0079d3;
+  border: none;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-post-button:hover:not(:disabled) {
+  background-color: #1484d6;
+}
+
+.submit-post-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .create-post-container {
+    padding: 16px;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .community-dropdown {
     width: 100%;
-}
+  }
 
-.file-name-display {
-    font-size: 14px;
-    color: var(--reddit-text-primary);
-    margin-top: var(--spacing-sm);
-    word-break: break-all;
-}
+  .post-type-tabs {
+    flex-wrap: wrap;
+  }
 
+  .editor-toolbar {
+    overflow-x: auto;
+  }
 
-/* --- Formatting Toolbar --- */
-.formatting-toolbar { 
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border: 1px solid var(--reddit-border);
-    border-bottom: none;
-    border-top-left-radius: var(--border-radius-md);
-    border-top-right-radius: var(--border-radius-md);
-    background-color: var(--reddit-bg-secondary);
-}
+  .form-actions {
+    flex-direction: column;
+  }
 
-.formatting-button {
-    padding: 4px 8px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    border-radius: var(--border-radius-sm);
-    color: var(--reddit-text-primary);
-}
-
-.formatting-button:hover {
-    background-color: var(--reddit-hover);
-}
-
-/* --- Content Text Area --- */
-.content-textarea { 
+  .save-draft-button,
+  .submit-post-button {
     width: 100%;
-    min-height: 200px;
-    font-size: 14px;
-    padding: var(--spacing-md);
-    border: 1px solid var(--reddit-border);
-    border-top: none;
-    border-bottom-left-radius: var(--border-radius-md);
-    border-bottom-right-radius: var(--border-radius-md);
-    resize: vertical;
-    box-sizing: border-box;
+  }
 }
 
-/* --- Action Buttons --- */
-.action-buttons-container { 
-    display: flex; 
-    gap: var(--spacing-sm); 
-    justify-content: flex-end;
-    margin-top: var(--spacing-xl);
-    padding-top: var(--spacing-lg);
-    border-top: 1px solid var(--reddit-border);
+/* ReactQuill Styling */
+.react-quill-editor {
+  border: 1px solid #edeff1;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
-.btn {
-    padding: var(--spacing-sm) var(--spacing-xl);
-    border-radius: var(--border-radius-md);
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.1s;
+.react-quill-editor .ql-toolbar {
+  background-color: #f6f7f8;
+  border-bottom: 1px solid #edeff1;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
 }
 
-.btn-secondary { 
-    border: 1px solid var(--reddit-border);
-    background-color: transparent;
-    color: var(--reddit-text-primary);
+.react-quill-editor .ql-container {
+  border: none;
+  min-height: 200px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 }
 
-.btn-secondary:hover {
-    background-color: var(--reddit-hover);
+.react-quill-editor .ql-editor {
+  min-height: 200px;
+  font-size: 14px;
+  color: #1a1a1b;
 }
 
-.btn-primary { 
-    border: none;
-    background-color: var(--reddit-blue);
-    color: white;
+.react-quill-editor .ql-editor::before {
+  color: #878a8c;
+  font-style: normal;
 }
 
-.btn-primary:hover {
-    background-color: #0060a8; /* Darker shade for hover */
+/* Override default text-editor-container styles for ReactQuill */
+.text-editor-container {
+  margin-bottom: 20px;
 }
 
-.btn[disabled] {
-    background-color: #a0a0a0;
-    cursor: not-allowed;
+/* File upload styling */
+.file-upload-container {
+  margin-bottom: 20px;
 }
 
-/* --- Error Message --- */
-.error {
-    color: red;
-    margin-bottom: var(--spacing-lg);
-    padding: var(--spacing-sm);
-    border: 1px solid red;
-    background-color: #ffe0e0;
-    border-radius: var(--border-radius-md);
+.file-upload-area {
+  border: 2px dashed #edeff1;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: border-color 0.2s;
+}
+
+.file-upload-area:hover {
+  border-color: #0079d3;
+}
+
+.file-placeholder {
+  color: #878a8c;
+  font-size: 14px;
+}
+
+.file-hint {
+  font-size: 12px;
+  color: #b8b8b8;
+  margin-top: 8px;
+}
+
+.file-selected {
+  color: #1a1a1b;
+}
+
+.change-file-btn {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background: none;
+  border: 1px solid #0079d3;
+  border-radius: 4px;
+  color: #0079d3;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.change-file-btn:hover {
+  background-color: #f0f8ff;
+}
+
+/* Loading and error states */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #878a8c;
+}
+
+.error-message {
+  background-color: #fee;
+  color: #c00;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
 }

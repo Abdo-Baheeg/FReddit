@@ -13,7 +13,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState('');
@@ -34,19 +34,25 @@ const Navbar = () => {
 
   // --- HANDLERS ---
   const handleSearch = (e) => {
-    if (e.key === 'Enter' && searchQuery.trim()) {
+    if (e.key === "Enter" && searchQuery.trim()) {
       navigate(`/search?q=${searchQuery}`);
     }
   };
 
-  const handleAskAi = () => navigate('/ask-ai');
+  const handleAskAi = () => navigate("/ask-ai");
+  
+  const handleItemClick = (path) => {
+    console.log("Navigating to:", path);
+    navigate(path);
+  };
+  
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('userId');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("userId");
     setIsLoggedIn(false);
     setShowUserMenu(false);
-    navigate('/');
+    navigate("/");
     window.location.reload();
   };
 
@@ -107,20 +113,20 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         setShowAppModal(false);
         setShowDotMenu(false);
         setShowUserMenu(false);
         setShowCreateMenu(false);
       }
     };
-    
+
     if (showAppModal || showDotMenu || showUserMenu || showCreateMenu) {
-      window.addEventListener('keydown', handleEsc);
+      window.addEventListener("keydown", handleEsc);
     }
-    
+
     return () => {
-      window.removeEventListener('keydown', handleEsc);
+      window.removeEventListener("keydown", handleEsc);
     };
   }, [showAppModal, showDotMenu, showUserMenu, showCreateMenu]);
 
@@ -132,23 +138,30 @@ const Navbar = () => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setShowUserMenu(false);
       }
-      if (createMenuRef.current && !createMenuRef.current.contains(event.target)) {
+      if (
+        createMenuRef.current &&
+        !createMenuRef.current.contains(event.target)
+      ) {
         setShowCreateMenu(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   if (loading) return null;
 
   return (
-    <div className={`vpBody ${isDarkMode ? 'vpDarkMode' : ''}`}>
+    <div className={`vpBody ${isDarkMode ? "vpDarkMode" : ""}`}>
       <header className="vpNewTopBar">
         <div className="vpTopBarContainer">
-          
           {/* LOGO */}
-          <div className="vpLogoNew" onClick={() => navigate('/')} style={{ cursor: 'pointer' }} title="Go to Home">
+          <div
+            className="vpLogoNew"
+            onClick={() => navigate("/")}
+            style={{ cursor: "pointer" }}
+            title="Go to Home"
+          >
             <span className="vpLogoTextNew">reddit</span>
           </div>
 
@@ -156,7 +169,11 @@ const Navbar = () => {
           <div className="vpSearchContainer">
             <div className="vpSearchWrapper">
               <div className="vpSearchLogoContainer">
-                <img src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png" alt="Reddit Logo" className="vpSearchLogoIcon"/>
+                <img
+                  src="https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png"
+                  alt="Reddit Logo"
+                  className="vpSearchLogoIcon"
+                />
               </div>
               <input
                 type="text"
@@ -180,7 +197,12 @@ const Navbar = () => {
           {!isLoggedIn ? (
             /* --- LOGGED OUT VIEW --- */
             <>
-              <button className="vpGetAppBtn" onClick={() => setShowAppModal(true)}>Get App</button>
+              <button
+                className="vpGetAppBtn"
+                onClick={() => setShowAppModal(true)}
+              >
+                Get App
+              </button>
               <div className="vpRightIcons">
                  <button className="vpIconBtn" onClick={toggleTheme}>
                   {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
@@ -400,9 +422,308 @@ const Navbar = () => {
                     <Settings size={20} />
                     <span>Settings</span>
                   </button>
-                </div>
-              )}
-            </div>
+                </div>)}
+
+                {showUserMenu && (
+                  <div className="vpUserDropdown">
+                    <div className="vpUserDropdownHeader">
+                      <div className="vpUserDropdownAvatar">
+                        <img
+                          src={userAvatar}
+                          alt={username}
+                          onError={(e) => {
+                            e.target.src =
+                              "https://www.redditstatic.com/desktop2x/img/favicon/android-icon-192x192.png";
+                          }}
+                        />
+                        <div className="vpUserDropdownOnline"></div>
+                      </div>
+                      <div className="vpUserDropdownInfo">
+                        <div className="vpUserDropdownName">u/{username}</div>
+                        <div className="vpUserDropdownEmail">{userEmail}</div>
+                      </div>
+                    </div>
+
+                    <div className="vpUserDropdownStats">
+                      <div className="vpUserDropdownStat">
+                        <span className="vpUserDropdownStatValue">
+                          {userKarma.toLocaleString()}
+                        </span>
+                        <span className="vpUserDropdownStatLabel">Karma</span>
+                      </div>
+                      <div className="vpUserDropdownStat">
+                        <span className="vpUserDropdownStatValue">
+                          {postCount}
+                        </span>
+                        <span className="vpUserDropdownStatLabel">Posts</span>
+                      </div>
+                    </div>
+
+                    <button
+                      className="vpUserDropdownItem"
+                      onClick={() => {
+                        navigate("/viewprofile");
+                        setShowUserMenu(false);
+                      }}
+                    >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      <span>View Profile</span>
+                    </button>
+
+                    <button
+                      className="vpUserDropdownItem"
+                      onClick={() => {
+                        navigate("/viewprofile");
+                        setShowUserMenu(false);
+                      }}
+                    >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <circle cx="12" cy="12" r="3" />
+                        <path d="M12 1v6m0 6v6m-9-9h6m6 0h6" />
+                      </svg>
+                      <span>Edit Avatar</span>
+                    </button>
+
+                    <button
+                      className="vpUserDropdownItem"
+                      onClick={() => {
+                        navigate("/drafts");
+                        setShowUserMenu(false);
+                      }}
+                    >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                        <path d="M14 2v6h6M16 13H8m8 4H8" />
+                      </svg>
+                      <span>Drafts</span>
+                    </button>
+
+                    <button
+                      className="vpUserDropdownItem"
+                      onClick={() => {
+                        navigate("/achievements");
+                        setShowUserMenu(false);
+                      }}
+                    >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M6 9H4.5a2.5 2.5 0 010-5H6m12 5h1.5a2.5 2.5 0 000-5H18M6 9v12m12-12v12M6 15h12M6 21h12" />
+                      </svg>
+                      <span>Achievements</span>
+                    </button>
+
+                    <button
+                      className="vpUserDropdownItem"
+                      onClick={() => {
+                        navigate("/all");
+                        setShowUserMenu(false);
+                      }}
+                    >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                        <path d="M16 3.13a4 4 0 010 7.75" />
+                      </svg>
+                      <span>View Communities</span>
+                    </button>
+
+                    <div className="vpUserDropdownDivider"></div>
+
+                    <button
+                      className="vpUserDropdownItem"
+                      onClick={() => {
+                        navigate("/premium");
+                        setShowUserMenu(false);
+                      }}
+                    >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                      </svg>
+                      <span>Premium</span>
+                    </button>
+
+                    <button
+                      className="vpUserDropdownItem"
+                      onClick={() => {
+                        toggleTheme();
+                        setShowUserMenu(false);
+                      }}
+                    >
+                      {isDarkMode ? (
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <circle cx="12" cy="12" r="5" />
+                          <line x1="12" y1="1" x2="12" y2="3" />
+                          <line x1="12" y1="21" x2="12" y2="23" />
+                          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                          <line x1="1" y1="12" x2="3" y2="12" />
+                          <line x1="21" y1="12" x2="23" y2="12" />
+                          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </svg>
+                      ) : (
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                        </svg>
+                      )}
+                      <span>{isDarkMode ? "Light Mode" : "Dark Mode"}</span>
+                    </button>
+
+                    <div className="vpUserDropdownDivider"></div>
+
+                    <button
+                      className="vpUserDropdownItem vpUserDropdownItemLogout"
+                      onClick={handleLogout}
+                    >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                        <path d="M16 17l5-5-5-5" />
+                        <path d="M21 12H9" />
+                      </svg>
+                      <span>Log Out</span>
+                    </button>
+
+                    <div className="vpUserDropdownDivider"></div>
+
+                    <button
+                      className="vpUserDropdownItem"
+                      onClick={() => {
+                        window.open("https://ads.reddit.com", "_blank");
+                        setShowUserMenu(false);
+                      }}
+                    >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <rect
+                          x="2"
+                          y="7"
+                          width="20"
+                          height="14"
+                          rx="2"
+                          ry="2"
+                        />
+                        <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
+                      </svg>
+                      <span>Adv</span>
+                    </button>
+
+                    <button
+                      className="vpUserDropdownItem"
+                      onClick={() => {
+                        navigate("/pro");
+                        setShowUserMenu(false);
+                      }}
+                    >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                      </svg>
+                      <span>Try Reddit Pro BETA</span>
+                    </button>
+
+                    <div className="vpUserDropdownDivider"></div>
+
+                    <button
+                      className="vpUserDropdownItem"
+                      onClick={() => {
+                        navigate("/setting");
+                        setShowUserMenu(false);
+                      }}
+                    >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
+                      </svg>
+                      <span>Settings</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -430,17 +751,31 @@ const Navbar = () => {
               <p>Or check it out in the app stores</p>
               <div className="vpModalText">
                 <div className="vpAppStores">
-                  <button 
+                  <button
                     className="vpAppStoreBtn"
-                    onClick={() => window.open('https://apps.apple.com/us-app/reddit/id1064216828', '_blank')}
+                    onClick={() =>
+                      window.open(
+                        "https://apps.apple.com/us-app/reddit/id1064216828",
+                        "_blank"
+                      )
+                    }
                   >
-                    <span className="vpAppStoreText">Download on the App Store</span>
+                    <span className="vpAppStoreText">
+                      Download on the App Store
+                    </span>
                   </button>
-                  <button 
+                  <button
                     className="vpPlayStoreBtn"
-                    onClick={() => window.open('https://play.google.com/store/apps/details?id=com.reddit.frontpage&pli=1', '_blank')}
+                    onClick={() =>
+                      window.open(
+                        "https://play.google.com/store/apps/details?id=com.reddit.frontpage&pli=1",
+                        "_blank"
+                      )
+                    }
                   >
-                    <span className="vpPlayStoreText">GET IT ON Google Play</span>
+                    <span className="vpPlayStoreText">
+                      GET IT ON Google Play
+                    </span>
                   </button>
                 </div>
               </div>
@@ -448,14 +783,8 @@ const Navbar = () => {
           </div>
         </div>
       )}
-
-      {/* Login Modal */}
-      {isLoginOpen && (
-        <Login 
-          isOpen={isLoginOpen} 
-          onClose={() => setIsLoginOpen(false)} 
-        />
-      )}
+      {/* Modal */}
+      {isLoginOpen && <Login setOpen={setIsLoginOpen} />}
     </div>
   );
 };

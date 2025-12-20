@@ -24,6 +24,25 @@ const Settings = () => {
   const [aboutDescriptionError, setAboutDescriptionError] = useState('');
   const [isSavingAboutDescription, setIsSavingAboutDescription] = useState(false);
   
+  // NEW STATES FOR INLINE EDITING
+  const [isEditing, setIsEditing] = useState(false);
+  const [newUsername, setNewUsername] = useState("");
+
+  // NEW STATES FOR EMAIL INLINE EDITING
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [isSavingEmail, setIsSavingEmail] = useState(false);
+
+  // NEW STATES FOR PASSWORD INLINE EDITING
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
+
+  
   const tabs = [
     'Account',
     'Profile',
@@ -55,6 +74,197 @@ const Settings = () => {
     }
   };
 
+  // Handle click on display name button 
+  const handleDisplayNameClick = () => {
+    // Set to display name or username
+    setNewUsername(user?.displayName || user?.username || "");
+    // Enable editing mode
+    setIsEditing(true);
+  };
+
+  // Handle saving display name - CONNECTED TO API - NEW FUNCTION
+  const handleSaveUsername = async () => {
+    // Validate display name
+    if (!newUsername.trim()) {
+      setDisplayNameError('Display name cannot be empty');
+      return;
+    }
+
+    if (newUsername.length > 90) {
+      setDisplayNameError('Display name must be 90 characters or less');
+      return;
+    }
+
+    setIsSavingDisplayName(true);
+
+    try {
+      // Call the API to update username
+      const updatedUser = await userApi.updateUsername(newUsername.trim());
+      
+      // Update the user in state
+      setUser(updatedUser);
+      
+      // Exit editing mode
+      setIsEditing(false);
+      setDisplayNameError('');
+      
+      // Refresh user data from server to ensure consistency
+      await fetchCurrentUser();
+      
+      console.log('Display name updated successfully via API');
+      
+    } 
+    catch (err) {
+      console.error('Error updating display name:', err);
+      
+      // Handle specific error cases
+      if (err.response?.status === 401) {
+        setDisplayNameError('Your session has expired. Please log in again.');
+      } else if (err.response?.status === 409) {
+        setDisplayNameError('This display name is already taken.');
+      } else if (err.message === 'Network Error') {
+        setDisplayNameError('Network error. Please check your internet connection.');
+      } else {
+        setDisplayNameError('Failed to update display name. Please try again.');
+      }
+    } finally {
+      setIsSavingDisplayName(false);
+    }
+  };
+
+  // Handle cancel editing
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setNewUsername("");
+    setDisplayNameError('');
+  };
+
+  // Handle saving email
+  const handleSaveEmail = async () => {
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!newEmail.trim()) {
+      setEmailError('Email cannot be empty');
+      return;
+    }
+
+    if (!emailRegex.test(newEmail)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+
+    // Check if email is same as current
+    if (newEmail === user?.email) {
+      setEmailError('This is already your current email');
+      return;
+    }
+
+    setIsSavingEmail(true);
+
+    try {
+      // Call the API to update email
+      const updatedUser = await userApi.updateEmail(newEmail.trim());
+      
+      // Update the user in state
+      setUser(updatedUser);
+      
+      // Exit editing mode
+      setIsEditingEmail(false);
+      setEmailError('');
+      
+      // Refresh user data from server
+      await fetchCurrentUser();
+      
+      console.log('Email updated successfully via API');
+      
+    }
+     catch (err) {
+      console.error('Error updating email:', err);
+      
+      // Handle specific error cases
+      if (err.response?.status === 401) {
+        setEmailError('Your session has expired. Please log in again.');
+      } else if (err.response?.status === 409) {
+        setEmailError('This email is already in use.');
+      } else if (err.message === 'Network Error') {
+        setEmailError('Network error. Please check your internet connection.');
+      } else {
+        setEmailError('Failed to update email. Please try again.');
+      }
+    } finally {
+      setIsSavingEmail(false);
+    }
+  };
+
+  // Handle saving password
+  const handleSavePassword = async () => {
+    // Validate password
+    if (!currentPassword.trim()) {
+      setPasswordError('Current password is required');
+      return;
+    }
+
+    if (!newPassword.trim()) {
+      setPasswordError('New password is required');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordError('New password must be at least 6 characters');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('New passwords do not match');
+      return;
+    }
+
+    setIsSavingPassword(true);
+
+    try {
+      // Call API to update password
+      await userApi.updatePassword(currentPassword.trim(), newPassword.trim());
+      
+      // Clear password fields
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      
+      // Exit editing mode
+      setIsEditingPassword(false);
+      setPasswordError('');
+      
+      console.log('Password updated successfully via API');
+      
+    } 
+    catch (err) {
+      console.error('Error updating password:', err);
+      
+      // Handle specific error cases
+      if (err.response?.status === 401) {
+        setPasswordError('Current password is incorrect');
+      } else if (err.response?.status === 400) {
+        setPasswordError('Invalid password format');
+      } else if (err.message === 'Network Error') {
+        setPasswordError('Network error. Please check your internet connection.');
+      } else {
+        setPasswordError('Failed to update password. Please try again.');
+      }
+    } finally {
+      setIsSavingPassword(false);
+    }
+  };
+
+  // NEW: Handle cancel password editing
+  const handleCancelPasswordEdit = () => {
+    setIsEditingPassword(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setPasswordError('');
+  };
+
   // About Description Modal Functions
   const handleAboutDescriptionClick = () => {
     setAboutDescriptionInput(user?.bio || user?.description || '');
@@ -81,9 +291,6 @@ const Settings = () => {
     
     try {
       // Update user bio/description via API
-      // Since you don't have a specific endpoint for updating bio in your API,
-      // I'll show you how to handle it once you add it
-      // For now, we'll simulate it
       console.log('Simulating about description update:', aboutDescriptionInput.trim());
       
       // Update local state directly for testing
@@ -95,16 +302,6 @@ const Settings = () => {
         updatedAt: new Date().toISOString()
       }));
       
-      // If you add the API endpoint later, uncomment this:
-      /*
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/users/update-bio`,
-        { bio: aboutDescriptionInput.trim() },
-        { headers: getAuthHeaders() }
-      );
-      setUser(response.data.user);
-      */
-      
       // Close modal
       setShowAboutModal(false);
       setAboutDescriptionError('');
@@ -112,7 +309,8 @@ const Settings = () => {
       // Show success message (optional)
       console.log('About description updated successfully');
       
-    } catch (err) {
+    }
+     catch (err) {
       console.error('Error updating about description:', err);
       
       // More specific error messages
@@ -143,8 +341,8 @@ const Settings = () => {
     }
   };
 
-  // Display Name Modal Functions
-  const handleDisplayNameClick = () => {
+  // Display Name Modal Functions 
+  const handleModalDisplayNameClick = () => {
     setDisplayNameInput(user?.displayName || '');
     setDisplayNameError('');
     setShowDisplayNameModal(true);
@@ -173,8 +371,7 @@ const Settings = () => {
     await new Promise(resolve => setTimeout(resolve, 500));
     
     try {
-      // TEMPORARY: Simulate successful API call for testing
-      // Remove this and uncomment the real API call when backend is ready
+      //  API call for testing
       console.log('Simulating display name update:', displayNameInput.trim());
       
       // Update local state directly for testing
@@ -192,7 +389,8 @@ const Settings = () => {
       // Show success message (optional)
       console.log('Display name updated successfully');
       
-    } catch (err) {
+    } 
+    catch (err) {
       console.error('Error updating display name:', err);
       
       // More specific error messages
@@ -321,7 +519,7 @@ const Settings = () => {
     }
   };
 
-  // Render Account tab content
+  // Render Account tab content 
   const renderAccountContent = () => (
     <div className="settings-main">
       <div className="general-section">
@@ -381,29 +579,143 @@ const Settings = () => {
             </div>
             <div className="setting-control">
               <span className="account-username">
-                <p>u/{user.username || 'No username'}</p>
+                <p> {user.username || 'No username'} </p>
               </span>
             </div>
           </div>
 
           <div className="settings-row">
             <div className="setting-label">
-              <span className="label-main">Account created</span>
+              <span className="label-main">Change Email </span>
             </div>
             <div className="setting-control">
-              <span className="account-created">
-                <p>
-                  {user.createdAt 
-                    ? new Date(user.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })
-                    : 'Unknown'}
-                </p>
-              </span>
+              {!isEditingEmail ? (
+                /* VIEW MODE */
+                <span className="change-email">
+                  <button
+                    className="change-email-btn"
+                    onClick={() => {
+                      setNewEmail(user?.email || '');
+                      setIsEditingEmail(true);
+                    }}
+                  >
+                    Change Ur Email >
+                  </button>
+                </span>
+              ) : (
+                /* EDIT MODE */
+                <div className="display-name-edit-container">
+                  <input
+                    type="email"
+                    className="display-name-input-inline"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    placeholder="Enter new email"
+                    autoFocus
+                  />
+
+                  <div className="inline-buttons">
+                    <button
+                      className="save-button-inline"
+                      onClick={handleSaveEmail}
+                      disabled={isSavingEmail || !newEmail.trim()}
+                    >
+                      {isSavingEmail ? 'Saving...' : 'Save'}
+                    </button>
+
+                    <button
+                      className="cancel-button-inline"
+                      onClick={() => {
+                        setIsEditingEmail(false);
+                        setEmailError('');
+                      }}
+                      disabled={isSavingEmail}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+
+                  {emailError && (
+                    <div className="inline-error">
+                      {emailError}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
+
+          <div className="settings-row">
+            <div className="setting-label">
+              <span className="label-main">Change Password  </span>
+            </div>
+            <div className="setting-control">
+              {!isEditingPassword ? (
+                /* VIEW MODE */
+                <span className="change-password">
+                  <button
+                    className="change-password-btn"
+                    onClick={() => setIsEditingPassword(true)}
+                  >
+                    Change Ur Password >
+                  </button>
+                </span>
+              ) : (
+                /* EDIT MODE */
+                <div className="password-edit-container">
+                  <div className="password-input-group">
+                    <input
+                      type="password"
+                      className="display-name-input-inline"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="Current password"
+                      autoFocus
+                    />
+                    <input
+                      type="password"
+                      className="display-name-input-inline"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="New password"
+                    />
+                    <input
+                      type="password"
+                      className="display-name-input-inline"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm new password"
+                    />
+                  </div>
+
+                  <div className="inline-buttons">
+                    <button
+                      className="save-button-inline"
+                      onClick={handleSavePassword}
+                      disabled={isSavingPassword || !currentPassword.trim() || !newPassword.trim() || !confirmPassword.trim()}
+                    >
+                      {isSavingPassword ? 'Saving...' : 'Save'}
+                    </button>
+
+                    <button
+                      className="cancel-button-inline"
+                      onClick={handleCancelPasswordEdit}
+                      disabled={isSavingPassword}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+
+                  {passwordError && (
+                    <div className="inline-error">
+                      {passwordError}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
 
         <h2 className="section-title" style={{marginTop: '40px'}}>Account authorization</h2>
@@ -478,7 +790,7 @@ const Settings = () => {
     </div>
   );
 
-  // Render Profile tab content
+  // Render Profile tab content 
   const renderProfileContent = () => (
     <div className="settings-main">
       <div className="general-section">
@@ -493,11 +805,51 @@ const Settings = () => {
               </span>
             </div>
             <div className="setting-control">
-              <button className="displaybutton" onClick={handleDisplayNameClick}>
-                <span className="display-name">
-                  {user.displayName || user.username || 'No display name set'}
-                </span>
-              </button>
+              {!isEditing ? (
+                //  button with current display name
+                <button className="displaybutton" onClick={handleDisplayNameClick}>
+                  <span className="display-name">
+                    {user.displayName || user.username || 'No display name set'}
+                  </span>
+                </button>
+              ) : (
+                // Edit mode 
+                <div className="display-name-edit-container">
+                  <input
+                    type="text"
+                    className="display-name-input-inline"
+                    value={newUsername}
+                    onChange={(e) => setNewUsername(e.target.value)}
+                    placeholder="Enter display name"
+                    maxLength={90}
+                    autoFocus
+                  />
+                  <div className="inline-buttons">
+                    <button 
+                      className="save-button-inline"
+                      onClick={handleSaveUsername}
+                      disabled={isSavingDisplayName || !newUsername.trim()}
+                    >
+                      {isSavingDisplayName ? 'Saving...' : 'Save'}
+                    </button>
+                    <button 
+                      className="cancel-button-inline"
+                      onClick={handleCancelEdit}
+                      disabled={isSavingDisplayName}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  {displayNameError && (
+                    <div className="inline-error">
+                      {displayNameError}
+                    </div>
+                  )}
+                  <div className="character-counter-inline">
+                    {newUsername.length}/90
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -523,19 +875,16 @@ const Settings = () => {
               <span className="label-sub">
                 Edit your avatar or upload an image
               </span>
-            </div>
-            <div className="setting-control">
-              <div className="avatar-preview">
-                {user.avatarUrl ? (
-                  <img src={user.avatarUrl} alt="Avatar" className="avatar-image" />
-                ) : (
-                  <div className="avatar-placeholder">
-                    {user.username?.charAt(0).toUpperCase() || 'U'}
-                  </div>
-                )}
               </div>
+            <div className="setting-control">
+              <button className="bio-button" >
+                <span className="about-description">
+                  { '>'}
+                </span>
+              </button>
             </div>
           </div>
+
 
           <div className="settings-row">
             <div className="setting-label">
@@ -1357,7 +1706,7 @@ const Settings = () => {
         </div>
       </div>
 
-      {/* About Description Modal */}
+      {/* Description Modal */}
       {showAboutModal && (
         <div className="about-modal-overlay">
           <div className="about-modal">
@@ -1447,7 +1796,7 @@ const Settings = () => {
         </div>
       )}
 
-      {/* Email Change Modal */}
+      {/* Email Change */}
       {showEmailModal && (
         <div className="email-modal-overlay">
           <div className="email-modal">
@@ -1466,7 +1815,7 @@ const Settings = () => {
         </div>
       )}
 
-      {/* Email Confirmation Modal */}
+      {/* Email Confirmation */}
       {showEmailConfirmationModal && (
         <div className="email-modal-overlay">
           <div className="email-modal">
@@ -1482,7 +1831,7 @@ const Settings = () => {
         </div>
       )}
 
-      {/* Gender Selection Modal */}
+      {/* Gender Selection */}
       {showGenderModal && (
         <div className="gender-modal-overlay">
           <div className="gender-modal">
@@ -1555,7 +1904,7 @@ const Settings = () => {
         </div>
       )}
 
-      {/* Delete Account Confirmation Modal */}
+      {/* Delete Account */}
       {showDeleteConfirmationModal && (
         <div className="email-modal-overlay">
           <div className="email-modal">

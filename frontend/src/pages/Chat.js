@@ -14,13 +14,14 @@ import './Chat.css';
 const Chat = () => {
   const { conversationId } = useParams();
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
+
   const { 
     connected, 
     conversations, 
     setConversations,
     messages, 
     setMessages,
-    unreadCounts,
     typingUsers,
     sendMessage, 
     markAsRead, 
@@ -32,46 +33,71 @@ const Chat = () => {
   const [loading, setLoading] = useState(true);
   const [showNewChatModal, setShowNewChatModal] = useState(false);
 
-  // Load conversations
+  const getOtherUser = (conv) => {
+  if (!conv || conv.type === 'community') return null;
+  return conv.participants.find(
+    p => String(p._id) !== String(currentUserId)
+  );
+};
+
+
+  // ================= Load current user =================
+  useEffect(() => {
+    const loadCurrentUser = async () => {
+      try {
+        const user = await userApi.getCurrentUser();
+        if (user && user.id) {
+          setCurrentUserId(String(user.id));
+        }
+      } catch (err) {
+        console.error('Failed to load current user:', err);
+      }
+    };
+    loadCurrentUser();
+  }, []);
+
+  // ================= Load conversations =================
   useEffect(() => {
     const loadConversations = async () => {
       try {
         const convs = await chatApi.getConversations();
         setConversations(convs);
         setLoading(false);
-      } catch (error) {
-        console.error('Failed to load conversations:', error);
+      } catch (err) {
+        console.error(err);
         setLoading(false);
       }
     };
-
     loadConversations();
   }, [setConversations]);
 
-  // Select conversation automatically
+  // ================= Auto select conversation =================
   useEffect(() => {
-    if (conversations.length > 0) {
-      if (conversationId) {
-        const conv = conversations.find(c => c._id === conversationId);
-        if (conv) setSelectedConversation(conv);
-      } else {
-        setSelectedConversation(conversations[0]);
-        navigate(`/chat/${conversations[0]._id}`);
-      }
+    if (!conversations.length) return;
+
+    if (conversationId) {
+      const conv = conversations.find(c => c._id === conversationId);
+      if (conv) setSelectedConversation(conv);
+    } else {
+      setSelectedConversation(conversations[0]);
+      navigate(`/chat/${conversations[0]._id}`);
     }
   }, [conversations, conversationId, navigate]);
 
-  // Load messages for selected convo
+  // ================= Load messages =================
   useEffect(() => {
     const loadMessages = async () => {
-      if (selectedConversation) {
-        try {
-          const msgs = await chatApi.getMessages(selectedConversation._id);
-          setMessages(prev => ({ ...prev, [selectedConversation._id]: msgs }));
-          markAsRead(selectedConversation._id);
-        } catch (error) {
-          console.error('Failed to load messages:', error);
-        }
+      if (!selectedConversation) return;
+
+      try {
+        const msgs = await chatApi.getMessages(selectedConversation._id);
+        setMessages(prev => ({
+          ...prev,
+          [selectedConversation._id]: msgs
+        }));
+        markAsRead(selectedConversation._id);
+      } catch (err) {
+        console.error(err);
       }
     };
 
@@ -82,6 +108,7 @@ const Chat = () => {
     }
   }, [selectedConversation, messages, setMessages, markAsRead]);
 
+  // ================= Handlers =================
   const handleSelectConversation = (conv) => {
     setSelectedConversation(conv);
     navigate(`/chat/${conv._id}`);
@@ -119,16 +146,19 @@ const Chat = () => {
   const typingInCurrent = selectedConversation ? typingUsers[selectedConversation._id] || {} : {};
 
   if (loading) {
-    return <div className="chat-container"><p>Loading conversations...</p></div>;
+    return <div className="chat-container">Loading...</div>;
   }
 
   if (!connected) {
     return (
       <div className="chat-container">
-        <p className="chat-disconnected">⚠️ Disconnected from chat server. Reconnecting...</p>
+        <p className="chat-disconnected">Disconnected… reconnecting</p>
       </div>
     );
   }
+
+  // ================= Render =================
+  // ... inside Chat.js ...
 
   return (
     <div className="chat-container">
@@ -148,7 +178,7 @@ const Chat = () => {
         unreadCounts={unreadCounts}
       />
 
-      {/* Main chat area */}
+      {/* Main Chat Area */}
       <div className="chat-main">
         {!selectedConversation && conversations.length === 0 ? (
           <ChatWelcome onStartChat={handleStartNewChat} />
@@ -185,5 +215,4 @@ const Chat = () => {
     </div>
   );
 };
-
 export default Chat;

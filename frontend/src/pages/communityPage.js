@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CommunityHeader from "../components/communityHeader";
 import CommunitySidebar from "../components/communitySidebar";
-import PostCard from "../components/PostCard";
+import {PostCard} from "../components/PostCard";
 import PrivateCommunityGate from "../components/privateCommunityGate";
 import "./communityPage.css";
 
-// ✅ CENTRAL API ONLY
 import { userApi, communityApi, membershipApi } from "../api";
 
 export default function CommunityPage() {
@@ -55,7 +54,6 @@ export default function CommunityPage() {
 
         setPosts(postsArray);
 
-        // 🔒 CHECK MEMBERSHIP FOR PRIVATE COMMUNITIES
         if (user && !communityData.isPublic) {
           try {
             const membership = await membershipApi.checkMembership(
@@ -93,9 +91,27 @@ export default function CommunityPage() {
       navigate("/login");
       return;
     }
-    navigate("/create-post", { state: { community } });
+    
+    // Get current path as referrer
+    const currentPath = window.location.pathname;
+    
+    // Make sure community object has all needed properties
+    const communityData = {
+      _id: community._id,
+      name: community.name || community.title || 'Unknown',
+      title: community.title,
+      memberCount: community.memberCount || 0
+    };
+    
+    navigate("/create-post", { 
+      state: { 
+        community: communityData,
+        referrer: currentPath // Pass current page as referrer
+      } 
+    });
   };
 
+  // ADD THIS FUNCTION - it was missing
   const openPost = (postId) => {
     navigate(`/post/${postId}`);
   };
@@ -103,7 +119,7 @@ export default function CommunityPage() {
   const handleJoinCommunity = async () => {
     try {
       await communityApi.joinCommunity(resolvedCommunityId);
-      setIsMember(true); // ✅ closes gate
+      setIsMember(true); 
     } catch (err) {
       console.error("Failed to join community", err);
     }
@@ -118,7 +134,6 @@ export default function CommunityPage() {
   if (!community)
     return <div className="community-page-root">Community not found.</div>;
 
-  // 🔒 PRIVATE COMMUNITY GATE LOGIC
   const shouldBlock =
     !community.isPublic && (!currentUser || !isMember);
 

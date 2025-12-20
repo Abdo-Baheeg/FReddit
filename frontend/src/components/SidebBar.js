@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Home, TrendingUp, Compass, Circle, Plus, Gamepad2, 
@@ -19,9 +19,41 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
     resources: true,
   });
 
-   const { openCreateCommunityModal } = useCreateCommunity();
+  const [joinedCommunities, setJoinedCommunities] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+   const { openCreateCommunityModal } = useCreateCommunity();
   const navigate = useNavigate();
+
+  // Fetch joined communities on mount
+  useEffect(() => {
+    const fetchJoinedCommunities = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch('http://localhost:5000/api/communities/joined', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setJoinedCommunities(data);
+        }
+      } catch (error) {
+        console.error('Error fetching joined communities:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJoinedCommunities();
+  }, []);
 
   const toggleSection = (section) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -123,14 +155,29 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
 
       <div className="separator"></div>
 
-      {/* --- SECTION: COMMUNITIES --- */}
+      {/* --- SECTION: COMMUNITIES (JOINED) --- */}
       <Collapsible 
         title="COMMUNITIES" 
         isOpen={openSections.communities} 
         onToggle={() => toggleSection('communities')}
       >
-        <MenuItem imgSrc="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" label="r/Cairo" isRound onClick={() => handleItemClick('/r/Cairo')} />
-        <MenuItem imgSrc="https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png" label="r/PersonalFinance" isRound onClick={() => handleItemClick('/r/PersonalFinance')} />
+        {loading ? (
+          <div className="loading-communities">Loading...</div>
+        ) : joinedCommunities.length > 0 ? (
+          joinedCommunities.map((community) => (
+            <MenuItem 
+              key={community._id}
+              imgSrc={community.icon || 'https://styles.redditmedia.com/t5_2qh2j/styles/communityIcon_72w75202678b1.png'} 
+              label={`r/${community.name}`} 
+              isRound 
+              onClick={() => handleItemClick(`/r/${community.name}`)} 
+            />
+          ))
+        ) : (
+          <div className="no-communities">
+            <span className="no-communities-text">No communities joined yet</span>
+          </div>
+        )}
       </Collapsible>
 
       <div className="separator"></div>
@@ -184,6 +231,7 @@ const ArrowIcon = () => <ChevronDown size={16} className="arrow" />;
 
 const getIcon = (name) => {
    switch (name) {
+<<<<<<< HEAD
     case 'home': return <Home size={20} />;
     case 'popular': return <TrendingUp size={20} />;
     case 'explore': return <Compass size={20} />;

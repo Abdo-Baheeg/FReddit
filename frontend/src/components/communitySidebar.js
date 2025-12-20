@@ -100,7 +100,6 @@ export default function CommunitySidebar({ community, currentUser }) {
           </div>
         </div>
 
-        {/* USER FLAIR */}
         <div className="cs-user-flair">
           <div className="cs-user-top">
             <img
@@ -119,7 +118,6 @@ export default function CommunitySidebar({ community, currentUser }) {
 
         <div className="cs-divider" />
 
-        {/* RULES */}
         <div className="cs-section">
           <div className="cs-section-title">R/{String(community.name).toUpperCase()} RULES</div>
 
@@ -147,7 +145,6 @@ export default function CommunitySidebar({ community, currentUser }) {
 
         <div className="cs-divider" />
 
-        {/* MODERATORS */}
         <div className="cs-section">
           <div className="cs-section-title">MODERATORS</div>
 
