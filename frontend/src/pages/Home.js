@@ -91,7 +91,6 @@ const Home = () => {
           onClick={() => setFeedType('trending')} 
           className={`feed-tab ${feedType === 'trending' ? 'active' : ''}`}
         >
-          <span>🔥</span>
           <span>Trending</span>
         </button>
         {isLoggedIn && (
@@ -100,14 +99,12 @@ const Home = () => {
               onClick={() => setFeedType('home')} 
               className={`feed-tab ${feedType === 'home' ? 'active' : ''}`}
             >
-              <span>🏠</span>
               <span>Home</span>
             </button>
             <button 
               onClick={() => setFeedType('suggested')} 
               className={`feed-tab ${feedType === 'suggested' ? 'active' : ''}`}
             >
-              <span>✨</span>
               <span>Discover</span>
             </button>
           </>
