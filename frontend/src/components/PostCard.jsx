@@ -338,10 +338,6 @@ const PostCard = ({ post, onVote }) => {
         post={{ ...post, score }}
         userVote={userVote}
         onVote={handleVote}
-        onAISummary={handleAISummary}
-        showAISummary={showAISummary}
-        upvoteCount={upvoteCount}
-        downvoteCount={downvoteCount}
       />
     )}
   </div>
