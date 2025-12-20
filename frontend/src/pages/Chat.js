@@ -49,7 +49,7 @@ const Chat = () => {
       try {
         const user = await userApi.getCurrentUser();
         if (user && user.id) {
-          setCurrentUserId(String(user.id));
+          //setCurrentUserId(String(user.id));
         }
       } catch (err) {
         console.error('Failed to load current user:', err);
@@ -177,7 +177,7 @@ const Chat = () => {
         selectedConversation={selectedConversation}
         onSelectConversation={handleSelectConversation}
         onStartNewChat={handleStartNewChat}
-        unreadCounts={unreadCounts}
+        //unreadCounts={unreadCounts}
       />
 
       {/* Main Chat Area */}

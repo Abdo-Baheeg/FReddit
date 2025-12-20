@@ -227,7 +227,6 @@ const ArrowIcon = () => <ChevronDown size={16} className="arrow" />;
 
 const getIcon = (name) => {
    switch (name) {
-<<<<<<< HEAD
     case 'home': return <Home size={20} />;
     case 'popular': return <TrendingUp size={20} />;
     case 'explore': return <Compass size={20} />;
