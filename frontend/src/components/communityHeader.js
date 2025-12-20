@@ -4,12 +4,17 @@ import "./communityHeader.css";
 
 import { communityApi, membershipApi } from "../api";
 
-export function requireAuthOrRedirect(navigate) {
+export function requireAuthOrRedirect() {
   const token = localStorage.getItem("token");
+
   if (!token) {
-    navigate("/login");
+    const loginBtn = document.querySelector(".vpLoginBtn");
+    if (loginBtn) {
+      loginBtn.click();
+    }
     return false;
   }
+
   return true;
 }
 
@@ -109,13 +114,14 @@ function HeaderContent({ communityId, initialCommunity }) {
   }, [community._id]);
 
   const handleCreatePost = () => {
-    if (!requireAuthOrRedirect(navigate)) return;
+    if (!requireAuthOrRedirect()) return;
     navigate("/create-post", { state: { community } });
   };
 
   const handleJoinToggle = async () => {
     if (optimistic) return;
-    if (!requireAuthOrRedirect(navigate)) return;
+
+    if (!requireAuthOrRedirect()) return;
 
     const willJoin = !community.isMember;
     setOptimistic(true);
@@ -128,7 +134,6 @@ function HeaderContent({ communityId, initialCommunity }) {
       }
 
       window.location.reload();
-
     } catch (err) {
       console.error("Join/Leave failed", err);
       setOptimistic(false);

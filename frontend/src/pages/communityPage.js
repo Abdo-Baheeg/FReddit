@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CommunityHeader from "../components/communityHeader";
 import CommunitySidebar from "../components/communitySidebar";
-import {PostCard} from "../components/PostCard";
+import { PostCard } from "../components/PostCard";
 import PrivateCommunityGate from "../components/privateCommunityGate";
 import "./communityPage.css";
 
@@ -40,7 +40,7 @@ export default function CommunityPage() {
         const [user, communityData, communityPosts] = await Promise.all([
           userApi.getCurrentUser().catch(() => null),
           communityApi.getCommunityById(resolvedCommunityId),
-          communityApi.getCommunityPosts(resolvedCommunityId)
+          communityApi.getCommunityPosts(resolvedCommunityId),
         ]);
 
         if (cancelled) return;
@@ -88,9 +88,11 @@ export default function CommunityPage() {
 
   const handleCreatePost = () => {
     if (!localStorage.getItem("token")) {
-      navigate("/login");
+      const loginBtn = document.querySelector(".vpLoginBtn");
+      if (loginBtn) loginBtn.click();
       return;
     }
+
     navigate("/create-post", { state: { community } });
   };
 
@@ -101,7 +103,7 @@ export default function CommunityPage() {
   const handleJoinCommunity = async () => {
     try {
       await communityApi.joinCommunity(resolvedCommunityId);
-      setIsMember(true); 
+      setIsMember(true);
     } catch (err) {
       console.error("Failed to join community", err);
     }
