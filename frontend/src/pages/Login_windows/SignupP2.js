@@ -33,10 +33,6 @@ const SignupP2 = ({ setOpen, email, onSignupSuccess }) => {
       setOpen(false);
       // notify parent to close other windows (signup/login)
       onSignupSuccess && onSignupSuccess();
-      
-      // Navigate to home and reload to update navbar/sidebar
-      navigate('/');
-      window.location.reload();
     } catch (err) {
       // If backend indicates username already exists, show the required text
       const msg =

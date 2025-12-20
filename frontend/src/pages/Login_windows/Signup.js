@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import {
   Logintitle,
@@ -16,6 +17,7 @@ import SignupP2 from "./SignupP2.js";
 import SignupSuccess from "./SignupSuccess.js";
 
 const Signup = ({ setOpen }) => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const disabled = !emailRegex.test(username);
@@ -36,6 +38,8 @@ const Signup = ({ setOpen }) => {
   const handleCloseSuccess = () => {
     setIsSignupSuccessOpen(false);
     setOpen(false);
+    navigate('/');
+    window.location.reload();
   };
 
   // listen for global close events (e.g., X clicked in other windows)

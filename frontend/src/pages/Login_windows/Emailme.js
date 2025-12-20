@@ -13,6 +13,12 @@ const Emailme = ({ setOpen }) => {
   const [username, setUsername] = useState("");
   const disabled = username.trim() === "";
 
+  const handleContinue = () => {
+    // This feature is not implemented yet
+    alert("Magic link login is not available yet. Please use regular login.");
+    setOpen(false);
+  };
+
   return (
     <div className="login-container">
       <div className="login-overlay" onClick={() => setOpen(false)}>
@@ -38,7 +44,7 @@ const Emailme = ({ setOpen }) => {
           </div>
 
           <div className="submits">
-            <Submit text="Continue" disabled={disabled} />
+            <Submit text="Continue" disabled={disabled} onClick={handleContinue} />
           </div>
         </div>
       </div>
