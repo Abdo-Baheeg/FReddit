@@ -35,6 +35,18 @@ const CreatePost = () => {
   console.log('Community from state:', communityFromState);
   console.log('Referrer:', referrer);
 
+  // HTML stripping helper function
+  const stripHtml = (html) => {
+    if (!html) return '';
+    
+    // Remove all HTML tags and decode HTML entities
+    return html
+      .replace(/<[^>]*>/g, ' ') // Replace tags with spaces
+      .replace(/&nbsp;/g, ' ')  // Replace &nbsp; with spaces
+      .replace(/\s+/g, ' ')     // Replace multiple spaces with single space
+      .trim();
+  };
+
   const tabs = [
     { id: 'text', label: 'Text' },
     { id: 'images', label: 'Images & Video' },
@@ -183,7 +195,8 @@ const CreatePost = () => {
 
       switch(selectedTab) {
         case 'text':
-          content = body || '';
+          // Strip HTML tags from ReactQuill content
+          content = stripHtml(body) || '';
           break;
         case 'link':
           content = linkUrl.trim();
@@ -195,12 +208,17 @@ const CreatePost = () => {
           });
           break;
         case 'images':
-          content = body || ''; // Use body as caption for images
+          // Strip HTML tags from caption
+          content = stripHtml(body) || '';
           fileToUpload = selectedFile;
           break;
         default:
-          content = body || '';
+          content = stripHtml(body) || '';
       }
+
+      // Debug: Show what content we're sending
+      console.log('Original body:', body);
+      console.log('Stripped content:', content);
 
       // Try community ID first, then name as fallback
       const communityIdentifier = selectedCommunity._id || selectedCommunity.name;
