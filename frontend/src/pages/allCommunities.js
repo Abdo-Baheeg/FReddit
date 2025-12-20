@@ -85,7 +85,8 @@ export default function AllCommunities() {
       );
     } catch (err) {
       if (err?.response?.status === 401) {
-        navigate("/login");
+        const loginBtn = document.querySelector(".vpLoginBtn");
+        if (loginBtn) loginBtn.click();
       } else {
         setError(err.message || "Join failed");
       }
@@ -115,7 +116,8 @@ export default function AllCommunities() {
       );
     } catch (err) {
       if (err?.response?.status === 401) {
-        navigate("/login");
+        const loginBtn = document.querySelector(".vpLoginBtn");
+        if (loginBtn) loginBtn.click();
       } else {
         setError(err.message || "Leave failed");
       }
@@ -125,7 +127,7 @@ export default function AllCommunities() {
   }
 
   function toggleJoin(communityId, e) {
-    e.preventDefault();   
+    e.preventDefault();
     e.stopPropagation();
 
     const isJoined = joinedMap.get(communityId);
