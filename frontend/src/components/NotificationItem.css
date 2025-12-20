@@ -7,6 +7,23 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
   position: relative;
+  --color-canvas-default: #ffffff;
+  --color-canvas-subtle: #f6f7f8;
+  --color-border-default: #edeff1;
+  --color-fg-default: #1c1c1c;
+  --color-accent-subtle: #e6f0ff;
+  --color-accent-muted: #d0e4ff;
+  --color-accent-emphasis: #0045ac;
+}
+
+.vpDarkMode .notification-item {
+  --color-canvas-default: #1a1a1b;
+  --color-canvas-subtle: #272729;
+  --color-border-default: #343536;
+  --color-fg-default: #d7dadc;
+  --color-accent-subtle: #1a3a5c;
+  --color-accent-muted: #2a4a6c;
+  --color-accent-emphasis: #4a90e2;
 }
 
 .notification-item:hover {

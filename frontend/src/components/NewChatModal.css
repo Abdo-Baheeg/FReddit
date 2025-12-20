@@ -1,10 +1,38 @@
+/* Light Mode Variables */
+.modal-overlay {
+  --background-color: #ffffff;
+  --text-primary: #1c1c1c;
+  --text-secondary: #7c7c7c;
+  --border-color: #edeff1;
+  --hover-color: #f6f7f8;
+  --error-bg: #fee;
+  --error-text: #c33;
+  --selected-bg: #e6f0ff;
+  --primary-color: #0045ac;
+  --primary-hover: #003584;
+}
+
+/* Dark Mode Variables */
+.vpDarkMode .modal-overlay {
+  --background-color: #1a1a1b;
+  --text-primary: #d7dadc;
+  --text-secondary: #818384;
+  --border-color: #343536;
+  --hover-color: #272729;
+  --error-bg: #3a1a1a;
+  --error-text: #ff6b6b;
+  --selected-bg: #1a3a5c;
+  --primary-color: #4a90e2;
+  --primary-hover: #3a7bc8;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,8 +57,9 @@
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   animation: slideUp 0.2s ease;
+  border: 1px solid var(--border-color);
 }
 
 @keyframes slideUp {
@@ -121,7 +150,7 @@
 }
 
 .search-input:focus {
-  border-color: #0045ac;
+  border-color: var(--primary-color);
 }
 
 .selected-users {
@@ -169,10 +198,11 @@
   align-items: center;
   gap: 8px;
   padding: 12px;
-  background-color: #fee;
-  color: #c33;
+  background-color: var(--error-bg);
+  color: var(--error-text);
   border-radius: 8px;
   font-size: 14px;
+  border: 1px solid var(--error-text);
 }
 
 .error-message .material-icons-outlined {
@@ -214,7 +244,7 @@
   width: 40px;
   height: 40px;
   border: 3px solid var(--border-color);
-  border-top-color: #0045ac;
+  border-top-color: var(--primary-color);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: 12px;
@@ -259,11 +289,8 @@
 }
 
 .user-result.selected {
-  background-color: #e6f0ff;
-}
-
-[data-theme="dark"] .user-result.selected {
-  background-color: #1a3a5c;
+  background-color: var(--selected-bg);
+  border: 1px solid var(--primary-color);
 }
 
 .user-avatar {
@@ -312,7 +339,7 @@
 }
 
 .check-icon {
-  color: #0045ac;
+  color: var(--primary-color);
   font-size: 24px;
   flex-shrink: 0;
 }
@@ -348,12 +375,12 @@
 }
 
 .btn-primary {
-  background-color: #0045ac;
+  background-color: var(--primary-color);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #003584;
+  background-color: var(--primary-hover);
 }
 
 .btn-primary:disabled {
