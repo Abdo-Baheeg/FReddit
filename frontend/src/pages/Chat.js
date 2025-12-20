@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
+import { useTheme } from '../context/ThemeContext';
 import { chatApi } from '../api';
+import { userApi } from '../api/userApi';
 import { MessageCircle } from 'lucide-react';
 import ChatSidebar from '../components/ChatSidebar';
 import ChatWelcome from '../components/ChatWelcome';

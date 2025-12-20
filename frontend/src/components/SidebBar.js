@@ -22,7 +22,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   const [joinedCommunities, setJoinedCommunities] = useState([]);
   const [loading, setLoading] = useState(true);
 
-   const { openCreateCommunityModal } = useCreateCommunity();
+  const { openCreateCommunityModal } = useCreateCommunity();
   const navigate = useNavigate();
 
   // Fetch joined communities on mount
@@ -63,7 +63,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
     setIsCollapsed?.(!isCollapsed);
   };
 
-  // ✅ REAL NAVIGATION
   const handleItemClick = (path) => {
     navigate(path);
   };
@@ -92,10 +91,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       <div className="menu-group">
         <MenuItem icon="add" label="Create Post" onClick={() => handleItemClick('/create-post')} />
         <MenuItem icon="rules" label="Create Community" onClick={openCreateCommunityModal} />
-        
         <MenuItem icon="best_of" label="Best Communities" onClick={() => handleItemClick('/communities')} />
-        
-        
       </div>
 
       <div className="separator"></div>
