@@ -2,16 +2,40 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: white;
+  background-color: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --bg-primary: #ffffff;
+  --bg-secondary: #f6f7f8;
+  --text-primary: #1a1a1b;
+  --text-secondary: #878a8c;
+  --border-color: #edeff1;
+  --border-hover: #878a8c;
+  --accent-color: #0079d3;
+  --accent-hover: #1484d6;
+  --error-bg: #fee;
+  --error-text: #c00;
+}
+
+.vpDarkMode .create-post-container {
+  --bg-primary: #1a1a1b;
+  --bg-secondary: #272729;
+  --text-primary: #d7dadc;
+  --text-secondary: #818384;
+  --border-color: #343536;
+  --border-hover: #4f5152;
+  --accent-color: #4a90e2;
+  --accent-hover: #5a9ff2;
+  --error-bg: #3a1a1a;
+  --error-text: #ff6b6b;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .create-post-header h1 {
   margin: 0 0 24px 0;
   font-size: 24px;
   font-weight: 600;
-  color: #1a1a1b;
+  color: var(--text-primary);
 }
 
 .community-selector {
@@ -26,11 +50,11 @@
 .community-dropdown-toggle {
   width: 100%;
   padding: 10px 12px;
-  background-color: white;
-  border: 1px solid #edeff1;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 14px;
-  color: #878a8c;
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -39,16 +63,16 @@
 }
 
 .community-dropdown-toggle:hover {
-  border-color: #878a8c;
+  border-color: var(--border-hover);
 }
 
 .community-placeholder {
-  color: #878a8c;
+  color: var(--text-primary);
 }
 
 .dropdown-arrow {
   font-size: 12px;
-  color: #878a8c;
+  color: var(--text-secondary);
 }
 
 .community-dropdown-menu {
@@ -56,8 +80,8 @@
   top: 100%;
   left: 0;
   right: 0;
-  background-color: white;
-  border: 1px solid #edeff1;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
@@ -68,20 +92,20 @@
 .community-option {
   padding: 10px 12px;
   font-size: 14px;
-  color: #1a1a1b;
+  color: var(--text-primary);
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .community-option:hover {
-  background-color: #f6f7f8;
+  background-color: var(--bg-secondary);
 }
 
 .post-type-tabs {
   display: flex;
   gap: 4px;
   margin-bottom: 20px;
-  border-bottom: 1px solid #edeff1;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 8px;
 }
 
@@ -92,19 +116,19 @@
   border-radius: 4px;
   font-size: 14px;
   font-weight: 500;
-  color: #878a8c;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .tab-button:hover {
-  background-color: #f6f7f8;
-  color: #1a1a1b;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .tab-button.active {
-  background-color: #f6f7f8;
-  color: #1a1a1b;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
   font-weight: 600;
 }
 
@@ -119,22 +143,23 @@
   margin-bottom: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: #1a1a1b;
+  color: var(--text-primary);
 }
 
 .form-group input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #edeff1;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 14px;
-  color: #1a1a1b;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
   transition: border-color 0.2s;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #0079d3;
+  border-color: var(--accent-color);
 }
 
 .tags-input-container {
@@ -147,11 +172,11 @@
   top: 50%;
   transform: translateY(-50%);
   font-size: 12px;
-  color: #878a8c;
+  color: var(--text-secondary);
 }
 
 .text-editor-container {
-  border: 1px solid #edeff1;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -290,22 +315,22 @@
 .save-draft-button {
   padding: 10px 24px;
   background: none;
-  border: 1px solid #878a8c;
+  border: 1px solid var(--text-secondary);
   border-radius: 9999px;
   font-size: 14px;
   font-weight: 600;
-  color: #878a8c;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .save-draft-button:hover {
-  background-color: #f6f7f8;
+  background-color: var(--bg-secondary);
 }
 
 .submit-post-button {
   padding: 10px 24px;
-  background-color: #0079d3;
+  background-color: var(--accent-color);
   border: none;
   border-radius: 9999px;
   font-size: 14px;
@@ -316,7 +341,7 @@
 }
 
 .submit-post-button:hover:not(:disabled) {
-  background-color: #1484d6;
+  background-color: var(--accent-hover);
 }
 
 .submit-post-button:disabled {
@@ -355,14 +380,14 @@
 
 /* ReactQuill Styling */
 .react-quill-editor {
-  border: 1px solid #edeff1;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .react-quill-editor .ql-toolbar {
-  background-color: #f6f7f8;
-  border-bottom: 1px solid #edeff1;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 }
@@ -372,17 +397,30 @@
   min-height: 200px;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
+  background-color: var(--bg-primary);
 }
 
 .react-quill-editor .ql-editor {
   min-height: 200px;
   font-size: 14px;
-  color: #1a1a1b;
+  color: var(--text-primary);
 }
 
 .react-quill-editor .ql-editor::before {
-  color: #878a8c;
+  color: var(--text-secondary);
   font-style: normal;
+}
+
+.react-quill-editor .ql-stroke {
+  stroke: var(--text-secondary);
+}
+
+.react-quill-editor .ql-fill {
+  fill: var(--text-secondary);
+}
+
+.react-quill-editor .ql-picker-label {
+  color: var(--text-secondary);
 }
 
 /* Override default text-editor-container styles for ReactQuill */
@@ -396,60 +434,64 @@
 }
 
 .file-upload-area {
-  border: 2px dashed #edeff1;
+  border: 2px dashed var(--border-color);
   border-radius: 8px;
   padding: 40px 20px;
   text-align: center;
   cursor: pointer;
   margin-bottom: 20px;
   transition: border-color 0.2s;
+  background-color: var(--bg-primary);
 }
 
 .file-upload-area:hover {
-  border-color: #0079d3;
+  border-color: var(--accent-color);
 }
 
 .file-placeholder {
-  color: #878a8c;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .file-hint {
   font-size: 12px;
-  color: #b8b8b8;
+  color: var(--text-secondary);
   margin-top: 8px;
+  opacity: 0.7;
 }
 
 .file-selected {
-  color: #1a1a1b;
+  color: var(--text-primary);
 }
 
 .change-file-btn {
   margin-top: 10px;
   padding: 6px 12px;
   background: none;
-  border: 1px solid #0079d3;
+  border: 1px solid var(--accent-color);
   border-radius: 4px;
-  color: #0079d3;
+  color: var(--accent-color);
   font-size: 12px;
   cursor: pointer;
 }
 
 .change-file-btn:hover {
-  background-color: #f0f8ff;
+  background-color: var(--bg-secondary);
 }
 
 /* Loading and error states */
 .loading {
   text-align: center;
   padding: 40px;
-  color: #878a8c;
+  color: var(--text-secondary);
 }
 
 .error-message {
-  background-color: #fee;
-  color: #c00;
-  padding: 10px;
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  padding: 12px 16px;
   border-radius: 4px;
   margin-bottom: 20px;
+  border: 1px solid var(--error-text);
+  font-size: 14px;
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { searchApi } from '../api';
-import {PostCard} from '../components/PostCard';
+import PostCard from '../components/PostCard';
 import './Search.css';
 import { Search as SearchIcon, Users, Layout, FileText, Loader } from 'lucide-react';
 
