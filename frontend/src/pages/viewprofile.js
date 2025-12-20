@@ -137,10 +137,9 @@ export default function RedditProfilePageMock() {
     { value: 'All Time', label: 'All Time' }
   ];
 
-  // Close options when clicking outside
+  // Close options 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Check if clicking outside feed dropdown
       const isOutsideFeed = showOptions.feed &&
         optionsRef.current &&
         !optionsRef.current.contains(event.target) &&
@@ -149,14 +148,12 @@ export default function RedditProfilePageMock() {
         topBackButtonRef.current &&
         !topBackButtonRef.current.contains(event.target);
       
-      // Check if clicking outside comments dropdown
       const isOutsideComments = showOptions.comments &&
         commentsOptionsRef.current &&
         !commentsOptionsRef.current.contains(event.target) &&
         commentsButtonRef.current &&
         !commentsButtonRef.current.contains(event.target);
       
-      // Check if clicking outside contributions modal
       const isOutsideModal = showContributionsModal &&
         contributionsModalRef.current &&
         !contributionsModalRef.current.contains(event.target);
@@ -191,7 +188,7 @@ export default function RedditProfilePageMock() {
 
   return (
     <div className="vpBody">
-      {/* Hidden file input for image selection */}
+      {/* File input for image selection */}
       <input
         type="file"
         ref={fileInputRef}
@@ -238,8 +235,7 @@ export default function RedditProfilePageMock() {
                 </div>
                 <div className="vpContributionValue">{totalComments}</div>
               </div>
-                                  <div className="vpContributionNote">Updates every 24 hours</div>
-
+              
             </div>
           </div>
         </div>
@@ -344,7 +340,7 @@ export default function RedditProfilePageMock() {
                       <span>+</span> Create Post
                     </button>
                     
-                    {/* Arrow button with relative positioning for dropdown */}
+                    {/* Arrow button with dropdown */}
                     <div className="vpFeedButtonWrapper" style={{position: 'relative', display: 'inline-block'}}>
                       <button
                         ref={buttonRef}
@@ -354,7 +350,7 @@ export default function RedditProfilePageMock() {
                         <span>{'->'}</span>
                       </button>
                       
-                      {/* Options dropdown menu - appears next to the button */}
+                      {/* Options dropdown menu */}
                       {showOptions.feed && (
                         <div
                           ref={optionsRef}
@@ -390,7 +386,7 @@ export default function RedditProfilePageMock() {
                               )}
                             </div>
                             
-                            {/* Time Filter Options - Only show when in "Back" mode */}
+                            {/* Time Filter Options */}
                             {activeView === 'back' && (
                               <div className="time-options">
                                 {timeOptions.map((time) => {
@@ -409,7 +405,7 @@ export default function RedditProfilePageMock() {
                                         </span>
                                       </div>
                                       
-                                      {/* Circle - Selection Indicator Only */}
+                                      {/* Circle */}
                                       <div className="time-option-circle-wrapper">
                                         <div 
                                           className={`time-option-circle ${isSelected ? 'circle-selected' : ''}`}
@@ -438,7 +434,7 @@ export default function RedditProfilePageMock() {
                 )}
                 
                 <div className="vpTabContent">
-                  {/* Tab content remains exactly the same as before */}
+
                   {activeTab === 'Overview' && (
                     <div>
                       {posts.length === 0 ? (
@@ -533,7 +529,6 @@ export default function RedditProfilePageMock() {
                     </div>
                   )}
                   
-                  {/* Other tab contents remain the same */}
                   {activeTab === 'Saved' && (
                     <div className="vpEmptyState">
                       <div className="vpEmptyRobot">
@@ -768,7 +763,7 @@ export default function RedditProfilePageMock() {
                 </div>
                 <hr className="vpDivider" />
                 
-                {/* ================= PROFILE ================= */}
+                {/* PROFILE */}
                 <div className="vpProfileSection">
                   <div className="vpSectionHeaderRow">
                     <h4>Profile</h4>
@@ -778,7 +773,7 @@ export default function RedditProfilePageMock() {
                   <span className="vpSectionSubtitle">Customize your profile</span>
                 </div>
                 
-                {/* ================= CURATE PROFILE ================= */}
+                {/* CURATE PROFILE  */}
                 <div className="vpProfileSection">
                   <div className="vpSectionHeaderRow">
                     <h4>Curate your profile</h4>
@@ -788,7 +783,7 @@ export default function RedditProfilePageMock() {
                   <span className="vpSectionSubtitle">Manage what people see when they visit your profile</span>
                 </div>
                 
-                {/* ================= AVATAR ================= */}
+                {/* AVATAR */}
                 <div className="vpProfileSection">
                   <div className="vpSectionHeaderRow">
                     <h4>Avatar</h4>

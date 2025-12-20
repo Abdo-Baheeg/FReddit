@@ -74,9 +74,9 @@ const Settings = () => {
     }
   };
 
-  // Handle click on display name button - NEW VERSION
+  // Handle click on display name button 
   const handleDisplayNameClick = () => {
-    // Set the new username state with current display name or username
+    // Set to display name or username
     setNewUsername(user?.displayName || user?.username || "");
     // Enable editing mode
     setIsEditing(true);
@@ -99,7 +99,6 @@ const Settings = () => {
 
     try {
       // Call the API to update username
-      // This is the key connection point - calling the API function you provided
       const updatedUser = await userApi.updateUsername(newUsername.trim());
       
       // Update the user in state
@@ -109,12 +108,13 @@ const Settings = () => {
       setIsEditing(false);
       setDisplayNameError('');
       
-      // Optional: Refresh user data from server to ensure consistency
+      // Refresh user data from server to ensure consistency
       await fetchCurrentUser();
       
       console.log('Display name updated successfully via API');
       
-    } catch (err) {
+    } 
+    catch (err) {
       console.error('Error updating display name:', err);
       
       // Handle specific error cases
@@ -139,7 +139,7 @@ const Settings = () => {
     setDisplayNameError('');
   };
 
-  // NEW: Handle saving email
+  // Handle saving email
   const handleSaveEmail = async () => {
     // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -178,7 +178,8 @@ const Settings = () => {
       
       console.log('Email updated successfully via API');
       
-    } catch (err) {
+    }
+     catch (err) {
       console.error('Error updating email:', err);
       
       // Handle specific error cases
@@ -196,7 +197,7 @@ const Settings = () => {
     }
   };
 
-  // NEW: Handle saving password
+  // Handle saving password
   const handleSavePassword = async () => {
     // Validate password
     if (!currentPassword.trim()) {
@@ -222,7 +223,7 @@ const Settings = () => {
     setIsSavingPassword(true);
 
     try {
-      // Call the API to update password
+      // Call API to update password
       await userApi.updatePassword(currentPassword.trim(), newPassword.trim());
       
       // Clear password fields
@@ -236,7 +237,8 @@ const Settings = () => {
       
       console.log('Password updated successfully via API');
       
-    } catch (err) {
+    } 
+    catch (err) {
       console.error('Error updating password:', err);
       
       // Handle specific error cases
@@ -289,9 +291,6 @@ const Settings = () => {
     
     try {
       // Update user bio/description via API
-      // Since you don't have a specific endpoint for updating bio in your API,
-      // I'll show you how to handle it once you add it
-      // For now, we'll simulate it
       console.log('Simulating about description update:', aboutDescriptionInput.trim());
       
       // Update local state directly for testing
@@ -310,7 +309,8 @@ const Settings = () => {
       // Show success message (optional)
       console.log('About description updated successfully');
       
-    } catch (err) {
+    }
+     catch (err) {
       console.error('Error updating about description:', err);
       
       // More specific error messages
@@ -341,7 +341,7 @@ const Settings = () => {
     }
   };
 
-  // Display Name Modal Functions (for modal version - kept as backup)
+  // Display Name Modal Functions 
   const handleModalDisplayNameClick = () => {
     setDisplayNameInput(user?.displayName || '');
     setDisplayNameError('');
@@ -371,8 +371,7 @@ const Settings = () => {
     await new Promise(resolve => setTimeout(resolve, 500));
     
     try {
-      // TEMPORARY: Simulate successful API call for testing
-      // Remove this and uncomment the real API call when backend is ready
+      //  API call for testing
       console.log('Simulating display name update:', displayNameInput.trim());
       
       // Update local state directly for testing
@@ -390,7 +389,8 @@ const Settings = () => {
       // Show success message (optional)
       console.log('Display name updated successfully');
       
-    } catch (err) {
+    } 
+    catch (err) {
       console.error('Error updating display name:', err);
       
       // More specific error messages
@@ -519,7 +519,7 @@ const Settings = () => {
     }
   };
 
-  // Render Account tab content - UPDATED WITH EMAIL AND PASSWORD INLINE EDITING
+  // Render Account tab content 
   const renderAccountContent = () => (
     <div className="settings-main">
       <div className="general-section">
@@ -579,7 +579,7 @@ const Settings = () => {
             </div>
             <div className="setting-control">
               <span className="account-username">
-                <p> {user.username || 'No username'}</p>
+                <p> {user.username || 'No username'} </p>
               </span>
             </div>
           </div>
@@ -790,7 +790,7 @@ const Settings = () => {
     </div>
   );
 
-  // Render Profile tab content - UPDATED WITH INLINE EDITING
+  // Render Profile tab content 
   const renderProfileContent = () => (
     <div className="settings-main">
       <div className="general-section">
@@ -806,14 +806,14 @@ const Settings = () => {
             </div>
             <div className="setting-control">
               {!isEditing ? (
-                // View mode - shows button with current display name
+                //  button with current display name
                 <button className="displaybutton" onClick={handleDisplayNameClick}>
                   <span className="display-name">
                     {user.displayName || user.username || 'No display name set'}
                   </span>
                 </button>
               ) : (
-                // Edit mode - shows input field and action buttons
+                // Edit mode 
                 <div className="display-name-edit-container">
                   <input
                     type="text"
@@ -1706,7 +1706,7 @@ const Settings = () => {
         </div>
       </div>
 
-      {/* About Description Modal */}
+      {/* Description Modal */}
       {showAboutModal && (
         <div className="about-modal-overlay">
           <div className="about-modal">
@@ -1751,7 +1751,7 @@ const Settings = () => {
         </div>
       )}
 
-      {/* Display Name Modal (kept as backup) */}
+      {/* Display Name Modal */}
       {showDisplayNameModal && (
         <div className="display-name-modal-overlay">
           <div className="display-name-modal">
@@ -1796,7 +1796,7 @@ const Settings = () => {
         </div>
       )}
 
-      {/* Email Change Modal */}
+      {/* Email Change */}
       {showEmailModal && (
         <div className="email-modal-overlay">
           <div className="email-modal">
@@ -1815,7 +1815,7 @@ const Settings = () => {
         </div>
       )}
 
-      {/* Email Confirmation Modal */}
+      {/* Email Confirmation */}
       {showEmailConfirmationModal && (
         <div className="email-modal-overlay">
           <div className="email-modal">
@@ -1831,7 +1831,7 @@ const Settings = () => {
         </div>
       )}
 
-      {/* Gender Selection Modal */}
+      {/* Gender Selection */}
       {showGenderModal && (
         <div className="gender-modal-overlay">
           <div className="gender-modal">
@@ -1904,7 +1904,7 @@ const Settings = () => {
         </div>
       )}
 
-      {/* Delete Account Confirmation Modal */}
+      {/* Delete Account */}
       {showDeleteConfirmationModal && (
         <div className="email-modal-overlay">
           <div className="email-modal">

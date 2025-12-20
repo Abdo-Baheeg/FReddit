@@ -1,4 +1,4 @@
-/* Apply to the whole app */
+/* whole app */
 * {
   margin: 0;
   padding: 0;
@@ -19,44 +19,44 @@ body {
   min-height: 100vh;
 }
 
-/* Main Container - REMOVED TOP PADDING */
+/* Main Container */
 .settings-container {
-  padding: 0 60px 40px; /* Removed top padding, kept right, bottom, left */
+  padding: 0 60px 40px; 
   min-height: 100vh;
   background-color: white;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Header with tabs inline - UPDATED TO REMOVE MARGIN */
+/* Header */
 .settings-header {
   margin-bottom: 0;
-  border-bottom: none; /* Remove border bottom */
+  border-bottom: none; 
   padding-bottom: 0;
-  padding-top: 20px; /* Added some top padding instead */
+  padding-top: 20px; 
 }
 
 .settings-header h1 {
   font-size: 32px;
   font-weight: 600;
   color: #000;
-  margin-bottom: 10px; /* Reduced margin to bring tabs closer */
+  margin-bottom: 10px; 
 }
 
-/* Horizontal tabs under the header - UPDATED TO REMOVE SCROLLING AND GAP */
+/* Horizontal tabs under header */
 .settings-horizontal-tabs {
   display: flex;
   gap: 0;
-  overflow-x: visible; /* Changed from auto to visible to prevent scrolling */
+  overflow-x: visible; 
   padding-bottom: 0;
-  margin-bottom: 30px; /* Keep space below tabs */
-  border-bottom: none; /* Remove the separator line */
-  flex-wrap: nowrap; /* Ensure tabs stay in a single line */
-  width: 100%; /* Ensure full width */
+  margin-bottom: 30px; 
+  border-bottom: none; 
+  flex-wrap: nowrap; 
+  width: 100%;
 }
 
 .settings-horizontal-tab {
-  padding: 10px 20px 12px; /* Adjusted padding */
+  padding: 10px 20px 12px; 
   font-size: 14px;
   font-weight: 500;
   color: #666;
@@ -68,8 +68,8 @@ body {
   white-space: nowrap;
   position: relative;
   border-bottom: 2px solid transparent;
-  margin-bottom: 0; /* Removed negative margin */
-  flex-shrink: 0; /* Prevent tabs from shrinking */
+  margin-bottom: 0; 
+  flex-shrink: 0; 
 }
 
 .settings-horizontal-tab:hover {
@@ -150,7 +150,6 @@ body {
   color: #000;
 }
 
-/* Table-like layout */
 .settings-table {
   width: 100%;
   border-collapse: collapse;
@@ -197,7 +196,7 @@ body {
   justify-content: flex-end;
 }
 
-/* Account tab specific styles */
+/* Account tab */
 .account-email {
   font-size: 15px;
   color: #000;
@@ -268,7 +267,7 @@ input:checked + .toggle-slider:before {
   transform: translateX(24px);
 }
 
-/* Privacy tab specific styles */
+/* Privacy tab */
 .privacy-option {
   display: flex;
   align-items: center;
@@ -295,7 +294,7 @@ input:checked + .toggle-slider:before {
   flex-shrink: 0;
 }
 
-/* Notifications tab specific styles */
+/* Notifications tab */
 .notifications-toggle-group {
   display: flex;
   align-items: center;
@@ -311,7 +310,7 @@ input:checked + .toggle-slider:before {
   text-align: right;
 }
 
-/* Account tab specific styles */
+/* Account tab */
 .connect-button {
   padding: 8px 16px;
   font-size: 14px;
@@ -339,96 +338,13 @@ input:checked + .toggle-slider:before {
   background-color: #fff0f0;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .settings-container {
-    padding: 0 20px 20px; /* Removed top padding for mobile too */
-  }
-  
-  .settings-header {
-    border-bottom: none;
-    margin-bottom: 20px;
-    padding-top: 15px; /* Added some top padding for mobile */
-  }
-  
-  .settings-header h1 {
-    margin-bottom: 15px; /* Reduced for mobile */
-  }
-  
-  .settings-horizontal-tabs {
-    display: none;
-  }
-  
-  .settings-content {
-    flex-direction: column;
-  }
-  
-  .settings-sidebar {
-    display: block;
-    width: 100%;
-  }
-  
-  .settings-tabs {
-    flex-direction: row;
-    overflow-x: auto; /* Keep scrolling for mobile */
-    padding-bottom: 10px;
-  }
-  
-  .settings-tab {
-    white-space: nowrap;
-  }
-  
-  .settings-row {
-    flex-direction: column;
-    gap: 15px;
-    align-items: flex-start;
-  }
-  
-  .setting-label {
-    width: 100%;
-    padding-right: 0;
-  }
-  
-  .label-sub {
-    white-space: normal;
-  }
-  
-  .toggle-control {
-    justify-content: flex-start;
-    width: 100%;
-  }
-  
-  .setting-control {
-    justify-content: flex-start;
-    width: 100%;
-  }
-  
-  .notifications-toggle-group {
-    justify-content: flex-start;
-  }
-}
-
-/* Prevent horizontal scrolling on desktop and ensure tabs fit */
-@media (min-width: 769px) {
-  .settings-horizontal-tabs {
-    overflow-x: hidden; /* Ensure no scrolling on desktop */
-  }
-  
-  /* Make sure all tabs fit without scrolling */
-  .settings-horizontal-tabs-container {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-  }
-}
-
 .email-button{
   background-color: transparent;
   border: none;
   cursor: pointer;
 }
 
-/* Email Modal Styles */
+/* Email Modal */
 .email-modal-overlay {
   position: fixed;
   top: 0;
@@ -493,7 +409,7 @@ input:checked + .toggle-slider:before {
   background-color: #085286;
 }
 
-/* Email Button Styles */
+/* Email Button */
 .email-button {
   background-color: transparent;
   border: none;
@@ -510,7 +426,7 @@ input:checked + .toggle-slider:before {
   font-weight: 500;
 }
 
-/* Gender Button Styles - Updated for right alignment */
+/* Gender Button Styles */
 .gender-button {
   background: none;
   border: none;
@@ -532,14 +448,13 @@ input:checked + .toggle-slider:before {
   gap: 8px;
 }
 
-/* Or if you want the text to be on the right but arrow on the far right: */
 .account-gender.align-right {
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
 
-/* Gender Modal Styles */
+/* Gender Modal */
 .gender-modal-overlay {
   position: fixed;
   top: 0;
@@ -647,7 +562,6 @@ input:checked + .toggle-slider:before {
   cursor: not-allowed;
 }
 
-/* Existing modal styles (keep these if they exist) */
 .email-modal-overlay {
   position: fixed;
   top: 0;
@@ -691,7 +605,7 @@ input:checked + .toggle-slider:before {
   padding: 0;
 }
 
-/* Delete Account Button Styles */
+/* Delete Account Button */
 .deletebutton {
   background: none;
   border: none;
@@ -709,7 +623,6 @@ input:checked + .toggle-slider:before {
   color: #1a1a1b;
 }
 
-/* Delete Account Modal Styles */
 .delete-modal-overlay {
   position: fixed;
   top: 0;
@@ -746,7 +659,7 @@ input:checked + .toggle-slider:before {
   line-height: 1.4;
 }
 
-/* Gender Button Styles - Updated for right alignment */
+/* Gender Button Styles */
 .gender-button {
   background: none;
   border: none;
@@ -768,7 +681,7 @@ input:checked + .toggle-slider:before {
   gap: 8px;
 }
 
-/* Gender Modal Styles */
+/* Gender Modal */
 .gender-modal-overlay {
   position: fixed;
   top: 0;
@@ -892,7 +805,7 @@ input:checked + .toggle-slider:before {
   cursor: not-allowed;
 }
 
-/* Existing modal styles (keep these if they exist) */
+/* Existing modal */
 .email-modal-overlay {
   position: fixed;
   top: 0;
@@ -929,9 +842,8 @@ input:checked + .toggle-slider:before {
   line-height: 1.4;
 }
 
-/* Add this to your existing setting.css file */
 
-/* Delete Account Confirmation Modal Styles */
+/* Delete Account Confirmation */
 .email-confirmation-content {
   text-align: center;
   margin: 20px 0;
@@ -959,12 +871,11 @@ input:checked + .toggle-slider:before {
   color: #000;
 }
 
-/* Update the existing email modal styles for consistency */
 .email-modal {
   background-color: white;
   border-radius: 8px;
   width: 90%;
-  max-width: 420px; /* Slightly wider for better content display */
+  max-width: 420px; 
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 24px;
 }
@@ -997,7 +908,7 @@ input:checked + .toggle-slider:before {
   border:none;
 }
 
-/* Display Name Modal Styles */
+/* Display Name Modal  */
 .display-name-modal-overlay {
   position: fixed;
   top: 0;
@@ -1115,7 +1026,7 @@ input:checked + .toggle-slider:before {
   cursor: not-allowed;
 }
 
-/* Display button styles */
+/* Display button */
 .displaybutton {
   background: none;
   border: none;
@@ -1153,7 +1064,7 @@ input:checked + .toggle-slider:before {
   align-items: center;
 }
 
-/* About Description Modal Styles */
+/* About Description Modal */
 .about-modal-overlay {
   position: fixed;
   top: 0;
@@ -1275,7 +1186,7 @@ input:checked + .toggle-slider:before {
   cursor: not-allowed;
 }
 
-/* Updated Bio button styling */
+/* Bio button */
 .bio-button:hover .about-description {
   color: #0079d3;
 }
@@ -1313,5 +1224,3 @@ input:checked + .toggle-slider:before {
   border:none;
   cursor: pointer;
 }
-
-

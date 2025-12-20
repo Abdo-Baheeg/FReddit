@@ -1,4 +1,4 @@
-/* ==================== LAYOUT STRUCTURE ==================== */
+/* LAYOUT STRUCTURE ]*/
 .vpLayoutContainer {
   display: flex;
   flex-direction: row;
@@ -6,31 +6,30 @@
   width: 100%;
   min-height: 100vh;
   background-color: white;
-  /* REMOVED: margin-top: 40px; */
   border: 1px; 
 }
 
-/* ==================== CONTENT WRAPPER ==================== */
+/*  CONTENT  */
 .vpPageContentWrapper {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  min-width: 0; /* Prevents overflow issues in flex items */
-  position: relative; /* Added for absolute positioning */
+  min-width: 0; 
+  position: relative; 
 }
 
-/* ==================== MAIN PAGE CONTENT ==================== */
+/*  MAIN PAGE CONTENT */
 .vpPageContent {
   display: flex;
   max-width: 1400px;
   padding: 24px;
   width: 100%;
-  margin-top: 40px; /* Added to create space for hamburger button */
+  margin-top: 40px; /* Acreate space for hamburger button */
 }
 
 .vpMain {
   min-height: 500px;
-  max-width: 10000px; /* Limit width like reddit */
+  max-width: 10000px; 
 }
 
 
@@ -156,11 +155,10 @@
   font-size: 18px; 
 }
 
-/* Container to hold both buttons side by side */
 .vpButtonsContainer {
   display: flex;
   align-items: center;
-  gap: 12px; /* المسافة بين الزرين */
+  gap: 12px; 
   margin-bottom: 40px;
 }
 
@@ -186,8 +184,7 @@
   font-weight: bold; 
 }
 
-/* Feed Button (Circular) */
-/* Feed Button (Circular) */
+/* Feed Button Circular */
 .vpfeedBtn {
   display: flex;
   align-items: center;
@@ -301,14 +298,13 @@
   cursor: pointer; 
 }
 
-/* ==================== RIGHT SIDEBAR ==================== */
+/*  RIGHT SIDEBAR  */
 .vpRightSidebar { 
   width: 312px; 
   flex-shrink: 0;
   
-  /* Move it further right */
   margin-left: auto;
-  margin-right: 20px; /* Add some space from the right edge */
+  margin-right: 20px; 
 }
 
 .vpRightCard { 
@@ -422,7 +418,6 @@
   text-decoration: underline; 
 }
 
-/* NEW STYLES FOR ADDED SECTIONS */
 .vpProfileSection {
   margin-bottom: 16px;
   padding-bottom: 16px;
@@ -562,27 +557,7 @@
   width: 100%;
 }
 
-/* Responsive */
-@media (max-width: 1200px) {
-  .vpPageContent {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-  
-  .vpRightSidebar {
-    width: 280px;
-  }
-}
-
-@media (max-width: 992px) {
-  .vpRightSidebar {
-    display: none;
-  }
-}
-
-
-
-/* Main tabs container styling */
+/* Main tabs container*/
 .vpTabs {
   display: flex;
   border-bottom: 1px solid #edeff1;
@@ -592,7 +567,6 @@
   gap: 0;
 }
 
-/* Individual tab button styling */
 .vpTabBtn {
   padding: 16px 20px;
   background: none;
@@ -681,43 +655,6 @@
   background-color: #1484d6;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .vpTabs {
-    padding: 0 8px;
-  }
-
-  .vpTabBtn {
-    padding: 14px 12px;
-    font-size: 13px;
-  }
-  
-  /* Adjust hamburger position for mobile */
-  .vpHamburgerContainer {
-    top: 8px;
-    left: 8px;
-  }
-}
-
-/* Hide scrollbar but keep functionality */
-.vpTabsContainer,
-.vpTabs,
-.vpTabContent,
-.vpEmptyState,
-.vpTabContent > * {
-  scrollbar-width: none; /* Firefox */
-}
-
-.vpTabsContainer::-webkit-scrollbar,
-.vpTabs::-webkit-scrollbar,
-.vpTabContent::-webkit-scrollbar,
-.vpEmptyState::-webkit-scrollbar,
-.vpTabContent > *::-webkit-scrollbar {
-  display: none; 
-}
-
-
-/* Keep your existing vpNewButton styles exactly as they are */
 .vpNewButton {
   background-color: transparent;
   color: #1a1a1b;
@@ -748,7 +685,6 @@
   transform: scale(0.98);
 }
 
-/* Only add dropdown container styling */
 .vpFeedButtonWrapper {
   position: relative;
   display: inline-block;
@@ -757,8 +693,8 @@
 /* Dropdown options styling - positioned relative to the button */
 .feed-options-bar {
   position: absolute;
-  top: calc(100% + 4px); /* Just below the button */
-  right: 0; /* Align to right edge of button */
+  top: calc(100% + 4px); 
+  right: 0; 
   background: white;
   border: 1px solid #edeff1;
   border-radius: 4px;
@@ -785,7 +721,6 @@
   padding: 4px 0;
 }
 
-/* Individual option item */
 .feed-option-item {
   display: flex;
   align-items: center;
@@ -822,17 +757,13 @@
   font-weight: 500;
 }
 
-/* Arrow indicator in the button - keep as is */
 .vpNewButton span {
   margin-left: 4px;
   font-size: 10px;
   opacity: 0.7;
 }
 
-
-
-
-/* Circle Selection Styles */
+/* Circle Selection */
 .time-option-left {
   display: flex;
   align-items: center;
@@ -880,13 +811,10 @@
   flex-shrink: 0;
 }
 
-/* Default: All circles empty (no fill) */
-/* Selected: Circle filled with black */
 .time-option-circle.circle-selected {
   background-color: #000;
 }
 
-/* Ensure the time options are properly displayed */
 .time-options {
   width: 100%;
 }
@@ -895,20 +823,17 @@
   padding: 8px 12px;
 }
 
-/* Remove any old vote styles */
 .vote-container {
   display: none;
 }
 
- 
 .vpStatButton{
 background-color: transparent;
 border: none;
 cursor: pointer;
 }
 
-
-/* Contributions Modal Styles */
+/* Contributions Modal */
 .vpModalOverlay {
   position: fixed;
   top: 0;
@@ -1025,7 +950,6 @@ cursor: pointer;
   color: #ff4500;
 }
 
-/* Update the Contributions button style */
 .vpStatButton {
   background: none;
   border: none;
@@ -1041,12 +965,7 @@ cursor: pointer;
   text-decoration: underline;
 }
 
-
-
-
-
-
-/* Contributions Modal Styles */
+/* Contributions Modal */
 .vpModalOverlay {
   position: fixed;
   top: 0;
@@ -1173,14 +1092,18 @@ cursor: pointer;
   line-height: 1;
 }
 
-/* Update the Contributions button style */
-.vpStatButton {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  font: inherit;
-  color: inherit;
-  text-align: center;
+.vpTabsContainer,
+.vpTabs,
+.vpTabContent,
+.vpEmptyState,
+.vpTabContent > * {
+  scrollbar-width: none; /* Firefox */
 }
 
+.vpTabsContainer::-webkit-scrollbar,
+.vpTabs::-webkit-scrollbar,
+.vpTabContent::-webkit-scrollbar,
+.vpEmptyState::-webkit-scrollbar,
+.vpTabContent > *::-webkit-scrollbar {
+  display: none; 
+}
