@@ -32,15 +32,19 @@ const Icon = ({ src, className = "", alt = "" }) => {
   );
 };
 
-const ActionButton = ({ icon, children, onClick, className = "" }) => {
+const ActionButton = ({ icon, children, onClick, className = "", disabled = false }) => {
   const handleClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (onClick) onClick();
+    if (onClick && !disabled) onClick();
   };
 
   return (
-    <button onClick={handleClick} className={`action-button ${className}`}>
+    <button 
+      onClick={handleClick} 
+      className={`action-button ${className}`}
+      disabled={disabled}
+    >
       {icon}
       {children}
     </button>
@@ -130,11 +134,12 @@ export function PostCard({ post, onVote }) {
     }
   };
 
+   /* ---------- VOTING LOGIC ---------- */
+
   const [userVote, setUserVote] = useState(null);
   const [score, setScore] = useState(post.score ?? 0);
 
   const handleVote = (dir) => {
-    console.log("Voting:", dir);
     setScore((prev) => {
       if (userVote === dir) {
         // undo vote
@@ -153,49 +158,6 @@ export function PostCard({ post, onVote }) {
     onVote?.(post._id || post.id, dir);
   };
 
-
-  /* ---------- SAVE LOGIC ---------- */
-
-  const [isSaved, setIsSaved] = useState(false);
-  const [saveLoading, setSaveLoading] = useState(false);
-
-  useEffect(() => {
-    const checkSaveStatus = async () => {
-      if (!localStorage.getItem("token") || !postId) return;
-      
-      try {
-        const saveData = await savedApi.checkSaved(postId, "post");
-        setIsSaved(!!saveData?.isSaved);
-      } catch (err) {
-        // Not saved
-      }
-    };
-    
-    checkSaveStatus();
-  }, [postId]);
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!localStorage.getItem("token")) {
-      navigate("/login");
-      return;
-    }
-
-    if (saveLoading) return;
-    setSaveLoading(true);
-
-    try {
-      await savedApi.toggleSave(postId, "post");
-      setIsSaved((prev) => !prev);
-    } catch (err) {
-      console.error("Save failed:", err);
-    } finally {
-      setSaveLoading(false);
-    }
-  };
-
   /* ---------- AI SUMMARY LOGIC ---------- */
 
   const [showAISummary, setShowAISummary] = useState(false);
@@ -204,42 +166,55 @@ export function PostCard({ post, onVote }) {
   const [aiError, setAiError] = useState(null);
 
   const handleAISummary = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (showAISummary) {
-      setShowAISummary(false);
-      return;
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
     }
-
-    setShowAISummary(true);
-    setAiError(null);
-
-    // If we already have a summary, don't fetch again
-    if (aiSummary) return;
 
     if (!localStorage.getItem("token")) {
       navigate("/login");
       return;
     }
 
+    if (showAISummary) {
+      // If AI summary is already showing, hide it
+      setShowAISummary(false);
+      return;
+    }
+
+    // Show the AI summary container
+    setShowAISummary(true);
+    setAiError(null);
+
+    // If we already have a summary, don't fetch again
+    if (aiSummary) return;
+
     setAiLoading(true);
 
     try {
+      console.log("Generating AI summary for post:", postId);
+      
       // Call the actual API to generate summary
       const response = await postApi.generateSummary(postId);
+      console.log("AI Summary API response:", response);
       
-      if (response.success && response.summary) {
+      if (response.success) {
+        // Use response.summary directly - this is the correct line
         setAiSummary(response.summary);
       } else {
         throw new Error(response.message || "Failed to generate summary");
       }
     } catch (err) {
-      console.error("AI summary failed:", err);
-      setAiError(err.message || "Failed to generate AI summary");
-      // Fallback to mock summary for demo
-      const mockSummary = `This post discusses ${post.title.toLowerCase()}. ${post.content ? post.content.substring(0, 150) + '...' : 'Key insights and discussion points are highlighted by the community.'}`;
-      setAiSummary(mockSummary);
+      console.error("AI summary generation failed:", err);
+      setAiError(err.message || "Failed to generate AI summary. Please try again.");
+      
+      // Fallback: Use a simple summary if API fails
+      const fallbackSummary = `This post titled "${post.title}" ${
+        post.content 
+          ? `discusses: ${post.content.substring(0, 200)}${post.content.length > 200 ? '...' : ''}` 
+          : 'contains community discussion and insights.'
+      }`;
+      setAiSummary(fallbackSummary);
     } finally {
       setAiLoading(false);
     }
@@ -247,7 +222,12 @@ export function PostCard({ post, onVote }) {
 
   /* ---------- NAVIGATION LOGIC ---------- */
   const handlePostClick = () => {
-    const postId = post._id || post.id;
+    navigate(`/post/${postId}`);
+  };
+
+  const handleCommentClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     navigate(`/post/${postId}`);
   };
 
@@ -279,14 +259,10 @@ export function PostCard({ post, onVote }) {
             {joinLoading ? "..." : isJoined ? "Joined" : "Join"}
           </button>
 
-          <button 
-            className={`save-button ${isSaved ? "saved" : ""}`}
-            onClick={handleSave}
-            disabled={saveLoading}
-          >
-            <Icon src={isSaved ? imgSaved : imgSave} alt="save" />
-            {saveLoading ? "..." : isSaved ? "Saved" : "Save"}
-          </button>
+          <button className="save-button">
+          <Icon src={imgSave} />
+          Save
+        </button>
         </div>
       </div>
 
@@ -316,6 +292,8 @@ export function PostCard({ post, onVote }) {
           onVote={handleVote}
           onAISummary={handleAISummary}
           showAISummary={showAISummary}
+          aiLoading={aiLoading}
+          onCommentClick={handleCommentClick}
         />
       )}
     </div>
@@ -325,7 +303,16 @@ export function PostCard({ post, onVote }) {
    Post Actions
 ================================ */
 
-const PostActions = ({ post, userVote, onVote, onAISummary, showAISummary, voteLoading }) => {
+const PostActions = ({ 
+  post, 
+  userVote, 
+  onVote, 
+  onAISummary, 
+  showAISummary, 
+  voteLoading, 
+  aiLoading,
+  onCommentClick 
+}) => {
   const handleShare = async () => {
     const postUrl = `${window.location.origin}/post/${post._id || post.id}`;
     
@@ -353,13 +340,6 @@ const PostActions = ({ post, userVote, onVote, onAISummary, showAISummary, voteL
     });
   };
 
-  const handleCommentClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const postUrl = `${window.location.origin}/post/${post._id || post.id}`;
-    window.open(postUrl, '_blank');
-  };
-
   return (
     <div className="post-actions-container">
       <div className="vote-container">
@@ -382,9 +362,9 @@ const PostActions = ({ post, userVote, onVote, onAISummary, showAISummary, voteL
 
       <ActionButton 
         icon={<Icon src={imgComment} />} 
-        onClick={handleCommentClick}
+        onClick={onCommentClick}
       >
-        <span className="action-count">{post.commentCount || 0} Comment{post.commentCount !== 1 ? 's' : ''}</span>
+        <span className="action-count">{post.comments || 0} Comment{post.comments !== 1 ? 's' : ''}</span>
       </ActionButton>
 
       <ActionButton 
@@ -394,13 +374,16 @@ const PostActions = ({ post, userVote, onVote, onAISummary, showAISummary, voteL
         <span className="share-text">Share</span>
       </ActionButton>
 
-      {/* AI Summary Button with Sparkles icon from lucide-react */}
+      {/* AI Summary Button */}
       <ActionButton 
         icon={<Sparkles size={20} />} 
         onClick={onAISummary}
         className={showAISummary ? "active" : ""}
+        disabled={aiLoading}
       >
-        <span className="ai-text">AI Summary</span>
+        <span className="ai-text">
+          {aiLoading ? "Generating..." : "AI Summary"}
+        </span>
       </ActionButton>
     </div>
   );
