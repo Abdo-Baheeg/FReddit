@@ -10,7 +10,6 @@ import {
 } from "./components.js";
 import { userApi } from "../../api";
 
-
 const SignupP2 = ({ setOpen, email, onSignupSuccess }) => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
@@ -19,7 +18,6 @@ const SignupP2 = ({ setOpen, email, onSignupSuccess }) => {
   const disabled = username.trim() === "" || password.trim() === "";
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
 
   const handleSignup = async () => {
     if (disabled) return;
@@ -58,9 +56,17 @@ const SignupP2 = ({ setOpen, email, onSignupSuccess }) => {
     return () => window.removeEventListener("closeAllAuthWindows", handler);
   }, [setOpen]);
 
+  // Prevent background scrolling and interactions when modal is open
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
   return (
     <div className="login-container">
-      <div className="login-overlay" onClick={() => setOpen(false)}>
+      <div className="login-overlay">
         <div className="login-notclose" onClick={(e) => e.stopPropagation()}>
           <div className="my-window-back-button">
             <BackButton onClose={() => setOpen(false)} />

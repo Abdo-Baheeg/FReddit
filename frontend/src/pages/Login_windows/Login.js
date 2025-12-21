@@ -22,9 +22,12 @@ const Login = ({ setOpen }) => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const emailRegex = /^[^\s@]+@[^\s@]+(?:\.[^\s@]+)+$/;
   // Both are Empty → disabled
-  const disabled = username.trim() === "" || password.trim() === "";
-
+  const disabled =
+    username.trim() === "" ||
+    password.trim() === "" ||
+    !emailRegex.test(username);
   // Modals State
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isResetOpen, setIsResetOpen] = useState(false);
@@ -50,9 +53,9 @@ const Login = ({ setOpen }) => {
 
       // Close the modal
       setOpen(false);
-      
+
       // Navigate to home and reload to update navbar/sidebar
-      navigate('/');
+      navigate("/");
       window.location.reload();
     } catch (err) {
       // show a user-friendly message on login failure
@@ -70,10 +73,18 @@ const Login = ({ setOpen }) => {
     return () => window.removeEventListener("closeAllAuthWindows", handler);
   }, [setOpen]);
 
+  // Prevent background scrolling and interactions when modal is open
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
   return (
     <div className="All_login">
       <div className="login-container">
-        <div className="login-overlay" onClick={() => setOpen(false)}>
+        <div className="login-overlay">
           <div className="login-notclose" onClick={(e) => e.stopPropagation()}>
             <div className="my-window-close-button">
               <CloseButton onClose={() => setOpen(false)} />
@@ -126,7 +137,7 @@ const Login = ({ setOpen }) => {
 
             <div className="inputs">
               <InputText
-                label="Email or username"
+                label="Email"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value.replace(/\s/g, ""))}

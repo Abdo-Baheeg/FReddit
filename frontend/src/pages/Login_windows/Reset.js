@@ -13,7 +13,8 @@ import { userApi } from "../../api";
 
 const Reset = ({ setOpen }) => {
   const [username, setUsername] = useState("");
-  const disabled = username.trim() === "";
+  const emailRegex = /^[^\s@]+@[^\s@]+(?:\.[^\s@]+)+$/;
+  const disabled = username.trim() === "" || !emailRegex.test(username);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -43,9 +44,17 @@ const Reset = ({ setOpen }) => {
     return () => window.removeEventListener("closeAllAuthWindows", handler);
   }, [setOpen]);
 
+  // Prevent background scrolling and interactions when modal is open
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
   return (
     <div className="login-container">
-      <div className="login-overlay" onClick={() => setOpen(false)}>
+      <div className="login-overlay">
         <div className="login-notclose" onClick={(e) => e.stopPropagation()}>
           <div className="my-window-close-button">
             <CloseButton onClose={() => setOpen(false)} />
@@ -68,7 +77,7 @@ const Reset = ({ setOpen }) => {
               </>
             ) : (
               <>
-                <Loginparagraph text="Enter your email address or username and we'll send you a" />
+                <Loginparagraph text="Enter your email address and we'll send you a" />
                 <br></br>
                 <Loginparagraph text="link to reset your password" />
               </>
@@ -78,7 +87,7 @@ const Reset = ({ setOpen }) => {
           {!success && (
             <div className="inputs">
               <InputText
-                label="Email or Username"
+                label="Email"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -95,10 +104,7 @@ const Reset = ({ setOpen }) => {
           </>
           <div className="submits">
             {success ? (
-              <Submit
-                text="Done"
-                onClick={() => setOpen(false)}
-              />
+              <Submit text="Done" onClick={() => setOpen(false)} />
             ) : (
               <Submit
                 text={isLoading ? "Sending..." : "Reset password"}

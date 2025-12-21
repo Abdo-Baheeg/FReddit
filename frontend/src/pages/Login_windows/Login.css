@@ -150,9 +150,8 @@
 
 /* لو عليه فوكس → الليبل يطلع فوق */
 .input-container.focused .input-label {
-  top: -4px;
+  top: -5px;
   font-size: 10px;
-  color: #5b9df9;
 }
 
 /* لو فيه كتابة → الليبل يفضل فوق حتى لو مش فوكس */

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Login.css";
 import {
   Logintitle,
@@ -13,6 +13,21 @@ const Emailme = ({ setOpen }) => {
   const [username, setUsername] = useState("");
   const disabled = username.trim() === "";
 
+  // Close this modal when a global close event is dispatched
+  useEffect(() => {
+    const handler = () => setOpen(false);
+    window.addEventListener("closeAllAuthWindows", handler);
+    return () => window.removeEventListener("closeAllAuthWindows", handler);
+  }, [setOpen]);
+
+  // Prevent background scrolling and interactions when modal is open
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
   const handleContinue = () => {
     // This feature is not implemented yet
     alert("Magic link login is not available yet. Please use regular login.");
@@ -21,7 +36,7 @@ const Emailme = ({ setOpen }) => {
 
   return (
     <div className="login-container">
-      <div className="login-overlay" onClick={() => setOpen(false)}>
+      <div className="login-overlay">
         <div className="login-notclose" onClick={(e) => e.stopPropagation()}>
           <div className="my-window-back-button">
             <BackButton onClose={() => setOpen(false)} />
@@ -44,7 +59,11 @@ const Emailme = ({ setOpen }) => {
           </div>
 
           <div className="submits">
-            <Submit text="Continue" disabled={disabled} onClick={handleContinue} />
+            <Submit
+              text="Continue"
+              disabled={disabled}
+              onClick={handleContinue}
+            />
           </div>
         </div>
       </div>
