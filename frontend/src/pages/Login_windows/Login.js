@@ -22,12 +22,8 @@ const Login = ({ setOpen }) => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const emailRegex = /^[^\s@]+@[^\s@]+(?:\.[^\s@]+)+$/;
   // Both are Empty → disabled
-  const disabled =
-    username.trim() === "" ||
-    password.trim() === "" ||
-    !emailRegex.test(username);
+  const disabled = username.trim() === "" || password.trim() === "";
   // Modals State
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isResetOpen, setIsResetOpen] = useState(false);
@@ -123,10 +119,9 @@ const Login = ({ setOpen }) => {
                 text="Continue with Apple"
                 icon="/icons/login/apple.svg"
               />
-              <ContinueWithWindow
+              <ContinueWithLink
                 text="Email me with a one-time link"
                 icon="/icons/login/email.svg"
-                onOpen={() => setIsEmailmeOpen(true)}
               />
               {isEmailmeOpen && <Emailme setOpen={setIsEmailmeOpen} />}
             </div>
