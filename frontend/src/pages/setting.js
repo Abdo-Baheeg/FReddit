@@ -625,7 +625,7 @@ const Settings = () => {
                       setIsEditingEmail(true);
                     }}
                   >
-                    Change Ur Email >
+                    Change Ur Email
                   </button>
                 </span>
               ) : (
@@ -681,7 +681,7 @@ const Settings = () => {
                     className="change-password-btn"
                     onClick={() => setIsEditingPassword(true)}
                   >
-                    Change Ur Password >
+                    Change Ur Password 
                   </button>
                 </span>
               ) : (

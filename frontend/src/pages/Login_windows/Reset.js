@@ -12,9 +12,9 @@ import {
 import { userApi } from "../../api";
 
 const Reset = ({ setOpen }) => {
-  const [username, setUsername] = useState("");
-  const emailRegex = /^[^\s@]+@[^\s@]+(?:\.[^\s@]+)+$/;
-  const disabled = username.trim() === "" || !emailRegex.test(username);
+  const [email, setEmail] = useState("");
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const disabled = email.trim() === "" || !emailRegex.test(email);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -27,7 +27,7 @@ const Reset = ({ setOpen }) => {
     setSuccess(false);
 
     try {
-      await userApi.forgotPassword(username);
+      await userApi.forgotPassword(email);
       setSuccess(true);
     } catch (err) {
       setError("Failed to send reset email. Please try again.");
@@ -89,8 +89,8 @@ const Reset = ({ setOpen }) => {
               <InputText
                 label="Email"
                 required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 onFocus={() => setError("")}
               />
             </div>
@@ -104,7 +104,7 @@ const Reset = ({ setOpen }) => {
           </>
           <div className="submits">
             {success ? (
-              <Submit text="Done" onClick={() => setOpen(false)} />
+              <Submit text="Continue" onClick={() => setOpen(false)} />
             ) : (
               <Submit
                 text={isLoading ? "Sending..." : "Reset password"}

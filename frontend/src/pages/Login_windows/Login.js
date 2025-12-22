@@ -9,7 +9,6 @@ import {
   Loginparagraph,
   Loginlink,
   ContinueWithLink,
-  ContinueWithWindow,
   OR,
   InputText,
   Submit,

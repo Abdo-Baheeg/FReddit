@@ -31,7 +31,6 @@ import About from "./pages/About";
 import Advertise from "./pages/Advertise";
 import Help from "./pages/Help";
 import ResetPassword from "./pages/Login_windows/ResetPassword";
-import VerifyEmail from "./pages/Login_windows/VerifyEmail";
 
 function AppContent() {
   const { isCreateCommunityModalOpen, closeCreateCommunityModal } =
@@ -82,7 +81,6 @@ function AppContent() {
           <Route path="/advertise" element={<Advertise />} />
           <Route path="/help" element={<Help />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/verify-email" element={<VerifyEmail />} />
         </Routes>
       </div>
 
