@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import Signup from "./Signup.js";
 import Reset from "./Reset.js";
-import Emailme from "./Emailme.js";
+
 import {
   Logintitle,
   Loginparagraph,
@@ -122,7 +122,7 @@ const Login = ({ setOpen }) => {
                 text="Email me with a one-time link"
                 icon="/icons/login/email.svg"
               />
-              {isEmailmeOpen && <Emailme setOpen={setIsEmailmeOpen} />}
+              
             </div>
 
             <div className="OR">
