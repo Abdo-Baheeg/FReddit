@@ -30,6 +30,7 @@ import CommunityPage from "./pages/communityPage";
 import About from "./pages/About";
 import Advertise from "./pages/Advertise";
 import Help from "./pages/Help";
+import ResetPassword from "./pages/Login_windows/ResetPassword";
 
 function AppContent() {
   const { isCreateCommunityModalOpen, closeCreateCommunityModal } =
@@ -77,9 +78,9 @@ function AppContent() {
           <Route path="*" element={<NotFound />} />
           <Route path="/community/:communityId" element={<CommunityPage />} />
           <Route path="/about" element={<About />} />
-          <Route path="/advertise" element={<Advertise />} />\
+          <Route path="/advertise" element={<Advertise />} />
           <Route path="/help" element={<Help />} />
-
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </div>
 

@@ -4,27 +4,30 @@ import { uploadImageToCloudinary } from '../context/CloudinaryHelper';
 import './setting.css';
 
 const Settings = () => {
-  const [activeTab, setActiveTab] = useState('Profile');
+  const [activeTab, setActiveTab] = useState("Profile");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showEmailModal, setShowEmailModal] = useState(false);
-  const [showEmailConfirmationModal, setShowEmailConfirmationModal] = useState(false);
+  const [showEmailConfirmationModal, setShowEmailConfirmationModal] =
+    useState(false);
   const [showGenderModal, setShowGenderModal] = useState(false);
-  const [selectedGender, setSelectedGender] = useState('');
+  const [selectedGender, setSelectedGender] = useState("");
   const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
-  const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false);
+  const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] =
+    useState(false);
   const [showDisplayNameModal, setShowDisplayNameModal] = useState(false);
-  const [displayNameInput, setDisplayNameInput] = useState('');
-  const [displayNameError, setDisplayNameError] = useState('');
+  const [displayNameInput, setDisplayNameInput] = useState("");
+  const [displayNameError, setDisplayNameError] = useState("");
   const [isSavingDisplayName, setIsSavingDisplayName] = useState(false);
-  
+
   // New state for About Description modal
   const [showAboutModal, setShowAboutModal] = useState(false);
-  const [aboutDescriptionInput, setAboutDescriptionInput] = useState('');
-  const [aboutDescriptionError, setAboutDescriptionError] = useState('');
-  const [isSavingAboutDescription, setIsSavingAboutDescription] = useState(false);
-  
+  const [aboutDescriptionInput, setAboutDescriptionInput] = useState("");
+  const [aboutDescriptionError, setAboutDescriptionError] = useState("");
+  const [isSavingAboutDescription, setIsSavingAboutDescription] =
+    useState(false);
+
   // NEW STATES FOR INLINE EDITING
   const [isEditing, setIsEditing] = useState(false);
   const [newUsername, setNewUsername] = useState("");
@@ -51,12 +54,12 @@ const Settings = () => {
 
   
   const tabs = [
-    'Account',
-    'Profile',
-    'Privacy',
-    'Preferences',
-    'Notifications',
-    'Email'
+    "Account",
+    "Profile",
+    "Privacy",
+    "Preferences",
+    "Notifications",
+    "Email",
   ];
 
   // Fetch user data on component mount
@@ -69,19 +72,19 @@ const Settings = () => {
       setLoading(true);
       const userData = await userApi.getCurrentUser();
       setUser(userData);
-      setSelectedGender(userData.gender || '');
-      setDisplayNameInput(userData.displayName || '');
-      setAboutDescriptionInput(userData.bio || userData.description || '');
+      setSelectedGender(userData.gender || "");
+      setDisplayNameInput(userData.displayName || "");
+      setAboutDescriptionInput(userData.bio || userData.description || "");
       setError(null);
     } catch (err) {
-      console.error('Error fetching user:', err);
-      setError('Failed to load user data. Please try again.');
+      console.error("Error fetching user:", err);
+      setError("Failed to load user data. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle click on display name button 
+  // Handle click on display name button
   const handleDisplayNameClick = () => {
     // Set to display name or username
     setNewUsername(user?.displayName || user?.username || "");
@@ -93,12 +96,12 @@ const Settings = () => {
   const handleSaveUsername = async () => {
     // Validate display name
     if (!newUsername.trim()) {
-      setDisplayNameError('Display name cannot be empty');
+      setDisplayNameError("Display name cannot be empty");
       return;
     }
 
     if (newUsername.length > 90) {
-      setDisplayNameError('Display name must be 90 characters or less');
+      setDisplayNameError("Display name must be 90 characters or less");
       return;
     }
 
@@ -107,32 +110,32 @@ const Settings = () => {
     try {
       // Call the API to update username
       const updatedUser = await userApi.updateUsername(newUsername.trim());
-      
+
       // Update the user in state
       setUser(updatedUser);
-      
+
       // Exit editing mode
       setIsEditing(false);
-      setDisplayNameError('');
-      
+      setDisplayNameError("");
+
       // Refresh user data from server to ensure consistency
       await fetchCurrentUser();
-      
-      console.log('Display name updated successfully via API');
-      
-    } 
-    catch (err) {
-      console.error('Error updating display name:', err);
-      
+
+      console.log("Display name updated successfully via API");
+    } catch (err) {
+      console.error("Error updating display name:", err);
+
       // Handle specific error cases
       if (err.response?.status === 401) {
-        setDisplayNameError('Your session has expired. Please log in again.');
+        setDisplayNameError("Your session has expired. Please log in again.");
       } else if (err.response?.status === 409) {
-        setDisplayNameError('This display name is already taken.');
-      } else if (err.message === 'Network Error') {
-        setDisplayNameError('Network error. Please check your internet connection.');
+        setDisplayNameError("This display name is already taken.");
+      } else if (err.message === "Network Error") {
+        setDisplayNameError(
+          "Network error. Please check your internet connection."
+        );
       } else {
-        setDisplayNameError('Failed to update display name. Please try again.');
+        setDisplayNameError("Failed to update display name. Please try again.");
       }
     } finally {
       setIsSavingDisplayName(false);
@@ -143,7 +146,7 @@ const Settings = () => {
   const handleCancelEdit = () => {
     setIsEditing(false);
     setNewUsername("");
-    setDisplayNameError('');
+    setDisplayNameError("");
   };
 
   // Handle avatar upload
@@ -221,21 +224,21 @@ const Settings = () => {
   // Handle saving email
   const handleSaveEmail = async () => {
     // Validate email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
+    const emailRegex = /^[^\s@]+@[^\s@]+(?:\.[^\s@]+)+$/;
+
     if (!newEmail.trim()) {
-      setEmailError('Email cannot be empty');
+      setEmailError("Email cannot be empty");
       return;
     }
 
     if (!emailRegex.test(newEmail)) {
-      setEmailError('Please enter a valid email address');
+      setEmailError("Please enter a valid email address");
       return;
     }
 
     // Check if email is same as current
     if (newEmail === user?.email) {
-      setEmailError('This is already your current email');
+      setEmailError("This is already your current email");
       return;
     }
 
@@ -244,32 +247,30 @@ const Settings = () => {
     try {
       // Call the API to update email
       const updatedUser = await userApi.updateEmail(newEmail.trim());
-      
+
       // Update the user in state
       setUser(updatedUser);
-      
+
       // Exit editing mode
       setIsEditingEmail(false);
-      setEmailError('');
-      
+      setEmailError("");
+
       // Refresh user data from server
       await fetchCurrentUser();
-      
-      console.log('Email updated successfully via API');
-      
-    }
-     catch (err) {
-      console.error('Error updating email:', err);
-      
+
+      console.log("Email updated successfully via API");
+    } catch (err) {
+      console.error("Error updating email:", err);
+
       // Handle specific error cases
       if (err.response?.status === 401) {
-        setEmailError('Your session has expired. Please log in again.');
+        setEmailError("Your session has expired. Please log in again.");
       } else if (err.response?.status === 409) {
-        setEmailError('This email is already in use.');
-      } else if (err.message === 'Network Error') {
-        setEmailError('Network error. Please check your internet connection.');
+        setEmailError("This email is already in use.");
+      } else if (err.message === "Network Error") {
+        setEmailError("Network error. Please check your internet connection.");
       } else {
-        setEmailError('Failed to update email. Please try again.');
+        setEmailError("Failed to update email. Please try again.");
       }
     } finally {
       setIsSavingEmail(false);
@@ -280,22 +281,22 @@ const Settings = () => {
   const handleSavePassword = async () => {
     // Validate password
     if (!currentPassword.trim()) {
-      setPasswordError('Current password is required');
+      setPasswordError("Current password is required");
       return;
     }
 
     if (!newPassword.trim()) {
-      setPasswordError('New password is required');
+      setPasswordError("New password is required");
       return;
     }
 
     if (newPassword.length < 6) {
-      setPasswordError('New password must be at least 6 characters');
+      setPasswordError("New password must be at least 6 characters");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordError('New passwords do not match');
+      setPasswordError("New passwords do not match");
       return;
     }
 
@@ -304,31 +305,31 @@ const Settings = () => {
     try {
       // Call API to update password
       await userApi.updatePassword(currentPassword.trim(), newPassword.trim());
-      
+
       // Clear password fields
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      
+
       // Exit editing mode
       setIsEditingPassword(false);
-      setPasswordError('');
-      
-      console.log('Password updated successfully via API');
-      
-    } 
-    catch (err) {
-      console.error('Error updating password:', err);
-      
+      setPasswordError("");
+
+      console.log("Password updated successfully via API");
+    } catch (err) {
+      console.error("Error updating password:", err);
+
       // Handle specific error cases
       if (err.response?.status === 401) {
-        setPasswordError('Current password is incorrect');
+        setPasswordError("Current password is incorrect");
       } else if (err.response?.status === 400) {
-        setPasswordError('Invalid password format');
-      } else if (err.message === 'Network Error') {
-        setPasswordError('Network error. Please check your internet connection.');
+        setPasswordError("Invalid password format");
+      } else if (err.message === "Network Error") {
+        setPasswordError(
+          "Network error. Please check your internet connection."
+        );
       } else {
-        setPasswordError('Failed to update password. Please try again.');
+        setPasswordError("Failed to update password. Please try again.");
       }
     } finally {
       setIsSavingPassword(false);
@@ -341,64 +342,73 @@ const Settings = () => {
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
-    setPasswordError('');
+    setPasswordError("");
   };
 
   // About Description Modal Functions
   const handleAboutDescriptionClick = () => {
-    setAboutDescriptionInput(user?.bio || user?.description || '');
-    setAboutDescriptionError('');
+    setAboutDescriptionInput(user?.bio || user?.description || "");
+    setAboutDescriptionError("");
     setShowAboutModal(true);
   };
 
   const handleCancelAboutModal = () => {
     setShowAboutModal(false);
-    setAboutDescriptionError('');
+    setAboutDescriptionError("");
   };
 
   const handleSaveAboutDescription = async () => {
     // Validate about description
     if (aboutDescriptionInput.length > 200) {
-      setAboutDescriptionError('About description must be 200 characters or less');
+      setAboutDescriptionError(
+        "About description must be 200 characters or less"
+      );
       return;
     }
 
     setIsSavingAboutDescription(true);
-    
+
     // Simulate API delay for better UX
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     try {
       // Update user bio/description via API
-      console.log('Simulating about description update:', aboutDescriptionInput.trim());
-      
+      console.log(
+        "Simulating about description update:",
+        aboutDescriptionInput.trim()
+      );
+
       // Update local state directly for testing
-      setUser(prev => ({ 
-        ...prev, 
+      setUser((prev) => ({
+        ...prev,
         bio: aboutDescriptionInput.trim(),
         description: aboutDescriptionInput.trim(),
         // Simulate API response timestamp
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       }));
-      
+
       // Close modal
       setShowAboutModal(false);
-      setAboutDescriptionError('');
-      
+      setAboutDescriptionError("");
+
       // Show success message (optional)
-      console.log('About description updated successfully');
-      
-    }
-     catch (err) {
-      console.error('Error updating about description:', err);
-      
+      console.log("About description updated successfully");
+    } catch (err) {
+      console.error("Error updating about description:", err);
+
       // More specific error messages
       if (err.response?.status === 401) {
-        setAboutDescriptionError('Your session has expired. Please log in again.');
-      } else if (err.message === 'Network Error') {
-        setAboutDescriptionError('Network error. Please check your internet connection.');
+        setAboutDescriptionError(
+          "Your session has expired. Please log in again."
+        );
+      } else if (err.message === "Network Error") {
+        setAboutDescriptionError(
+          "Network error. Please check your internet connection."
+        );
       } else {
-        setAboutDescriptionError('Failed to update about description. Please try again.');
+        setAboutDescriptionError(
+          "Failed to update about description. Please try again."
+        );
       }
     } finally {
       setIsSavingAboutDescription(false);
@@ -408,79 +418,85 @@ const Settings = () => {
   const handleAboutDescriptionInputChange = (e) => {
     const value = e.target.value;
     setAboutDescriptionInput(value);
-    
+
     // Clear error when user starts typing
-    if (aboutDescriptionError && aboutDescriptionError !== 'About description must be 200 characters or less') {
-      setAboutDescriptionError('');
+    if (
+      aboutDescriptionError &&
+      aboutDescriptionError !==
+        "About description must be 200 characters or less"
+    ) {
+      setAboutDescriptionError("");
     }
-    
+
     // Validate length in real-time
     if (value.length > 200) {
-      setAboutDescriptionError('About description must be 200 characters or less');
+      setAboutDescriptionError(
+        "About description must be 200 characters or less"
+      );
     }
   };
 
-  // Display Name Modal Functions 
+  // Display Name Modal Functions
   const handleModalDisplayNameClick = () => {
-    setDisplayNameInput(user?.displayName || '');
-    setDisplayNameError('');
+    setDisplayNameInput(user?.displayName || "");
+    setDisplayNameError("");
     setShowDisplayNameModal(true);
   };
 
   const handleCancelDisplayNameModal = () => {
     setShowDisplayNameModal(false);
-    setDisplayNameError('');
+    setDisplayNameError("");
   };
 
   const handleSaveDisplayName = async () => {
     // Validate display name
     if (displayNameInput.length > 90) {
-      setDisplayNameError('Display name must be 90 characters or less');
+      setDisplayNameError("Display name must be 90 characters or less");
       return;
     }
 
-    if (displayNameInput.trim() === '') {
-      setDisplayNameError('Display name cannot be empty');
+    if (displayNameInput.trim() === "") {
+      setDisplayNameError("Display name cannot be empty");
       return;
     }
 
     setIsSavingDisplayName(true);
-    
+
     // Simulate API delay for better UX
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     try {
       //  API call for testing
-      console.log('Simulating display name update:', displayNameInput.trim());
-      
+      console.log("Simulating display name update:", displayNameInput.trim());
+
       // Update local state directly for testing
-      setUser(prev => ({ 
-        ...prev, 
+      setUser((prev) => ({
+        ...prev,
         displayName: displayNameInput.trim(),
         // Simulate API response timestamp
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       }));
-      
+
       // Close modal
       setShowDisplayNameModal(false);
-      setDisplayNameError('');
-      
+      setDisplayNameError("");
+
       // Show success message (optional)
-      console.log('Display name updated successfully');
-      
-    } 
-    catch (err) {
-      console.error('Error updating display name:', err);
-      
+      console.log("Display name updated successfully");
+    } catch (err) {
+      console.error("Error updating display name:", err);
+
       // More specific error messages
       if (err.response?.status === 401) {
-        setDisplayNameError('Your session has expired. Please log in again.');
+        setDisplayNameError("Your session has expired. Please log in again.");
       } else if (err.response?.status === 409) {
-        setDisplayNameError('This display name is already taken.');
-      } else if (err.message === 'Network Error') {
-        setDisplayNameError('Network error. Please check your internet connection.');
+        setDisplayNameError("This display name is already taken.");
+      } else if (err.message === "Network Error") {
+        setDisplayNameError(
+          "Network error. Please check your internet connection."
+        );
       } else {
-        setDisplayNameError('Failed to update display name. Please try again.');
+        setDisplayNameError("Failed to update display name. Please try again.");
       }
     } finally {
       setIsSavingDisplayName(false);
@@ -490,15 +506,18 @@ const Settings = () => {
   const handleDisplayNameInputChange = (e) => {
     const value = e.target.value;
     setDisplayNameInput(value);
-    
+
     // Clear error when user starts typing
-    if (displayNameError && displayNameError !== 'Display name must be 90 characters or less') {
-      setDisplayNameError('');
+    if (
+      displayNameError &&
+      displayNameError !== "Display name must be 90 characters or less"
+    ) {
+      setDisplayNameError("");
     }
-    
+
     // Validate length in real-time
     if (value.length > 90) {
-      setDisplayNameError('Display name must be 90 characters or less');
+      setDisplayNameError("Display name must be 90 characters or less");
     }
   };
 
@@ -581,38 +600,41 @@ const Settings = () => {
     }
 
     switch (activeTab) {
-      case 'Account':
+      case "Account":
         return renderAccountContent();
-      case 'Profile':
+      case "Profile":
         return renderProfileContent();
-      case 'Privacy':
+      case "Privacy":
         return renderPrivacyContent();
-      case 'Preferences':
+      case "Preferences":
         return renderPreferencesContent();
-      case 'Notifications':
+      case "Notifications":
         return renderNotificationsContent();
-      case 'Email':
+      case "Email":
         return renderEmailContent();
       default:
         return renderProfileContent();
     }
   };
 
-  // Render Account tab content 
+  // Render Account tab content
   const renderAccountContent = () => (
     <div className="settings-main">
       <div className="general-section">
         <h2 className="section-title">General</h2>
-        
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
               <span className="label-main">Email address</span>
             </div>
             <div className="setting-control">
-              <button className="email-button" onClick={() => setShowEmailModal(true)}>
+              <button
+                className="email-button"
+                onClick={() => setShowEmailModal(true)}
+              >
                 <span className="account-email">
-                  <p>{user.email || 'No email provided'}</p>
+                  <p>{user.email || "No email provided"}</p>
                 </span>
               </button>
             </div>
@@ -623,9 +645,12 @@ const Settings = () => {
               <span className="label-main">Gender</span>
             </div>
             <div className="setting-control">
-              <button className="gender-button" onClick={() => setShowGenderModal(true)}>
+              <button
+                className="gender-button"
+                onClick={() => setShowGenderModal(true)}
+              >
                 <span className="account-gender">
-                  {selectedGender || 'Not specified'} &gt;
+                  {selectedGender || "Not specified"} &gt;
                 </span>
               </button>
             </div>
@@ -649,8 +674,10 @@ const Settings = () => {
           </div>
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Account Information</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Account Information
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -658,7 +685,7 @@ const Settings = () => {
             </div>
             <div className="setting-control">
               <span className="account-username">
-                <p> {user.username || 'No username'} </p>
+                <p> {user.username || "No username"} </p>
               </span>
             </div>
           </div>
@@ -674,11 +701,11 @@ const Settings = () => {
                   <button
                     className="change-email-btn"
                     onClick={() => {
-                      setNewEmail(user?.email || '');
+                      setNewEmail(user?.email || "");
                       setIsEditingEmail(true);
                     }}
                   >
-                    Change Ur Email >
+                    Change Ur Email
                   </button>
                 </span>
               ) : (
@@ -699,14 +726,14 @@ const Settings = () => {
                       onClick={handleSaveEmail}
                       disabled={isSavingEmail || !newEmail.trim()}
                     >
-                      {isSavingEmail ? 'Saving...' : 'Save'}
+                      {isSavingEmail ? "Saving..." : "Save"}
                     </button>
 
                     <button
                       className="cancel-button-inline"
                       onClick={() => {
                         setIsEditingEmail(false);
-                        setEmailError('');
+                        setEmailError("");
                       }}
                       disabled={isSavingEmail}
                     >
@@ -715,9 +742,7 @@ const Settings = () => {
                   </div>
 
                   {emailError && (
-                    <div className="inline-error">
-                      {emailError}
-                    </div>
+                    <div className="inline-error">{emailError}</div>
                   )}
                 </div>
               )}
@@ -726,7 +751,7 @@ const Settings = () => {
 
           <div className="settings-row">
             <div className="setting-label">
-              <span className="label-main">Change Password  </span>
+              <span className="label-main">Change Password </span>
             </div>
             <div className="setting-control">
               {!isEditingPassword ? (
@@ -736,7 +761,7 @@ const Settings = () => {
                     className="change-password-btn"
                     onClick={() => setIsEditingPassword(true)}
                   >
-                    Change Ur Password >
+                    Change Ur Password 
                   </button>
                 </span>
               ) : (
@@ -771,9 +796,14 @@ const Settings = () => {
                     <button
                       className="save-button-inline"
                       onClick={handleSavePassword}
-                      disabled={isSavingPassword || !currentPassword.trim() || !newPassword.trim() || !confirmPassword.trim()}
+                      disabled={
+                        isSavingPassword ||
+                        !currentPassword.trim() ||
+                        !newPassword.trim() ||
+                        !confirmPassword.trim()
+                      }
                     >
-                      {isSavingPassword ? 'Saving...' : 'Save'}
+                      {isSavingPassword ? "Saving..." : "Save"}
                     </button>
 
                     <button
@@ -786,19 +816,18 @@ const Settings = () => {
                   </div>
 
                   {passwordError && (
-                    <div className="inline-error">
-                      {passwordError}
-                    </div>
+                    <div className="inline-error">{passwordError}</div>
                   )}
                 </div>
               )}
             </div>
           </div>
-
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Account authorization</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Account authorization
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -808,9 +837,7 @@ const Settings = () => {
               </span>
             </div>
             <div className="setting-control">
-              <button className="connect-button disconnect">
-                Disconnect
-              </button>
+              <button className="connect-button disconnect">Disconnect</button>
             </div>
           </div>
 
@@ -822,9 +849,7 @@ const Settings = () => {
               </span>
             </div>
             <div className="setting-control">
-              <button className="connect-button">
-                Connect
-              </button>
+              <button className="connect-button">Connect</button>
             </div>
           </div>
 
@@ -838,8 +863,10 @@ const Settings = () => {
           </div>
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Reddit Premium</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Reddit Premium
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -851,15 +878,20 @@ const Settings = () => {
           </div>
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Advanced</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Advanced
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
               <span className="label-main">Delete account</span>
             </div>
             <div className="setting-control">
-              <button className="deletebutton" onClick={() => setShowDeleteAccountModal(true)}>
+              <button
+                className="deletebutton"
+                onClick={() => setShowDeleteAccountModal(true)}
+              >
                 <span className="privacy-arrow">&gt;</span>
               </button>
             </div>
@@ -869,12 +901,12 @@ const Settings = () => {
     </div>
   );
 
-  // Render Profile tab content 
+  // Render Profile tab content
   const renderProfileContent = () => (
     <div className="settings-main">
       <div className="general-section">
         <h2 className="section-title">General</h2>
-        
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -886,13 +918,16 @@ const Settings = () => {
             <div className="setting-control">
               {!isEditing ? (
                 //  button with current display name
-                <button className="displaybutton" onClick={handleDisplayNameClick}>
+                <button
+                  className="displaybutton"
+                  onClick={handleDisplayNameClick}
+                >
                   <span className="display-name">
-                    {user.displayName || user.username || 'No display name set'}
+                    {user.displayName || user.username || "No display name set"}
                   </span>
                 </button>
               ) : (
-                // Edit mode 
+                // Edit mode
                 <div className="display-name-edit-container">
                   <input
                     type="text"
@@ -904,14 +939,14 @@ const Settings = () => {
                     autoFocus
                   />
                   <div className="inline-buttons">
-                    <button 
+                    <button
                       className="save-button-inline"
                       onClick={handleSaveUsername}
                       disabled={isSavingDisplayName || !newUsername.trim()}
                     >
-                      {isSavingDisplayName ? 'Saving...' : 'Save'}
+                      {isSavingDisplayName ? "Saving..." : "Save"}
                     </button>
-                    <button 
+                    <button
                       className="cancel-button-inline"
                       onClick={handleCancelEdit}
                       disabled={isSavingDisplayName}
@@ -920,9 +955,7 @@ const Settings = () => {
                     </button>
                   </div>
                   {displayNameError && (
-                    <div className="inline-error">
-                      {displayNameError}
-                    </div>
+                    <div className="inline-error">{displayNameError}</div>
                   )}
                   <div className="character-counter-inline">
                     {newUsername.length}/90
@@ -940,9 +973,12 @@ const Settings = () => {
               </span>
             </div>
             <div className="setting-control">
-              <button className="bio-button" onClick={handleAboutDescriptionClick}>
+              <button
+                className="bio-button"
+                onClick={handleAboutDescriptionClick}
+              >
                 <span className="about-description">
-                  {user.bio || user.description || 'No bio provided'}
+                  {user.bio || user.description || "No bio provided"}
                 </span>
               </button>
             </div>
@@ -954,7 +990,7 @@ const Settings = () => {
               <span className="label-sub">
                 Edit your avatar or upload an image
               </span>
-              </div>
+            </div>
             <div className="setting-control">
               <input
                 type="file"
@@ -987,7 +1023,6 @@ const Settings = () => {
               )}
             </div>
           </div>
-
 
           <div className="settings-row">
             <div className="setting-label">
@@ -1026,13 +1061,18 @@ const Settings = () => {
             <div className="setting-label">
               <span className="label-main">Mark as mature (18+)</span>
               <span className="label-sub">
-                Label your profile as Not Safe for Work (NSFW) and ensure it's inaccessible to people under 18
+                Label your profile as Not Safe for Work (NSFW) and ensure it's
+                inaccessible to people under 18
               </span>
             </div>
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="mature-toggle" defaultChecked={user.isMature || false} />
+                  <input
+                    type="checkbox"
+                    id="mature-toggle"
+                    defaultChecked={user.isMature || false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1048,19 +1088,24 @@ const Settings = () => {
     <div className="settings-main">
       <div className="general-section">
         <h2 className="section-title">Social interactions</h2>
-        
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
               <span className="label-main">Allow people to follow you</span>
               <span className="label-sub">
-                Let people follow you to see your profile posts in their home feed
+                Let people follow you to see your profile posts in their home
+                feed
               </span>
             </div>
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="follow-toggle" defaultChecked={user.allowFollowing !== false} />
+                  <input
+                    type="checkbox"
+                    id="follow-toggle"
+                    defaultChecked={user.allowFollowing !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1089,20 +1134,29 @@ const Settings = () => {
           </div>
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Discoverability</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Discoverability
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
-              <span className="label-main">List your profile on old.reddit.com/users</span>
+              <span className="label-main">
+                List your profile on old.reddit.com/users
+              </span>
               <span className="label-sub">
-                List your profile on old.reddit.com/users and allow posts to your profile to appear in r/all
+                List your profile on old.reddit.com/users and allow posts to
+                your profile to appear in r/all
               </span>
             </div>
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="old-reddit-toggle" defaultChecked={user.listOnOldReddit !== false} />
+                  <input
+                    type="checkbox"
+                    id="old-reddit-toggle"
+                    defaultChecked={user.listOnOldReddit !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1113,13 +1167,18 @@ const Settings = () => {
             <div className="setting-label">
               <span className="label-main">Show up in search results</span>
               <span className="label-sub">
-                Allow search engines like Google to link to your profile in their search results
+                Allow search engines like Google to link to your profile in
+                their search results
               </span>
             </div>
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="search-toggle" defaultChecked={user.showInSearch !== false} />
+                  <input
+                    type="checkbox"
+                    id="search-toggle"
+                    defaultChecked={user.showInSearch !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1127,20 +1186,27 @@ const Settings = () => {
           </div>
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Ads personalization</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Ads personalization
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
               <span className="label-main">Personalize ads on Reddit</span>
               <span className="label-sub">
-                Personalize ads on Reddit based on information and activity from our partners
+                Personalize ads on Reddit based on information and activity from
+                our partners
               </span>
             </div>
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="ads-toggle" defaultChecked={user.personalizeAds !== false} />
+                  <input
+                    type="checkbox"
+                    id="ads-toggle"
+                    defaultChecked={user.personalizeAds !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1149,15 +1215,22 @@ const Settings = () => {
 
           <div className="settings-row">
             <div className="setting-label">
-              <span className="label-main">Allow us to use information from our partners</span>
+              <span className="label-main">
+                Allow us to use information from our partners
+              </span>
               <span className="label-sub">
-                Allow us to use information from our partners to show you better ads on Reddit
+                Allow us to use information from our partners to show you better
+                ads on Reddit
               </span>
             </div>
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="partners-toggle" defaultChecked={user.allowPartnerData !== false} />
+                  <input
+                    type="checkbox"
+                    id="partners-toggle"
+                    defaultChecked={user.allowPartnerData !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1165,8 +1238,10 @@ const Settings = () => {
           </div>
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Advanced</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Advanced
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -1180,9 +1255,7 @@ const Settings = () => {
           <div className="settings-row">
             <div className="setting-label">
               <span className="label-main">Clear history</span>
-              <span className="label-sub">
-                Delete your post views history
-              </span>
+              <span className="label-sub">Delete your post views history</span>
             </div>
             <div className="setting-control">
               <span className="privacy-arrow">&gt;</span>
@@ -1198,7 +1271,7 @@ const Settings = () => {
     <div className="settings-main">
       <div className="general-section">
         <h2 className="section-title">Language</h2>
-        
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -1222,20 +1295,29 @@ const Settings = () => {
           </div>
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Content</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Content
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
-              <span className="label-main">Show mature content (I'm over 18)</span>
+              <span className="label-main">
+                Show mature content (I'm over 18)
+              </span>
               <span className="label-sub">
-                See Not Safe for Work mature and adult content in your feeds and search results
+                See Not Safe for Work mature and adult content in your feeds and
+                search results
               </span>
             </div>
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="mature-content-toggle" defaultChecked={user.showMatureContent !== false} />
+                  <input
+                    type="checkbox"
+                    id="mature-content-toggle"
+                    defaultChecked={user.showMatureContent !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1244,12 +1326,18 @@ const Settings = () => {
 
           <div className="settings-row">
             <div className="setting-label">
-              <span className="label-main">Blur mature (18+) images and media</span>
+              <span className="label-main">
+                Blur mature (18+) images and media
+              </span>
             </div>
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="blur-mature-toggle" defaultChecked={user.blurMatureImages !== false} />
+                  <input
+                    type="checkbox"
+                    id="blur-mature-toggle"
+                    defaultChecked={user.blurMatureImages !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1258,12 +1346,18 @@ const Settings = () => {
 
           <div className="settings-row">
             <div className="setting-label">
-              <span className="label-main">Show recommendations in home feed</span>
+              <span className="label-main">
+                Show recommendations in home feed
+              </span>
             </div>
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="recommendations-toggle" defaultChecked={user.showRecommendations !== false} />
+                  <input
+                    type="checkbox"
+                    id="recommendations-toggle"
+                    defaultChecked={user.showRecommendations !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1280,8 +1374,10 @@ const Settings = () => {
           </div>
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Accessibility</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Accessibility
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -1290,7 +1386,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="autoplay-toggle" defaultChecked={user.autoplayMedia !== false} />
+                  <input
+                    type="checkbox"
+                    id="autoplay-toggle"
+                    defaultChecked={user.autoplayMedia !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1307,7 +1407,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="reduce-motion-toggle" defaultChecked={user.reduceMotion === true} />
+                  <input
+                    type="checkbox"
+                    id="reduce-motion-toggle"
+                    defaultChecked={user.reduceMotion === true}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1323,7 +1427,7 @@ const Settings = () => {
     <div className="settings-main">
       <div className="general-section">
         <h2 className="section-title">General</h2>
-        
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -1332,7 +1436,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="community-notifications-toggle" defaultChecked={user.communityNotifications !== false} />
+                  <input
+                    type="checkbox"
+                    id="community-notifications-toggle"
+                    defaultChecked={user.communityNotifications !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1346,7 +1454,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="web-push-toggle" defaultChecked={user.webPushNotifications !== false} />
+                  <input
+                    type="checkbox"
+                    id="web-push-toggle"
+                    defaultChecked={user.webPushNotifications !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1354,8 +1466,10 @@ const Settings = () => {
           </div>
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Messages</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Messages
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -1364,7 +1478,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="chat-messages-toggle" defaultChecked={user.chatMessagesNotifications !== false} />
+                  <input
+                    type="checkbox"
+                    id="chat-messages-toggle"
+                    defaultChecked={user.chatMessagesNotifications !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1378,7 +1496,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="chat-requests-toggle" defaultChecked={user.chatRequestsNotifications !== false} />
+                  <input
+                    type="checkbox"
+                    id="chat-requests-toggle"
+                    defaultChecked={user.chatRequestsNotifications !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1400,8 +1522,10 @@ const Settings = () => {
           </div>
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Activity</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Activity
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -1411,7 +1535,11 @@ const Settings = () => {
               <div className="notifications-toggle-group">
                 <div className="toggle-control">
                   <label className="toggle-switch">
-                    <input type="checkbox" id="mentions-toggle" defaultChecked={user.mentionsNotifications !== false} />
+                    <input
+                      type="checkbox"
+                      id="mentions-toggle"
+                      defaultChecked={user.mentionsNotifications !== false}
+                    />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
@@ -1428,7 +1556,11 @@ const Settings = () => {
               <div className="notifications-toggle-group">
                 <div className="toggle-control">
                   <label className="toggle-switch">
-                    <input type="checkbox" id="comments-toggle" defaultChecked={user.commentsNotifications !== false} />
+                    <input
+                      type="checkbox"
+                      id="comments-toggle"
+                      defaultChecked={user.commentsNotifications !== false}
+                    />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
@@ -1445,7 +1577,11 @@ const Settings = () => {
               <div className="notifications-toggle-group">
                 <div className="toggle-control">
                   <label className="toggle-switch">
-                    <input type="checkbox" id="upvotes-posts-toggle" defaultChecked={user.upvotesPostsNotifications !== false} />
+                    <input
+                      type="checkbox"
+                      id="upvotes-posts-toggle"
+                      defaultChecked={user.upvotesPostsNotifications !== false}
+                    />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
@@ -1462,7 +1598,13 @@ const Settings = () => {
               <div className="notifications-toggle-group">
                 <div className="toggle-control">
                   <label className="toggle-switch">
-                    <input type="checkbox" id="upvotes-comments-toggle" defaultChecked={user.upvotesCommentsNotifications !== false} />
+                    <input
+                      type="checkbox"
+                      id="upvotes-comments-toggle"
+                      defaultChecked={
+                        user.upvotesCommentsNotifications !== false
+                      }
+                    />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
@@ -1479,7 +1621,11 @@ const Settings = () => {
               <div className="notifications-toggle-group">
                 <div className="toggle-control">
                   <label className="toggle-switch">
-                    <input type="checkbox" id="replies-toggle" defaultChecked={user.repliesNotifications !== false} />
+                    <input
+                      type="checkbox"
+                      id="replies-toggle"
+                      defaultChecked={user.repliesNotifications !== false}
+                    />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
@@ -1496,7 +1642,13 @@ const Settings = () => {
               <div className="notifications-toggle-group">
                 <div className="toggle-control">
                   <label className="toggle-switch">
-                    <input type="checkbox" id="activity-comments-toggle" defaultChecked={user.activityCommentsNotifications !== false} />
+                    <input
+                      type="checkbox"
+                      id="activity-comments-toggle"
+                      defaultChecked={
+                        user.activityCommentsNotifications !== false
+                      }
+                    />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
@@ -1513,7 +1665,11 @@ const Settings = () => {
               <div className="notifications-toggle-group">
                 <div className="toggle-control">
                   <label className="toggle-switch">
-                    <input type="checkbox" id="followers-toggle" defaultChecked={user.followersNotifications !== false} />
+                    <input
+                      type="checkbox"
+                      id="followers-toggle"
+                      defaultChecked={user.followersNotifications !== false}
+                    />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
@@ -1530,7 +1686,11 @@ const Settings = () => {
               <div className="notifications-toggle-group">
                 <div className="toggle-control">
                   <label className="toggle-switch">
-                    <input type="checkbox" id="awards-toggle" defaultChecked={user.awardsNotifications !== false} />
+                    <input
+                      type="checkbox"
+                      id="awards-toggle"
+                      defaultChecked={user.awardsNotifications !== false}
+                    />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
@@ -1547,7 +1707,11 @@ const Settings = () => {
               <div className="notifications-toggle-group">
                 <div className="toggle-control">
                   <label className="toggle-switch">
-                    <input type="checkbox" id="posts-follow-toggle" defaultChecked={user.postsFollowNotifications !== false} />
+                    <input
+                      type="checkbox"
+                      id="posts-follow-toggle"
+                      defaultChecked={user.postsFollowNotifications !== false}
+                    />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
@@ -1564,7 +1728,13 @@ const Settings = () => {
               <div className="notifications-toggle-group">
                 <div className="toggle-control">
                   <label className="toggle-switch">
-                    <input type="checkbox" id="comments-follow-toggle" defaultChecked={user.commentsFollowNotifications !== false} />
+                    <input
+                      type="checkbox"
+                      id="comments-follow-toggle"
+                      defaultChecked={
+                        user.commentsFollowNotifications !== false
+                      }
+                    />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
@@ -1593,7 +1763,7 @@ const Settings = () => {
     <div className="settings-main">
       <div className="general-section">
         <h2 className="section-title">Messages</h2>
-        
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -1602,7 +1772,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="admin-notifications-toggle" defaultChecked={user.adminEmailNotifications !== false} />
+                  <input
+                    type="checkbox"
+                    id="admin-notifications-toggle"
+                    defaultChecked={user.adminEmailNotifications !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1616,7 +1790,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="email-chat-requests-toggle" defaultChecked={user.emailChatRequests !== false} />
+                  <input
+                    type="checkbox"
+                    id="email-chat-requests-toggle"
+                    defaultChecked={user.emailChatRequests !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1624,8 +1802,10 @@ const Settings = () => {
           </div>
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Activity</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Activity
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -1634,7 +1814,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="new-user-welcome-toggle" defaultChecked={user.newUserWelcomeEmail !== false} />
+                  <input
+                    type="checkbox"
+                    id="new-user-welcome-toggle"
+                    defaultChecked={user.newUserWelcomeEmail !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1648,7 +1832,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="email-comments-toggle" defaultChecked={user.emailCommentsOnPosts !== false} />
+                  <input
+                    type="checkbox"
+                    id="email-comments-toggle"
+                    defaultChecked={user.emailCommentsOnPosts !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1662,7 +1850,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="email-replies-toggle" defaultChecked={user.emailRepliesToComments !== false} />
+                  <input
+                    type="checkbox"
+                    id="email-replies-toggle"
+                    defaultChecked={user.emailRepliesToComments !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1676,7 +1868,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="email-upvotes-posts-toggle" defaultChecked={user.emailUpvotesOnPosts !== false} />
+                  <input
+                    type="checkbox"
+                    id="email-upvotes-posts-toggle"
+                    defaultChecked={user.emailUpvotesOnPosts !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1690,7 +1886,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="email-upvotes-comments-toggle" defaultChecked={user.emailUpvotesOnComments !== false} />
+                  <input
+                    type="checkbox"
+                    id="email-upvotes-comments-toggle"
+                    defaultChecked={user.emailUpvotesOnComments !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1704,7 +1904,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="email-mentions-toggle" defaultChecked={user.emailUsernameMentions !== false} />
+                  <input
+                    type="checkbox"
+                    id="email-mentions-toggle"
+                    defaultChecked={user.emailUsernameMentions !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1718,7 +1922,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="email-followers-toggle" defaultChecked={user.emailNewFollowers !== false} />
+                  <input
+                    type="checkbox"
+                    id="email-followers-toggle"
+                    defaultChecked={user.emailNewFollowers !== false}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1726,8 +1934,10 @@ const Settings = () => {
           </div>
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Newsletters</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Newsletters
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -1736,7 +1946,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="daily-digest-toggle" defaultChecked={user.dailyDigestEmail === true} />
+                  <input
+                    type="checkbox"
+                    id="daily-digest-toggle"
+                    defaultChecked={user.dailyDigestEmail === true}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1750,7 +1964,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="weekly-recap-toggle" defaultChecked={user.weeklyRecapEmail === true} />
+                  <input
+                    type="checkbox"
+                    id="weekly-recap-toggle"
+                    defaultChecked={user.weeklyRecapEmail === true}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1764,7 +1982,11 @@ const Settings = () => {
             <div className="setting-control">
               <div className="toggle-control">
                 <label className="toggle-switch">
-                  <input type="checkbox" id="weekly-topic-toggle" defaultChecked={user.weeklyTopicEmail === true} />
+                  <input
+                    type="checkbox"
+                    id="weekly-topic-toggle"
+                    defaultChecked={user.weeklyTopicEmail === true}
+                  />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
@@ -1772,8 +1994,10 @@ const Settings = () => {
           </div>
         </div>
 
-        <h2 className="section-title" style={{marginTop: '40px'}}>Advanced</h2>
-        
+        <h2 className="section-title" style={{ marginTop: "40px" }}>
+          Advanced
+        </h2>
+
         <div className="settings-table">
           <div className="settings-row">
             <div className="setting-label">
@@ -1795,12 +2019,14 @@ const Settings = () => {
     <div className="settings-container">
       <div className="settings-header">
         <h1>Settings</h1>
-        
+
         <div className="settings-horizontal-tabs">
           {tabs.map((tab) => (
             <button
               key={tab}
-              className={`settings-horizontal-tab ${activeTab === tab ? 'active' : ''}`}
+              className={`settings-horizontal-tab ${
+                activeTab === tab ? "active" : ""
+              }`}
               onClick={() => setActiveTab(tab)}
             >
               {tab}
@@ -1814,7 +2040,7 @@ const Settings = () => {
             {tabs.map((tab) => (
               <button
                 key={tab}
-                className={`settings-tab ${activeTab === tab ? 'active' : ''}`}
+                className={`settings-tab ${activeTab === tab ? "active" : ""}`}
                 onClick={() => setActiveTab(tab)}
               >
                 {tab}
@@ -1822,9 +2048,7 @@ const Settings = () => {
             ))}
           </div>
         </div>
-        <div className="settings-main-content">
-          {renderMainContent()}
-        </div>
+        <div className="settings-main-content">{renderMainContent()}</div>
       </div>
 
       {/* Description Modal */}
@@ -1835,7 +2059,7 @@ const Settings = () => {
             <p className="about-modal-subtitle">
               Give a brief description of yourself
             </p>
-            
+
             <div className="about-input-container">
               <textarea
                 className="about-input"
@@ -1849,23 +2073,26 @@ const Settings = () => {
                 {aboutDescriptionInput.length}/200
               </div>
             </div>
-            
+
             {aboutDescriptionError && (
-              <div className="about-error">
-                {aboutDescriptionError}
-              </div>
+              <div className="about-error">{aboutDescriptionError}</div>
             )}
-            
+
             <div className="modal-buttons">
-              <button className="cancel-button" onClick={handleCancelAboutModal}>
+              <button
+                className="cancel-button"
+                onClick={handleCancelAboutModal}
+              >
                 Cancel
               </button>
-              <button 
-                className={`save-button ${isSavingAboutDescription ? 'saving' : ''}`} 
+              <button
+                className={`save-button ${
+                  isSavingAboutDescription ? "saving" : ""
+                }`}
                 onClick={handleSaveAboutDescription}
                 disabled={isSavingAboutDescription || !!aboutDescriptionError}
               >
-                {isSavingAboutDescription ? 'Saving...' : 'Save'}
+                {isSavingAboutDescription ? "Saving..." : "Save"}
               </button>
             </div>
           </div>
@@ -1880,7 +2107,7 @@ const Settings = () => {
             <p className="display-name-modal-subtitle">
               Changing your display name won't change your username
             </p>
-            
+
             <div className="display-name-input-container">
               <input
                 type="text"
@@ -1894,23 +2121,24 @@ const Settings = () => {
                 {displayNameInput.length}/90
               </div>
             </div>
-            
+
             {displayNameError && (
-              <div className="display-name-error">
-                {displayNameError}
-              </div>
+              <div className="display-name-error">{displayNameError}</div>
             )}
-            
+
             <div className="modal-buttons">
-              <button className="cancel-button" onClick={handleCancelDisplayNameModal}>
+              <button
+                className="cancel-button"
+                onClick={handleCancelDisplayNameModal}
+              >
                 Cancel
               </button>
-              <button 
-                className={`save-button ${isSavingDisplayName ? 'saving' : ''}`} 
+              <button
+                className={`save-button ${isSavingDisplayName ? "saving" : ""}`}
                 onClick={handleSaveDisplayName}
                 disabled={isSavingDisplayName || !!displayNameError}
               >
-                {isSavingDisplayName ? 'Saving...' : 'Save'}
+                {isSavingDisplayName ? "Saving..." : "Save"}
               </button>
             </div>
           </div>
@@ -1922,13 +2150,22 @@ const Settings = () => {
         <div className="email-modal-overlay">
           <div className="email-modal">
             <h3>Change your email address</h3>
-            <p>To change your email address, you need to create a Reddit password first. We'll walk you through it.</p>
-            
+            <p>
+              To change your email address, you need to create a Reddit password
+              first. We'll walk you through it.
+            </p>
+
             <div className="modal-buttons">
-              <button className="cancel-button" onClick={handleCancelEmailModal}>
+              <button
+                className="cancel-button"
+                onClick={handleCancelEmailModal}
+              >
                 Cancel
               </button>
-              <button className="continue-button" onClick={handleContinueEmailModal}>
+              <button
+                className="continue-button"
+                onClick={handleContinueEmailModal}
+              >
                 Continue
               </button>
             </div>
@@ -1941,10 +2178,16 @@ const Settings = () => {
         <div className="email-modal-overlay">
           <div className="email-modal">
             <h3>Check your email</h3>
-            <p>We sent a message to {user?.email || 'your email'} with a link to create your password.</p>
-            
+            <p>
+              We sent a message to {user?.email || "your email"} with a link to
+              create your password.
+            </p>
+
             <div className="modal-buttons">
-              <button className="continue-button" onClick={handleCloseEmailConfirmationModal}>
+              <button
+                className="continue-button"
+                onClick={handleCloseEmailConfirmationModal}
+              >
                 Done
               </button>
             </div>
@@ -1958,44 +2201,58 @@ const Settings = () => {
           <div className="gender-modal">
             <h3>Gender</h3>
             <p className="gender-modal-subtitle">
-              This information may be used to improve your recommendations and ads.
+              This information may be used to improve your recommendations and
+              ads.
             </p>
-            
+
             <div className="gender-options">
-              <div 
-                className={`gender-option ${selectedGender === 'Woman' ? 'selected' : ''}`}
-                onClick={() => handleGenderSelect('Woman')}
+              <div
+                className={`gender-option ${
+                  selectedGender === "Woman" ? "selected" : ""
+                }`}
+                onClick={() => handleGenderSelect("Woman")}
               >
                 Woman
               </div>
-              <div 
-                className={`gender-option ${selectedGender === 'Man' ? 'selected' : ''}`}
-                onClick={() => handleGenderSelect('Man')}
+              <div
+                className={`gender-option ${
+                  selectedGender === "Man" ? "selected" : ""
+                }`}
+                onClick={() => handleGenderSelect("Man")}
               >
                 Man
               </div>
-              <div 
-                className={`gender-option ${selectedGender === 'Non-binary' ? 'selected' : ''}`}
-                onClick={() => handleGenderSelect('Non-binary')}
+              <div
+                className={`gender-option ${
+                  selectedGender === "Non-binary" ? "selected" : ""
+                }`}
+                onClick={() => handleGenderSelect("Non-binary")}
               >
                 Non-binary
               </div>
-              <div 
-                className={`gender-option ${selectedGender === 'I prefer not to say' ? 'selected' : ''}`}
-                onClick={() => handleGenderSelect('I prefer not to say')}
+              <div
+                className={`gender-option ${
+                  selectedGender === "I prefer not to say" ? "selected" : ""
+                }`}
+                onClick={() => handleGenderSelect("I prefer not to say")}
               >
                 I prefer not to say
               </div>
-              <div 
-                className={`gender-option ${selectedGender === 'I refer to myself as...' ? 'selected' : ''}`}
-                onClick={() => handleGenderSelect('I refer to myself as...')}
+              <div
+                className={`gender-option ${
+                  selectedGender === "I refer to myself as..." ? "selected" : ""
+                }`}
+                onClick={() => handleGenderSelect("I refer to myself as...")}
               >
                 I refer to myself as...
               </div>
             </div>
-            
+
             <div className="modal-buttons">
-              <button className="cancel-button" onClick={handleCancelGenderModal}>
+              <button
+                className="cancel-button"
+                onClick={handleCancelGenderModal}
+              >
                 Cancel
               </button>
               <button className="save-button" onClick={handleSaveGender}>
@@ -2011,13 +2268,22 @@ const Settings = () => {
         <div className="delete-modal-overlay">
           <div className="delete-modal">
             <h3>Delete your account</h3>
-            <p>To delete your account, you need to create a Reddit password first. We'll walk you through it.</p>
-            
+            <p>
+              To delete your account, you need to create a Reddit password
+              first. We'll walk you through it.
+            </p>
+
             <div className="modal-buttons">
-              <button className="cancel-button" onClick={handleCancelDeleteAccountModal}>
+              <button
+                className="cancel-button"
+                onClick={handleCancelDeleteAccountModal}
+              >
                 Cancel
               </button>
-              <button className="continue-button" onClick={handleContinueDeleteAccount}>
+              <button
+                className="continue-button"
+                onClick={handleContinueDeleteAccount}
+              >
                 Continue
               </button>
             </div>
@@ -2033,12 +2299,19 @@ const Settings = () => {
             <div className="email-confirmation-content">
               <div className="confirmation-text">
                 <p>Check your email</p>
-                <p>We sent a message to <strong>{user?.email || 'your email'}</strong> with a link to create your password.</p>
+                <p>
+                  We sent a message to{" "}
+                  <strong>{user?.email || "your email"}</strong> with a link to
+                  create your password.
+                </p>
               </div>
             </div>
-            
+
             <div className="modal-buttons">
-              <button className="continue-button" onClick={handleCloseDeleteConfirmationModal}>
+              <button
+                className="continue-button"
+                onClick={handleCloseDeleteConfirmationModal}
+              >
                 Done
               </button>
             </div>

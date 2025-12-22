@@ -9,7 +9,6 @@ import {
   Loginparagraph,
   Loginlink,
   ContinueWithLink,
-  ContinueWithWindow,
   OR,
   InputText,
   Submit,
@@ -24,7 +23,6 @@ const Login = ({ setOpen }) => {
   const [password, setPassword] = useState("");
   // Both are Empty → disabled
   const disabled = username.trim() === "" || password.trim() === "";
-
   // Modals State
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isResetOpen, setIsResetOpen] = useState(false);
@@ -50,9 +48,9 @@ const Login = ({ setOpen }) => {
 
       // Close the modal
       setOpen(false);
-      
+
       // Navigate to home and reload to update navbar/sidebar
-      navigate('/');
+      navigate("/");
       window.location.reload();
     } catch (err) {
       // show a user-friendly message on login failure
@@ -70,10 +68,18 @@ const Login = ({ setOpen }) => {
     return () => window.removeEventListener("closeAllAuthWindows", handler);
   }, [setOpen]);
 
+  // Prevent background scrolling and interactions when modal is open
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
   return (
     <div className="All_login">
       <div className="login-container">
-        <div className="login-overlay" onClick={() => setOpen(false)}>
+        <div className="login-overlay">
           <div className="login-notclose" onClick={(e) => e.stopPropagation()}>
             <div className="my-window-close-button">
               <CloseButton onClose={() => setOpen(false)} />
@@ -112,10 +118,9 @@ const Login = ({ setOpen }) => {
                 text="Continue with Apple"
                 icon="/icons/login/apple.svg"
               />
-              <ContinueWithWindow
+              <ContinueWithLink
                 text="Email me with a one-time link"
                 icon="/icons/login/email.svg"
-                onOpen={() => setIsEmailmeOpen(true)}
               />
               {isEmailmeOpen && <Emailme setOpen={setIsEmailmeOpen} />}
             </div>
@@ -126,7 +131,7 @@ const Login = ({ setOpen }) => {
 
             <div className="inputs">
               <InputText
-                label="Email or username"
+                label="Email"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value.replace(/\s/g, ""))}

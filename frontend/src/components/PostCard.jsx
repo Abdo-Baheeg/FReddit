@@ -1,42 +1,61 @@
 import React, { useState, useEffect } from "react";
 import "./PostCard.css";
 import { useNavigate } from "react-router-dom";
-import { membershipApi, voteApi, savedApi } from "../api";
+import { membershipApi, voteApi, savedApi, postApi } from "../api";
 import AI_Summary from "./AI-summary";
-import { 
-  ArrowBigUp, 
-  ArrowBigDown, 
-  MessageSquare, 
-  Share2, 
-  Bookmark,
-  BookmarkCheck,
-  Sparkles
-} from "lucide-react";
+import { Sparkles } from "lucide-react";
+
+// === Icon assets ===
+import imgDownvote from "../images/downvote.png";
+import imgUpvote from "../images/upvote.png";
+import imgComment from "../images/comment.png";
+import imgShare from "../images/share.png";
+import imgSave from "../images/save.png";
+import imgSaved from "../images/saved.png";
 
 /* ===============================
    Reusable Small Components
 ================================ */
 
-const ActionButton = ({ icon: Icon, children, onClick, className = "" }) => {
+const Icon = ({ src, className = "", alt = "" }) => {
+  return (
+    <img 
+      src={src} 
+      alt={alt || "icon"} 
+      className={`icon ${className}`}
+      style={{ width: '20px', height: '20px', display: 'block' }}
+      onError={(e) => {
+        console.error("Failed to load icon:", src);
+        e.target.style.border = '2px solid red'; 
+      }}
+    />
+  );
+};
+
+const ActionButton = ({ icon, children, onClick, className = "", disabled = false }) => {
   const handleClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (onClick) onClick();
+    if (onClick && !disabled) onClick();
   };
 
   return (
-    <button onClick={handleClick} className={`action-button ${className}`}>
-      <Icon size={20} />
+    <button 
+      onClick={handleClick} 
+      className={`action-button ${className}`}
+      disabled={disabled}
+    >
+      {icon}
       {children}
     </button>
   );
 };
 
-const VoteButton = ({ icon: Icon, active, onClick, count }) => {
+const VoteButton = ({ icon, active, onClick, disabled = false }) => {
   const handleClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    onClick();
+    if (!disabled) onClick();
   };
 
   return (
@@ -44,8 +63,19 @@ const VoteButton = ({ icon: Icon, active, onClick, count }) => {
       type="button"
       className={`vote-button ${active ? "active" : ""}`}
       onClick={handleClick}
+      disabled={disabled}
+      style={{
+        background: 'transparent',
+        border: 'none',
+        padding: '4px',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        opacity: disabled ? 0.5 : 1
+      }}
     >
-      <Icon size={20} />
+      <Icon src={icon} alt={active ? "active vote" : "vote"} />
     </button>
   );
 };
@@ -54,8 +84,9 @@ const VoteButton = ({ icon: Icon, active, onClick, count }) => {
    Main Component
 ================================ */
 
-const PostCard = ({ post, onVote }) => {
+export function PostCard({ post, onVote }) {
   const navigate = useNavigate();
+  const postId = post._id || post.id;
 
   /* ---------- COMMUNITY JOIN LOGIC ---------- */
 
@@ -103,136 +134,28 @@ const PostCard = ({ post, onVote }) => {
     }
   };
 
-  /* ---------- VOTING LOGIC ---------- */
+   /* ---------- VOTING LOGIC ---------- */
 
   const [userVote, setUserVote] = useState(null);
   const [score, setScore] = useState(post.score ?? 0);
-  const [upvoteCount, setUpvoteCount] = useState(post.upvoteCount ?? 0);
-  const [downvoteCount, setDownvoteCount] = useState(post.downvoteCount ?? 0);
-  const [voteLoading, setVoteLoading] = useState(false);
 
-  const postId = post._id || post.id;
-
-  // Fetch user's existing vote
-  useEffect(() => {
-    const fetchUserVote = async () => {
-      if (!localStorage.getItem("token") || !postId) return;
-      
-      try {
-        const voteData = await voteApi.getUserVote(postId, "post");
-        if (voteData?.vote) {
-          setUserVote(voteData.vote.voteType === 1 ? "up" : "down");
-        }
-      } catch (err) {
-        // User hasn't voted yet
+  const handleVote = (dir) => {
+    setScore((prev) => {
+      if (userVote === dir) {
+        // undo vote
+        return dir === "up" ? prev - 1 : prev + 1;
       }
-    };
-    
-    fetchUserVote();
-  }, [postId]);
 
-  const handleVote = async (dir) => {
-    if (!localStorage.getItem("token")) {
-      navigate("/login");
-      return;
-    }
+      if (userVote === "up" && dir === "down") return prev - 2;
+      if (userVote === "down" && dir === "up") return prev + 2;
 
-    if (voteLoading) return;
-    setVoteLoading(true);
+      return dir === "up" ? prev + 1 : prev - 1;
+    });
 
-    const previousVote = userVote;
-    const previousScore = score;
-    const previousUpvoteCount = upvoteCount;
-    const previousDownvoteCount = downvoteCount;
+    setUserVote((prev) => (prev === dir ? null : dir));
 
-    // Optimistic update
-    if (userVote === dir) {
-      // Remove vote
-      setUserVote(null);
-      setScore((prev) => (dir === "up" ? prev - 1 : prev + 1));
-      if (dir === "up") {
-        setUpvoteCount((prev) => prev - 1);
-      } else {
-        setDownvoteCount((prev) => prev - 1);
-      }
-    } else if (userVote) {
-      // Change vote
-      setUserVote(dir);
-      setScore((prev) => (dir === "up" ? prev + 2 : prev - 2));
-      if (dir === "up") {
-        setUpvoteCount((prev) => prev + 1);
-        setDownvoteCount((prev) => prev - 1);
-      } else {
-        setUpvoteCount((prev) => prev - 1);
-        setDownvoteCount((prev) => prev + 1);
-      }
-    } else {
-      // New vote
-      setUserVote(dir);
-      setScore((prev) => (dir === "up" ? prev + 1 : prev - 1));
-      if (dir === "up") {
-        setUpvoteCount((prev) => prev + 1);
-      } else {
-        setDownvoteCount((prev) => prev + 1);
-      }
-    }
-
-    try {
-      const voteType = userVote === dir ? 0 : (dir === "up" ? 1 : -1);
-      await voteApi.vote(postId, "post", voteType);
-      
-      // Callback for parent component if provided
-      onVote?.(postId, dir);
-    } catch (err) {
-      console.error("Vote failed:", err);
-      // Revert on error
-      setUserVote(previousVote);
-      setScore(previousScore);      setUpvoteCount(previousUpvoteCount);
-      setDownvoteCount(previousDownvoteCount);    } finally {
-      setVoteLoading(false);
-    }
-  };
-
-  /* ---------- SAVE LOGIC ---------- */
-
-  const [isSaved, setIsSaved] = useState(false);
-  const [saveLoading, setSaveLoading] = useState(false);
-
-  useEffect(() => {
-    const checkSaveStatus = async () => {
-      if (!localStorage.getItem("token") || !postId) return;
-      
-      try {
-        const saveData = await savedApi.checkSaved(postId, "post");
-        setIsSaved(!!saveData?.isSaved);
-      } catch (err) {
-        // Not saved
-      }
-    };
-    
-    checkSaveStatus();
-  }, [postId]);
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!localStorage.getItem("token")) {
-      navigate("/login");
-      return;
-    }
-
-    if (saveLoading) return;
-    setSaveLoading(true);
-
-    try {
-      await savedApi.toggleSave(postId, "post");
-      setIsSaved((prev) => !prev);
-    } catch (err) {
-      console.error("Save failed:", err);
-    } finally {
-      setSaveLoading(false);
-    }
+    // FIX: use _id fallback
+    onVote?.(post._id || post.id, dir);
   };
 
   /* ---------- AI SUMMARY LOGIC ---------- */
@@ -240,17 +163,28 @@ const PostCard = ({ post, onVote }) => {
   const [showAISummary, setShowAISummary] = useState(false);
   const [aiSummary, setAiSummary] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState(null);
 
   const handleAISummary = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    if (!localStorage.getItem("token")) {
+      navigate("/login");
+      return;
+    }
 
     if (showAISummary) {
+      // If AI summary is already showing, hide it
       setShowAISummary(false);
       return;
     }
 
+    // Show the AI summary container
     setShowAISummary(true);
+    setAiError(null);
 
     // If we already have a summary, don't fetch again
     if (aiSummary) return;
@@ -258,100 +192,127 @@ const PostCard = ({ post, onVote }) => {
     setAiLoading(true);
 
     try {
-      // Simulate AI summary generation (replace with actual API call)
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log("Generating AI summary for post:", postId);
       
-      // Mock summary - replace with actual API call
-      const mockSummary = `This post discusses ${post.title.toLowerCase()}. ${post.content ? post.content.substring(0, 150) + '...' : 'Key insights and discussion points are highlighted by the community.'}`;
+      // Call the actual API to generate summary
+      const response = await postApi.generateSummary(postId);
+      console.log("AI Summary API response:", response);
       
-      setAiSummary(mockSummary);
+      if (response.success) {
+        // Use response.summary directly - this is the correct line
+        setAiSummary(response.summary);
+      } else {
+        throw new Error(response.message || "Failed to generate summary");
+      }
     } catch (err) {
-      console.error("AI summary failed:", err);
-      setAiSummary("Failed to generate summary. Please try again.");
+      console.error("AI summary generation failed:", err);
+      setAiError(err.message || "Failed to generate AI summary. Please try again.");
+      
+      // Fallback: Use a simple summary if API fails
+      const fallbackSummary = `This post titled "${post.title}" ${
+        post.content 
+          ? `discusses: ${post.content.substring(0, 200)}${post.content.length > 200 ? '...' : ''}` 
+          : 'contains community discussion and insights.'
+      }`;
+      setAiSummary(fallbackSummary);
     } finally {
       setAiLoading(false);
     }
   };
 
   /* ---------- NAVIGATION LOGIC ---------- */
-
   const handlePostClick = () => {
-    const postId = post._id || post.id;
+    navigate(`/post/${postId}`);
+  };
+
+  const handleCommentClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     navigate(`/post/${postId}`);
   };
 
   return (
-  <div className="post-card-container post-card">
-    {/* Header */}
-    <div className="post-card-header">
-      <div className="post-card-title-row">
-        <div className="post-card-meta">
-          <span className="post-subreddit">r/{post.community?.name || post.subreddit || post.communityId || post.community?._id || post.subredditId}</span>
-          <span className="post-time"> • {new Date(post.createdAt).toLocaleDateString()}</span>
+    <div className="post-card-container post-card">
+      {/* Header */}
+      <div className="post-card-header">
+        <div className="post-card-title-row">
+          <div className="post-card-meta">
+            <span className="post-subreddit">r/{post.community?.name || post.subreddit || post.communityId || post.community?._id || post.subredditId}</span>
+            <span className="post-time"> • {new Date(post.createdAt).toLocaleDateString()}</span>
+          </div>
+          
+          <h2 
+            className="post-card-title" 
+            onClick={handlePostClick}
+            style={{ cursor: 'pointer' }}
+          >
+            {post.title}
+          </h2>
         </div>
-        
-        <h2 
-          className="post-card-title" 
+
+        <div className="post-card-actions">
+          <button
+            className={`join-button ${isJoined ? "joined" : ""}`}
+            onClick={handleJoinToggle}
+            disabled={joinLoading}
+          >
+            {joinLoading ? "..." : isJoined ? "Joined" : "Join"}
+          </button>
+
+          <button className="save-button">
+          <Icon src={imgSave} />
+          Save
+        </button>
+        </div>
+      </div>
+
+      {post.content && (
+        <p 
+          className="post-card-content" 
           onClick={handlePostClick}
           style={{ cursor: 'pointer' }}
         >
-          {post.title}
-        </h2>
-      </div>
+          {post.content}
+        </p>
+      )}
 
-      <div className="post-card-actions">
-        <button
-          className={`join-button ${isJoined ? "joined" : ""}`}
-          onClick={handleJoinToggle}
-          disabled={joinLoading}
-        >
-          {joinLoading ? "..." : isJoined ? "Joined" : "Join"}
-        </button>
+      {/* AI Summary Section */}
+      {showAISummary && (
+        <AI_Summary 
+          summary={aiSummary} 
+          isLoading={aiLoading}
+          error={aiError}
+        />
+      )}
 
-        <button 
-          className={`save-button ${isSaved ? "saved" : ""}`}
-          onClick={handleSave}
-          disabled={saveLoading}
-        >
-          {isSaved ? <BookmarkCheck size={20} /> : <Bookmark size={20} />}
-          {isSaved ? "Saved" : "Save"}
-        </button>
-      </div>
+      {!post.promoted && (
+        <PostActions
+          post={{ ...post, score }}
+          userVote={userVote}
+          onVote={handleVote}
+          onAISummary={handleAISummary}
+          showAISummary={showAISummary}
+          aiLoading={aiLoading}
+          onCommentClick={handleCommentClick}
+        />
+      )}
     </div>
-
-    {post.content && (
-      <p 
-        className="post-card-content" 
-        onClick={handlePostClick}
-        style={{ cursor: 'pointer' }}
-      >
-        {post.content}
-      </p>
-    )}
-
-    {showAISummary && (
-      <AI_Summary summary={aiSummary} isLoading={aiLoading} />
-    )}
-
-    {!post.promoted && (
-      <PostActions
-        post={{ ...post, score }}
-        userVote={userVote}
-        onVote={handleVote}
-        onAISummary={handleAISummary}
-        showAISummary={showAISummary}
-        upvoteCount={upvoteCount}
-        downvoteCount={downvoteCount}
-      />
-    )}
-  </div>
-);
+  );
 }
 /* ===============================
    Post Actions
 ================================ */
 
-const PostActions = ({ post, userVote, onVote, onAISummary, showAISummary, upvoteCount, downvoteCount }) => {
+const PostActions = ({ 
+  post, 
+  userVote, 
+  onVote, 
+  onAISummary, 
+  showAISummary, 
+  voteLoading, 
+  aiLoading,
+  onCommentClick 
+}) => {
   const handleShare = async () => {
     const postUrl = `${window.location.origin}/post/${post._id || post.id}`;
     
@@ -381,38 +342,49 @@ const PostActions = ({ post, userVote, onVote, onAISummary, showAISummary, upvot
 
   return (
     <div className="post-actions-container">
-      {/* Voting Buttons */}
       <div className="vote-container">
         <VoteButton
-          icon={ArrowBigUp}
+          icon={imgUpvote}
           active={userVote === "up"}
           onClick={() => onVote("up")}
+          disabled={voteLoading}
         />
+
         <span className="vote-count">{post.score}</span>
+
         <VoteButton
-          icon={ArrowBigDown}
+          icon={imgDownvote}
           active={userVote === "down"}
           onClick={() => onVote("down")}
+          disabled={voteLoading}
         />
       </div>
 
-      <ActionButton icon={MessageSquare}>
+      <ActionButton 
+        icon={<Icon src={imgComment} />} 
+        onClick={onCommentClick}
+      >
         <span className="action-count">{post.comments || 0} Comment{post.comments !== 1 ? 's' : ''}</span>
       </ActionButton>
 
-      <ActionButton icon={Share2} onClick={handleShare}>
+      <ActionButton 
+        icon={<Icon src={imgShare} />} 
+        onClick={handleShare}
+      >
         <span className="share-text">Share</span>
       </ActionButton>
 
+      {/* AI Summary Button */}
       <ActionButton 
-        icon={Sparkles} 
+        icon={<Sparkles size={20} />} 
         onClick={onAISummary}
         className={showAISummary ? "active" : ""}
+        disabled={aiLoading}
       >
-        <span className="ai-text">AI Summary</span>
+        <span className="ai-text">
+          {aiLoading ? "Generating..." : "AI Summary"}
+        </span>
       </ActionButton>
     </div>
   );
 };
-
-export default PostCard;

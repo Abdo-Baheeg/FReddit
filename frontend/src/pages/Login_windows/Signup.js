@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import {
   Logintitle,
@@ -16,8 +17,9 @@ import SignupP2 from "./SignupP2.js";
 import SignupSuccess from "./SignupSuccess.js";
 
 const Signup = ({ setOpen }) => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+(?:\.[^\s@]+)+$/;
   const disabled = !emailRegex.test(username);
   const [error, setError] = useState("");
   // Modals State
@@ -36,6 +38,8 @@ const Signup = ({ setOpen }) => {
   const handleCloseSuccess = () => {
     setIsSignupSuccessOpen(false);
     setOpen(false);
+    navigate("/");
+    window.location.reload();
   };
 
   // listen for global close events (e.g., X clicked in other windows)
@@ -50,9 +54,17 @@ const Signup = ({ setOpen }) => {
     return () => window.removeEventListener("closeAllAuthWindows", handler);
   }, [setOpen]);
 
+  // Prevent background scrolling and interactions when modal is open
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
   return (
     <div className="login-container">
-      <div className="login-overlay" onClick={() => setOpen(false)}>
+      <div className="login-overlay">
         <div className="login-notclose" onClick={(e) => e.stopPropagation()}>
           <div className="my-window-close-button">
             <CloseButton onClose={() => setOpen(false)} />

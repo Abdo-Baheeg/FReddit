@@ -233,7 +233,7 @@ const Navbar = () => {
             <button 
               className="vpIconBtn" 
               aria-label="Advertise"
-              onClick={() => window.open('https://ads.reddit.com', '_blank')}
+              onClick={() => navigate('advertise')}
               title="Advertise on Reddit"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
