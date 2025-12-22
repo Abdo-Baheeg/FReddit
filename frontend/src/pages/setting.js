@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { userApi } from '../api';
+import { uploadImageToCloudinary } from '../context/CloudinaryHelper';
 import './setting.css';
 
 const Settings = () => {
@@ -41,6 +42,12 @@ const Settings = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [isSavingPassword, setIsSavingPassword] = useState(false);
+
+  // NEW STATES FOR AVATAR AND BANNER UPLOADS
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [bannerUploading, setBannerUploading] = useState(false);
+  const avatarInputRef = useRef(null);
+  const bannerInputRef = useRef(null);
 
   
   const tabs = [
@@ -137,6 +144,78 @@ const Settings = () => {
     setIsEditing(false);
     setNewUsername("");
     setDisplayNameError('');
+  };
+
+  // Handle avatar upload
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size must be less than 5MB');
+      return;
+    }
+
+    setAvatarUploading(true);
+    setError(null);
+
+    try {
+      const url = await uploadImageToCloudinary(file);
+      
+      // Update user profile with new avatar URL
+      const updatedUser = await userApi.updateProfile({ avatar_url: url });
+      setUser(updatedUser);
+      
+      console.log('Avatar uploaded successfully');
+    } catch (err) {
+      console.error('Error uploading avatar:', err);
+      setError('Failed to upload avatar. Please try again.');
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
+  // Handle banner upload
+  const handleBannerUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 10MB for banners)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size must be less than 10MB');
+      return;
+    }
+
+    setBannerUploading(true);
+    setError(null);
+
+    try {
+      const url = await uploadImageToCloudinary(file);
+      
+      // Update user profile with new banner URL
+      const updatedUser = await userApi.updateProfile({ banner_url: url });
+      setUser(updatedUser);
+      
+      console.log('Banner uploaded successfully');
+    } catch (err) {
+      console.error('Error uploading banner:', err);
+      setError('Failed to upload banner. Please try again.');
+    } finally {
+      setBannerUploading(false);
+    }
   };
 
   // Handle saving email
@@ -877,11 +956,35 @@ const Settings = () => {
               </span>
               </div>
             <div className="setting-control">
-              <button className="bio-button" >
+              <input
+                type="file"
+                ref={avatarInputRef}
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                style={{ display: 'none' }}
+              />
+              <button 
+                className="bio-button" 
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={avatarUploading}
+              >
                 <span className="about-description">
-                  { '>'}
+                  {avatarUploading ? 'Uploading...' : (user.avatar_url ? 'Change Avatar' : 'Upload Avatar')}
                 </span>
               </button>
+              {user.avatar_url && (
+                <img 
+                  src={user.avatar_url} 
+                  alt="Current avatar" 
+                  style={{ 
+                    width: '40px', 
+                    height: '40px', 
+                    borderRadius: '50%', 
+                    marginLeft: '10px',
+                    objectFit: 'cover'
+                  }} 
+                />
+              )}
             </div>
           </div>
 
@@ -892,6 +995,24 @@ const Settings = () => {
               <span className="label-sub">
                 Upload a profile background image
               </span>
+            </div>
+            <div className="setting-control">
+              <input
+                type="file"
+                ref={bannerInputRef}
+                accept="image/*"
+                onChange={handleBannerUpload}
+                style={{ display: 'none' }}
+              />
+              <button 
+                className="bio-button" 
+                onClick={() => bannerInputRef.current?.click()}
+                disabled={bannerUploading}
+              >
+                <span className="about-description">
+                  {bannerUploading ? 'Uploading...' : (user.banner_url ? 'Change Banner' : 'Upload Banner')}
+                </span>
+              </button>
             </div>
           </div>
 

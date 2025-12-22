@@ -25,9 +25,7 @@ export  async function uploadImageToCloudinary(imageFile) {
 
     const formData = new FormData();
     formData.append('file', imageFile);
-    formData.append('cloud_name', cloud_name); 
-    formData.append('upload_preset', upload_preset); // Use your upload preset
-    formData.append('resource_type', 'image'); 
+    formData.append('upload_preset', upload_preset); 
 
     const response = await fetch(
        `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
